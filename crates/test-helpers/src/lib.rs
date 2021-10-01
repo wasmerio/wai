@@ -354,6 +354,46 @@ pub fn codegen_spidermonkey_export(input: TokenStream) -> TokenStream {
     })
 }
 
+#[proc_macro]
+#[cfg(feature = "witx-bindgen-gen-wasmer")]
+pub fn codegen_wasmer_import(input: TokenStream) -> TokenStream {
+    gen_rust(
+        input,
+        Direction::Import,
+        &[
+            (
+                "import",
+                || witx_bindgen_gen_wasmer::Opts::default().build(),
+                |_| quote::quote!(),
+            ),
+            (
+                "import-tracing-and-custom-error",
+                || {
+                    let mut opts = witx_bindgen_gen_wasmer::Opts::default();
+                    opts.tracing = true;
+                    opts.custom_error = true;
+                    opts.build()
+                },
+                |_| quote::quote!(),
+            ),
+        ],
+    )
+}
+
+#[proc_macro]
+#[cfg(feature = "witx-bindgen-gen-wasmer")]
+pub fn codegen_wasmer_export(input: TokenStream) -> TokenStream {
+    gen_rust(
+        input,
+        Direction::Export,
+        &[(
+            "export",
+            || witx_bindgen_gen_wasmer::Opts::default().build(),
+            |_| quote::quote!(),
+        )],
+    )
+}
+
 fn generate_tests<G>(
     input: TokenStream,
     dir: &str,

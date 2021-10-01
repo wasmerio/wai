@@ -18,6 +18,7 @@ pub struct Config {
     wasmtime: RefCell<witx_bindgen_gen_wasmtime::Opts>,
     wasmtime_py: RefCell<witx_bindgen_gen_wasmtime_py::Opts>,
     markdown: RefCell<witx_bindgen_gen_markdown::Opts>,
+    wasmer: RefCell<witx_bindgen_gen_wasmer::Opts>,
 }
 
 impl demo::Config for Config {
@@ -47,6 +48,7 @@ impl demo::Config for Config {
             demo::Lang::Js => Box::new(self.js.borrow().clone().build()),
             demo::Lang::C => Box::new(self.c.borrow().clone().build()),
             demo::Lang::Markdown => Box::new(self.markdown.borrow().clone().build()),
+            demo::Lang::Wasmer => Box::new(self.wasmer.borrow().clone().build()),
         };
         let iface = witx2::Interface::parse("input", &witx).map_err(|e| format!("{:?}", e))?;
         let mut files = Default::default();

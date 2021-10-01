@@ -111,6 +111,7 @@ class Editor {
       case "wasmtime-py": lang = Lang.WasmtimePy; break;
       case "c": lang = Lang.C; break;
       case "markdown": lang = Lang.Markdown; break;
+      case "wasmer": lang = Lang.Wasmer; break;
       default: return;
     }
     const result = this.config.render(lang, witx, is_import);
