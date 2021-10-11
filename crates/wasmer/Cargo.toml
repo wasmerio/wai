@@ -8,7 +8,7 @@ edition = "2018"
 anyhow = "1.0"
 bitflags = "1.2"
 thiserror = "1.0"
-wasmer = { git = "https://github.com/wasmerio/wasmer", branch = "get_namespace_exports" }
+wasmer = { git = "https://github.com/wasmerio/wasmer" }
 witx-bindgen-wasmer-impl = { path = "../wasmer-impl", version = "0.1" }
 tracing-lib = { version = "0.1.26", optional = true, package = 'tracing' }
 async-trait = { version = "0.1.50", optional = true }

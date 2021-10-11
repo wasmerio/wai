@@ -2077,7 +2077,7 @@ dependencies = [
 [[package]]
 name = "wasmer"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "cfg-if",
  "indexmap",
@@ -2087,14 +2087,14 @@ dependencies = [
  "target-lexicon",
  "thiserror",
  "wasm-bindgen",
- "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-compiler-cranelift 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-derive 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-engine 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-engine-dylib 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-engine-universal 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-compiler-cranelift 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-derive 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-engine 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-engine-dylib 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-engine-universal 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer)",
  "wat",
  "winapi",
 ]
@@ -2121,7 +2121,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "enumset",
  "loupe",
@@ -2131,8 +2131,8 @@ dependencies = [
  "smallvec",
  "target-lexicon",
  "thiserror",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer)",
  "wasmparser 0.78.2",
 ]
 
@@ -2159,7 +2159,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler-cranelift"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "cranelift-codegen 0.76.0",
  "cranelift-entity 0.76.0",
@@ -2170,9 +2170,9 @@ dependencies = [
  "rayon",
  "smallvec",
  "tracing",
- "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer)",
 ]
 
 [[package]]
@@ -2190,7 +2190,7 @@ dependencies = [
 [[package]]
 name = "wasmer-derive"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -2222,7 +2222,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "backtrace",
  "lazy_static",
@@ -2234,9 +2234,9 @@ dependencies = [
  "serde_bytes",
  "target-lexicon",
  "thiserror",
- "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer)",
 ]
 
 [[package]]
@@ -2264,7 +2264,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-dylib"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "cfg-if",
  "leb128",
@@ -2274,11 +2274,11 @@ dependencies = [
  "serde",
  "tempfile",
  "tracing",
- "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-engine 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-object 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-engine 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-object 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer)",
  "which",
 ]
 
@@ -2303,17 +2303,17 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-universal"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "cfg-if",
  "leb128",
  "loupe",
  "region 3.0.0",
  "rkyv",
- "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-engine 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-engine 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-vm 2.0.0 (git+https://github.com/wasmerio/wasmer)",
  "winapi",
 ]
 
@@ -2332,12 +2332,12 @@ dependencies = [
 [[package]]
 name = "wasmer-object"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "object 0.26.2",
  "thiserror",
- "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-compiler 2.0.0 (git+https://github.com/wasmerio/wasmer)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
 ]
 
 [[package]]
@@ -2356,7 +2356,7 @@ dependencies = [
 [[package]]
 name = "wasmer-types"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "indexmap",
  "loupe",
@@ -2390,7 +2390,7 @@ dependencies = [
 [[package]]
 name = "wasmer-vm"
 version = "2.0.0"
-source = "git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports#35d6c0229c1f85969053d695f89cbdc5586d6392"
+source = "git+https://github.com/wasmerio/wasmer#f12b822bb251bde2691ded97e921cebfa737ba36"
 dependencies = [
  "backtrace",
  "cc",
@@ -2404,7 +2404,7 @@ dependencies = [
  "rkyv",
  "serde",
  "thiserror",
- "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer-types 2.0.0 (git+https://github.com/wasmerio/wasmer)",
  "winapi",
 ]
 
@@ -2965,7 +2965,7 @@ dependencies = [
  "bitflags",
  "thiserror",
  "tracing",
- "wasmer 2.0.0 (git+https://github.com/wasmerio/wasmer?branch=get_namespace_exports)",
+ "wasmer 2.0.0 (git+https://github.com/wasmerio/wasmer)",
  "witx-bindgen-wasmer-impl",
 ]
 
