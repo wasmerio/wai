@@ -15,7 +15,7 @@ enum lang {
   markdown,
   spidermonkey,
   wasmer,
-  wasmer_py,
+  wasmer-py,
 }
 
 
