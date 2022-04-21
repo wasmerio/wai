@@ -3070,7 +3070,7 @@ dependencies = [
 name = "wit-bindgen-gen-wasmer-py"
 version = "0.1.0"
 dependencies = [
- "heck",
+ "heck 0.3.3",
  "structopt",
  "test-helpers",
  "wit-bindgen-gen-core",

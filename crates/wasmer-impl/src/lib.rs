@@ -1,3 +1,5 @@
+use std::path::{Path, PathBuf};
+
 use proc_macro::TokenStream;
 use syn::parse::{Error, Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
@@ -36,12 +38,12 @@ fn run(input: TokenStream, dir: Direction) -> TokenStream {
 
     // Include a dummy `include_str!` for any files we read so rustc knows that
     // we depend on the contents of those files.
-    let cwd = std::env::current_dir().unwrap();
+    let cwd = std::env::var("CARGO_MANIFEST_DIR").unwrap();
     for file in input.files.iter() {
         contents.extend(
             format!(
                 "const _: &str = include_str!(r#\"{}\"#);\n",
-                cwd.join(file).display()
+                Path::new(&cwd).join(file).display()
             )
             .parse::<TokenStream>()
             .unwrap(),
@@ -95,7 +97,9 @@ impl Parse for Opts {
                 files.push(s.value());
             }
             let mut interfaces = Vec::new();
+            let manifest_dir = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap());
             for path in files.iter() {
+                let path = manifest_dir.join(path);
                 let iface = Interface::parse_file(path).map_err(|e| Error::new(call_site, e))?;
                 interfaces.push(iface);
             }
