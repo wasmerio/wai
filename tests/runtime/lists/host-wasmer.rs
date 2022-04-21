@@ -1,7 +1,7 @@
 use anyhow::Result;
 use wasmer::WasmerEnv;
 
-wit_bindgen_wasmer::export!("./tests/runtime/lists/imports.wit");
+wit_bindgen_wasmer::export!("../../tests/runtime/lists/imports.wit");
 
 use imports::*;
 use wit_bindgen_wasmer::Le;
@@ -127,7 +127,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("./tests/runtime/lists/exports.wit");
+wit_bindgen_wasmer::import!("../../tests/runtime/lists/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -140,19 +140,16 @@ fn run(wasm: &str) -> Result<()> {
 
     let bytes = exports.allocated_bytes()?;
     exports.test_imports()?;
-    exports.list_param( &[1, 2, 3, 4])?;
-    exports.list_param2( "foo")?;
-    exports.list_param3( &["foo", "bar", "baz"])?;
-    exports.list_param4( &[&["foo", "bar"], &["baz"]])?;
+    exports.list_param(&[1, 2, 3, 4])?;
+    exports.list_param2("foo")?;
+    exports.list_param3(&["foo", "bar", "baz"])?;
+    exports.list_param4(&[&["foo", "bar"], &["baz"]])?;
     assert_eq!(exports.list_result()?, [1, 2, 3, 4, 5]);
     assert_eq!(exports.list_result2()?, "hello!");
     assert_eq!(exports.list_result3()?, ["hello,", "world!"]);
-    assert_eq!(exports.string_roundtrip( "x")?, "x");
-    assert_eq!(exports.string_roundtrip( "")?, "");
-    assert_eq!(
-        exports.string_roundtrip( "hello ⚑ world")?,
-        "hello ⚑ world"
-    );
+    assert_eq!(exports.string_roundtrip("x")?, "x");
+    assert_eq!(exports.string_roundtrip("")?, "");
+    assert_eq!(exports.string_roundtrip("hello ⚑ world")?, "hello ⚑ world");
     // Ensure that we properly called `free` everywhere in all the glue that we
     // needed to.
     assert_eq!(bytes, exports.allocated_bytes()?);
