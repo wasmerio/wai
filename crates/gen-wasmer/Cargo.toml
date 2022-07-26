@@ -17,6 +17,12 @@ structopt = { version = "0.3", default-features = false, optional = true }
 [dev-dependencies]
 anyhow = "1.0"
 test-helpers = { path = '../test-helpers', features = ['wit-bindgen-gen-wasmer'] }
-wasmer = "2.1"
-wasmer-wasi = "2.1"
 wit-bindgen-wasmer = { path = '../wasmer', features = ['tracing'] }
+
+[dev-dependencies.wasmer]
+git = "https://github.com/wasmerio/wasmer.git"
+branch = "master"
+
+[dev-dependencies.wasmer-wasi]
+git = "https://github.com/wasmerio/wasmer.git"
+branch = "master"
