@@ -710,8 +710,10 @@ impl Generator for Wasmer {
         let is_async = !self.opts.async_.is_none();
         let mut sig = FnSig::default();
         sig.async_ = is_async;
-        // TODO: this shouldn't be in the self_arg, but rather in the
-        // list of parameters.
+
+        // Adding the store to the self_arg is an ugly workaround, but the
+        // FnSig and Function types don't really leave a lot of room for
+        // implementing this in a better way.
         sig.self_arg = Some("&self, store: &mut wasmer::Store".to_string());
         self.print_docs_and_params(iface, func, TypeMode::AllBorrowed("'_"), &sig);
         self.push_str("-> Result<");
