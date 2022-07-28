@@ -2221,7 +2221,7 @@ dependencies = [
 [[package]]
 name = "wasmer"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "cfg-if 1.0.0",
  "indexmap",
@@ -2242,7 +2242,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "backtrace",
  "cfg-if 1.0.0",
@@ -2267,7 +2267,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler-cranelift"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "cranelift-codegen 0.82.3",
  "cranelift-entity 0.82.3",
@@ -2285,7 +2285,7 @@ dependencies = [
 [[package]]
 name = "wasmer-derive"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -2296,7 +2296,7 @@ dependencies = [
 [[package]]
 name = "wasmer-types"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "enum-iterator",
  "enumset",
@@ -2312,7 +2312,7 @@ dependencies = [
 [[package]]
 name = "wasmer-vbus"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "thiserror",
  "tracing",
@@ -2322,7 +2322,7 @@ dependencies = [
 [[package]]
 name = "wasmer-vfs"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "libc",
  "thiserror",
@@ -2332,7 +2332,7 @@ dependencies = [
 [[package]]
 name = "wasmer-vm"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "backtrace",
  "cc",
@@ -2356,7 +2356,7 @@ dependencies = [
 [[package]]
 name = "wasmer-vnet"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "bytes",
  "thiserror",
@@ -2367,7 +2367,7 @@ dependencies = [
 [[package]]
 name = "wasmer-wasi"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "bytes",
  "cfg-if 1.0.0",
@@ -2390,7 +2390,7 @@ dependencies = [
 [[package]]
 name = "wasmer-wasi-local-networking"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "bytes",
  "tracing",
@@ -2401,7 +2401,7 @@ dependencies = [
 [[package]]
 name = "wasmer-wasi-types"
 version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#74482a1126d881f963de0ae3dd7b841cc652a540"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
 dependencies = [
  "byteorder",
  "time",
