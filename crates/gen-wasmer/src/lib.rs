@@ -28,6 +28,7 @@ pub struct Wasmer {
     needs_le: bool,
     needs_custom_error_to_trap: bool,
     needs_custom_error_to_types: BTreeSet<String>,
+    needs_lazy_initialized: bool,
     all_needed_handles: BTreeSet<String>,
     exported_resources: BTreeSet<ResourceId>,
     types: Types,
@@ -167,17 +168,10 @@ impl Wasmer {
     }
 
     fn print_intrinsics(&mut self) {
-        // TODO: properly only import these when needed
-        //if self.needs_memory || !self.needs_functions.is_empty() || !self.exported_resources.is_empty() {
-            self.push_str("#[allow(unused_imports)]\n");
+        if self.needs_lazy_initialized || !self.exported_resources.is_empty() {
             self.push_str("use wit_bindgen_wasmer::once_cell::unsync::OnceCell;\n");
-            self.push_str("#[allow(unused_imports)]\n");
-            self.push_str("use std::rc::Rc;\n");
-        //}
-        //if self.all_needed_handles.len() > 0 {
-            self.push_str("#[allow(unused_imports)]\n");
-            self.push_str("use core::cell::RefCell;\n");
-        //}
+        }
+
         self.push_str("#[allow(unused_imports)]\n");
         self.push_str("use wasmer::AsStoreMut as _;\n");
         self.push_str("#[allow(unused_imports)]\n");
@@ -913,11 +907,12 @@ impl Generator for Wasmer {
             }
         }
 
+        self.needs_lazy_initialized |= self.needs_memory;
+        self.needs_lazy_initialized |= !self.needs_functions.is_empty();
         for (module, funcs) in mem::take(&mut self.guest_imports) {
             let module_camel = module.to_camel_case();
-            let needs_lazy_initialized = self.needs_memory || !self.needs_functions.is_empty();
 
-            if needs_lazy_initialized {
+            if self.needs_lazy_initialized {
                 self.push_str("pub struct LazyInitialized {\n");
                 if self.needs_memory {
                     self.push_str("memory: wasmer::Memory,\n");
@@ -945,13 +940,13 @@ impl Generator for Wasmer {
             self.push_str(&module_camel);
             self.push_str("> {\n");
             self.push_str("data: T,\n");
-            if self.all_needed_handles.len() > 0 {
-                self.push_str("tables: Rc<RefCell<");
+            if !self.all_needed_handles.is_empty() {
+                self.push_str("tables: std::rc::Rc<core::cell::RefCell<");
                 self.push_str(&module_camel);
                 self.push_str("Tables<T>>>,\n");
             }
-            if needs_lazy_initialized {
-                self.push_str("lazy: Rc<OnceCell<LazyInitialized>>,\n");
+            if self.needs_lazy_initialized {
+                self.push_str("lazy: std::rc::Rc<OnceCell<LazyInitialized>>,\n");
             }
             self.push_str("}\n");
             self.push_str("unsafe impl<T: ");
@@ -961,17 +956,17 @@ impl Generator for Wasmer {
             self.push_str(&module_camel);
             self.push_str("> Sync for EnvWrapper<T> {}\n");
 
-            if needs_lazy_initialized {
-                self.push_str("let lazy = Rc::new(OnceCell::new());\n");
+            if self.needs_lazy_initialized {
+                self.push_str("let lazy = std::rc::Rc::new(OnceCell::new());\n");
             }
 
             self.push_str("let env = EnvWrapper {\n");
             self.push_str("data,\n");
             if self.all_needed_handles.len() > 0 {
-                self.push_str("tables: Rc::default(),\n");
+                self.push_str("tables: std::rc::Rc::default(),\n");
             }
-            if needs_lazy_initialized {
-                self.push_str("lazy: Rc::clone(&lazy),\n");
+            if self.needs_lazy_initialized {
+                self.push_str("lazy: std::rc::Rc::clone(&lazy),\n");
             }
             self.push_str("};\n");
             self.push_str("let env = wasmer::FunctionEnv::new(&mut *store, env);\n");
@@ -1027,7 +1022,7 @@ impl Generator for Wasmer {
             }
 
             self.push_str("move |_instance: &wasmer::Instance, _store: &dyn wasmer::AsStoreRef| {\n");
-            if needs_lazy_initialized {
+            if self.needs_lazy_initialized {
                 if self.needs_memory {
                     self.push_str("let memory = _instance.exports.get_memory(\"memory\")?.clone();\n");
                 }
