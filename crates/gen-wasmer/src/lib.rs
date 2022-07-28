@@ -2239,7 +2239,6 @@ impl Bindgen for FunctionBindgen<'_> {
                 }
                 self.push_str(";\n");
 
-                self.push_str("drop(host);\n");
                 if self.gen.all_needed_handles.len() > 0 {
                     self.push_str("drop(tables);\n");
                 }
