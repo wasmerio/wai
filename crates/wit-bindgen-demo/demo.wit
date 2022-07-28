@@ -28,7 +28,7 @@ resource config {
   set-wasmtime-tracing: func(unchecked: bool)
   set-wasmtime-async: func(val: wasmtime-async)
   set-wasmtime-custom-error: func(custom: bool)
-  set-wasmer-tracing: function(unchecked: bool)
-  set-wasmer-async: function(val: wasmtime-async)
-  set-wasmer-custom-error: function(custom: bool)
+  set-wasmer-tracing: func(unchecked: bool)
+  set-wasmer-async: func(val: wasmtime-async)
+  set-wasmer-custom-error: func(custom: bool)
 }

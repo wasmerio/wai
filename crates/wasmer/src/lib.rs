@@ -86,13 +86,16 @@ pub mod rt {
         RuntimeError::new(msg)
     }
 
-    pub fn validate_flags<U>(
-        bits: i64,
-        all: i64,
+    pub fn validate_flags<T, U>(
+        bits: T,
+        all: T,
         name: &str,
-        mk: impl FnOnce(i64) -> U,
-    ) -> Result<U, RuntimeError> {
-        if bits & !all != 0 {
+        mk: impl FnOnce(T) -> U,
+    ) -> Result<U, RuntimeError>
+    where
+        T: std::ops::Not<Output = T> + std::ops::BitAnd<Output = T> + From<u8> + PartialEq + Copy,
+    {
+        if bits & !all != 0u8.into() {
             let msg = format!("invalid flags specified for `{}`", name);
             Err(RuntimeError::new(msg))
         } else {

@@ -1,7 +1,7 @@
 use anyhow::Result;
 use wasmer::WasmerEnv;
 
-wit_bindgen_wasmer::export!("./tests/runtime/lists/imports.wit");
+wit_bindgen_wasmer::export!("../../tests/runtime/lists/imports.wit");
 
 use imports::*;
 use wit_bindgen_wasmer::Le;
@@ -127,7 +127,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("./tests/runtime/lists/exports.wit");
+wit_bindgen_wasmer::import!("../../tests/runtime/lists/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -135,7 +135,7 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         |store, import_object| imports::add_to_imports(store, import_object, MyImports),
-        |store, module, import_object| exports::Exports::instantiate(store, module, import_object),
+        |store, module, import_object| Exports::instantiate(store, module, import_object),
     )?;
 
     let bytes = exports.allocated_bytes()?;

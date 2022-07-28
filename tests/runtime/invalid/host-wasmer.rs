@@ -1,4 +1,4 @@
-wit_bindgen_wasmer::export!("./tests/runtime/invalid/imports.wit");
+wit_bindgen_wasmer::export!("../../tests/runtime/invalid/imports.wit");
 
 use anyhow::Result;
 use imports::*;
@@ -36,7 +36,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("./tests/runtime/invalid/exports.wit");
+wit_bindgen_wasmer::import!("../../tests/runtime/invalid/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -44,7 +44,7 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         |store, import_object| imports::add_to_imports(store, import_object, MyImports),
-        |store, module, import_object| exports::Exports::instantiate(store, module, import_object),
+        |store, module, import_object| Exports::instantiate(store, module, import_object),
     )?;
 
     assert_err(exports.invalid_bool(), "invalid discriminant for `bool`")?;

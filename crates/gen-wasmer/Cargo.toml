@@ -20,6 +20,3 @@ test-helpers = { path = '../test-helpers', features = ['wit-bindgen-gen-wasmer']
 wasmer = "2.1"
 wasmer-wasi = "2.1"
 wit-bindgen-wasmer = { path = '../wasmer', features = ['tracing'] }
-
-[features]
-witx-compat = ['wit-bindgen-gen-core/witx-compat']

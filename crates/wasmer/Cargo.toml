@@ -22,6 +22,3 @@ tracing = ['tracing-lib', 'wit-bindgen-wasmer-impl/tracing']
 # Enables async support for generated code, although when enabled this still
 # needs to be configured through the macro invocation.
 async = ['async-trait', 'wit-bindgen-wasmer-impl/async']
-
-# Enables the ability to parse the old s-expression-based `*.wit` format.
-witx-compat = ['wit-bindgen-wasmer-impl/witx-compat']
