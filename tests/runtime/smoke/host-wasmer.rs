@@ -3,11 +3,11 @@ use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,
 };
-use wasmer::WasmerEnv;
+use wasmer::AsStoreMut as _;
 
 wit_bindgen_wasmer::export!("../../tests/runtime/smoke/imports.wit");
 
-#[derive(WasmerEnv, Clone)]
+#[derive(Clone)]
 pub struct MyImports {
     hit: Arc<AtomicBool>,
 }
@@ -22,16 +22,32 @@ impl imports::Imports for MyImports {
 wit_bindgen_wasmer::import!("../../tests/runtime/smoke/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
+    use wasmer::AsStoreMut as _;
+
     let hit = Arc::new(AtomicBool::new(false));
+
+    let mut store = wasmer::Store::default();
+
     let exports = crate::instantiate(
         wasm,
-        |store, import_object| {
-            imports::add_to_imports(store, import_object, MyImports { hit: hit.clone() })
+        &mut store,
+        |store, imports| {
+            imports::add_to_imports(
+                store,
+                imports,
+                MyImports { hit: hit.clone() },
+            )
         },
-        |store, module, import_object| exports::Exports::instantiate(store, module, import_object),
+        |store, module, imports| {
+            exports::Exports::instantiate(
+                &mut store.as_store_mut().as_store_mut(),
+                module,
+                imports,
+            )
+        },
     )?;
 
-    exports.thunk()?;
+    exports.thunk(&mut store)?;
 
     assert!(hit.load(Ordering::Relaxed));
 

@@ -5,7 +5,7 @@ pub use async_trait::async_trait;
 #[cfg(feature = "tracing-lib")]
 pub use tracing_lib as tracing;
 #[doc(hidden)]
-pub use {anyhow, bitflags, wasmer};
+pub use {anyhow, bitflags, once_cell, wasmer};
 
 mod error;
 mod le;
