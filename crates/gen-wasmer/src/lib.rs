@@ -973,7 +973,7 @@ impl Generator for Wasmer {
             if needs_lazy_initialized {
                 self.push_str("lazy: Rc::clone(&lazy),\n");
             }
-            self.push_str("};\n\n");
+            self.push_str("};\n");
             self.push_str("let env = wasmer::FunctionEnv::new(&mut *store, env);\n");
             self.push_str("let mut exports = wasmer::Exports::new();\n");
             self.push_str("let mut store = store.as_store_mut();\n");
@@ -2242,7 +2242,6 @@ impl Bindgen for FunctionBindgen<'_> {
                 if self.gen.all_needed_handles.len() > 0 {
                     self.push_str("drop(tables);\n");
                 }
-                self.push_str("\n");
 
                 self.after_call = true;
 
