@@ -1,7 +1,6 @@
 wit_bindgen_wasmer::export!("../../tests/runtime/handles/imports.wit");
 
 use anyhow::Result;
-use wasmer::AsStoreMut as _;
 use imports::*;
 use std::cell::RefCell;
 
@@ -92,6 +91,7 @@ wit_bindgen_wasmer::import!("../../tests/runtime/handles/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
+    use wasmer::AsStoreMut as _;
 
     let mut store = wasmer::Store::default();
 

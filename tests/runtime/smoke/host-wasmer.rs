@@ -3,7 +3,6 @@ use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,
 };
-use wasmer::AsStoreMut as _;
 
 wit_bindgen_wasmer::export!("../../tests/runtime/smoke/imports.wit");
 

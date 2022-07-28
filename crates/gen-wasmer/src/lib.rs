@@ -666,7 +666,7 @@ impl Generator for Wasmer {
         self.needs_memory |= needs_memory || needs_borrow_checker;
 
         if self.needs_memory {
-            self.src.push_str("let memory: wasmer::Memory = store.data().lazy.get().unwrap().memory.clone();\n");
+            self.src.push_str("let _memory: wasmer::Memory = store.data().lazy.get().unwrap().memory.clone();\n");
         }
 
         if needs_borrow_checker {
@@ -674,7 +674,7 @@ impl Generator for Wasmer {
             // of WasmPtr/WasmCell.
             self.src.push_str(
                 "let mut _bc = wit_bindgen_wasmer::BorrowChecker::new(unsafe {
-                        memory.data_unchecked_mut(&store)
+                        _memory.data_unchecked_mut(&store)
                  });\n");
         }
 
@@ -755,7 +755,7 @@ impl Generator for Wasmer {
             self.src
                 .push_str(&format!("let func_{name} = &self.func_{name};\n"));
             let get = format!(
-                "instance.exports.get_typed_function(store, \"{name}\")?",
+                "_instance.exports.get_typed_function(store, \"{name}\")?",
             );
             exports
                 .fields
@@ -766,12 +766,12 @@ impl Generator for Wasmer {
 
         assert!(!needs_borrow_checker);
         if needs_memory {
-            self.src.push_str("let memory = &self.memory;\n");
+            self.src.push_str("let _memory = &self.memory;\n");
             exports.fields.insert(
                 "memory".to_string(),
                 (
                     "wasmer::Memory".to_string(),
-                    "instance.exports.get_memory(\"memory\")?.clone()".to_string(),
+                    "_instance.exports.get_memory(\"memory\")?.clone()".to_string(),
                 ),
             );
         }
@@ -818,7 +818,7 @@ impl Generator for Wasmer {
             (
                 format!("wasmer::TypedFunction<{cvt}>"),
                 format!(
-                    "instance.exports.get_typed_function(store, \"{}\")?",
+                    "_instance.exports.get_typed_function(store, \"{}\")?",
                     func.name,
                 ),
             ),
@@ -1026,17 +1026,17 @@ impl Generator for Wasmer {
                 self.push_str("imports.register_namespace(\"canonical_abi\", canonical_abi);\n");
             }
 
-            self.push_str("move |instance: &wasmer::Instance, store: &dyn wasmer::AsStoreRef| {\n");
+            self.push_str("move |_instance: &wasmer::Instance, _store: &dyn wasmer::AsStoreRef| {\n");
             if needs_lazy_initialized {
                 if self.needs_memory {
-                    self.push_str("let memory = instance.exports.get_memory(\"memory\")?.clone();\n");
+                    self.push_str("let memory = _instance.exports.get_memory(\"memory\")?.clone();\n");
                 }
                 for name in self.needs_functions.keys() {
                     self.src.push_str(&format!(
-                            "let func_{name} = instance
+                            "let func_{name} = _instance
                         .exports
                         .get_typed_function(
-                            &store.as_store_ref(),
+                            &_store.as_store_ref(),
                             \"{name}\",
                         )
                         .unwrap()
@@ -1275,7 +1275,7 @@ impl Generator for Wasmer {
                     /// be used to interact with the wasm module.
                     pub fn new(
                         store: &mut wasmer::StoreMut<'_>,
-                        instance: &wasmer::Instance,
+                        _instance: &wasmer::Instance,
                         env: wasmer::FunctionEnv<{}Data>,
                     ) -> Result<Self, wasmer::ExportError> {{
                 ",
@@ -1449,12 +1449,12 @@ impl FunctionBindgen<'_> {
             if !self.caller_memory_available {
                 self.needs_memory = true;
                 self.caller_memory_available = true;
-                self.push_str("let caller_memory = unsafe { memory.data_unchecked_mut(&store.as_store_ref()) };\n");
+                self.push_str("let caller_memory = unsafe { _memory.data_unchecked_mut(&store.as_store_ref()) };\n");
             }
             format!("caller_memory")
         } else {
             self.needs_memory = true;
-            format!("unsafe {{ memory.data_unchecked_mut(&store.as_store_ref()) }}")
+            format!("unsafe {{ _memory.data_unchecked_mut(&store.as_store_ref()) }}")
         }
     }
 
@@ -1972,7 +1972,7 @@ impl Bindgen for FunctionBindgen<'_> {
                         "
                                 copy_slice(
                                     store,
-                                    memory,
+                                    _memory,
                                     func_{},
                                     ptr{tmp}, len{tmp}, {}
                                 )?
@@ -2034,7 +2034,7 @@ impl Bindgen for FunctionBindgen<'_> {
                         "
                             let data{tmp} = copy_slice(
                                 store,
-                                memory,
+                                _memory,
                                 func_{},
                                 ptr{tmp}, len{tmp}, 1,
                             )?;

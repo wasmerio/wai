@@ -2,7 +2,7 @@ wit_bindgen_wasmer::export!("../../tests/runtime/invalid/imports.wit");
 
 use anyhow::Result;
 use imports::*;
-use wasmer::{RuntimeError, AsStoreMut as _};
+use wasmer::RuntimeError;
 
 #[derive(Clone)]
 pub struct MyImports;
@@ -40,6 +40,7 @@ wit_bindgen_wasmer::import!("../../tests/runtime/invalid/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
+    use wasmer::AsStoreMut as _;
 
     let mut store = wasmer::Store::default();
 
