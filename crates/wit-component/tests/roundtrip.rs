@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use pretty_assertions::assert_eq;
 use std::fs;
-use wit_component::{decode_interface_component, ComponentEncoder, InterfacePrinter};
+use wit_component::{decode_interface_component, InterfaceEncoder, InterfacePrinter};
 use wit_parser::Interface;
 
 /// Tests the the roundtrip encoding of individual interface files.
@@ -27,11 +27,9 @@ fn roundtrip_interfaces() -> Result<()> {
         let test_case = path.file_stem().unwrap().to_str().unwrap();
         let wit_path = path.join(test_case).with_extension("wit");
 
-        let interface = Interface::parse_file(&wit_path)?;
+        let interface = Interface::parse_file(&wit_path).context("failed to parse `wit` file")?;
 
-        let encoder = ComponentEncoder::default()
-            .interface(&interface)
-            .types_only(true);
+        let encoder = InterfaceEncoder::new(&interface).validate(true);
 
         let bytes = encoder.encode().with_context(|| {
             format!(
@@ -41,10 +39,12 @@ fn roundtrip_interfaces() -> Result<()> {
             )
         })?;
 
-        let interface = decode_interface_component(&bytes)?;
+        let interface = decode_interface_component(&bytes).context("failed to decode bytes")?;
 
         let mut printer = InterfacePrinter::default();
-        let output = printer.print(&interface)?;
+        let output = printer
+            .print(&interface)
+            .context("failed to print interface")?;
 
         if std::env::var_os("BLESS").is_some() {
             fs::write(&wit_path, output)?;

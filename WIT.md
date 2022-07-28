@@ -58,10 +58,10 @@ comment ::= '//' character-that-isnt-a-newline*
           | '/*' any-unicode-character* '*/'
 ```
 
-There is a special type of comment called `documentation comment`. A 
+There is a special type of comment called `documentation comment`. A
 `doc-comment` is either a line comment preceded with `///` whichends at the next
-newline (`\n`) character or it's a block comment which starts with `/**` and ends 
-with `*/`. Note that block comments are allowed to be nested and their delimiters 
+newline (`\n`) character or it's a block comment which starts with `/**` and ends
+with `*/`. Note that block comments are allowed to be nested and their delimiters
 must be balanced
 
 ```wit
@@ -72,7 +72,7 @@ doc-comment ::= '///' character-that-isnt-a-newline*
 ### Operators
 
 There are some common operators in the lexical structure of `wit` used for
-various constructs. Note that delimiters such as `{`, `(`, and `[` must all be
+various constructs. Note that delimiters such as `{` and `(` must all be
 balanced.
 
 ```wit
@@ -89,10 +89,10 @@ keywords is still in flux at this time but the current set is:
 keyword ::= 'use'
           | 'type'
           | 'resource'
-          | 'function'
+          | 'func'
           | 'u8' | 'u16' | 'u32' | 'u64'
           | 's8' | 's16' | 's32' | 's64'
-          | 'f32' | 'f64'
+          | 'float32' | 'float64'
           | 'char'
           | 'handle'
           | 'record'
@@ -105,49 +105,15 @@ keyword ::= 'use'
           | 'option'
           | 'list'
           | 'expected'
-          | '_'
+          | 'unit'
           | 'as'
           | 'from'
           | 'static'
           | 'interface'
           | 'tuple'
           | 'async'
-```
-
-### Identifiers
-
-Identifiers are used for the names of functions, parameters, etc. Identifiers
-can either be specified raw as a sequence of characters or as a string literal.
-As a string literal an identifier is allowed to be any valid unicode string,
-including those that might overlap otherwise with keywords. For example an
-identifier can't be `use` but it can be `"use"`:
-
-```wit
-identifier ::= keylike+
-             | string
-
-keylike ::= '-'
-          | '_'
-          | 'a' ... 'z'
-          | 'A' ... 'Z'
-          | '0' ... '9'
-```
-
-Strings are intended to be the same format as strings in the WebAssembly text
-format except that they're always valid unicode and don't have raw byte escapes:
-
-```wit
-string ::= '"' stringchar* '"'
-
-stringchar ::= c       if c == \u{9} or (\u{20} <= c <= \u{10ffff} and c != \u{7f}
-             | escape
-
-escape ::= '\\'
-         | '\"'
-         | '\''
-         | '\t'
-         | '\n'
-         | '\r'
+          | 'future'
+          | 'stream'
 ```
 
 ## Top-level items
@@ -368,22 +334,22 @@ union-cases ::= ty,
               | ty ',' union-cases?
 ```
 
-## Item: `function`
+## Item: `func`
 
 Functions can also be defined in a `*.wit` document. Functions have a name,
 parameters, and results. Functions can optionally also be declared as `async`
 functions.
 
 ```wit
-thunk: function()
-fibonacci: function(n: u32) -> u32
-sleep: async function(ms: u64)
+thunk: func()
+fibonacci: func(n: u32) -> u32
+sleep: async func(ms: u64)
 ```
 
 Specifically functions have the structure:
 
 ```wit
-func-item ::= id ':' 'async'? 'function' '(' func-args ')' func-ret
+func-item ::= id ':' 'async'? 'func' '(' func-args ')' func-ret
 
 func-args ::= func-arg
             | func-arg ',' func-args?
@@ -410,10 +376,10 @@ of the including resource, unless the function is flagged as `static`.
 resource file-descriptor
 
 resource request {
-    static new: function() -> request
+    static new: func() -> request
 
-    body: async function() -> list<u8>
-    headers: function() -> list<string>
+    body: async func() -> list<u8>
+    headers: func() -> list<string>
 }
 ```
 
@@ -425,8 +391,7 @@ resource-item ::= 'resource' id resource-contents
 resource-contents ::= nil
                     | '{' resource-defs '}'
 
-resource-defs ::= resource-def
-                | resource-def ',' resource-defs?
+resource-defs ::= resource-def resource-defs?
 
 resource-def ::= 'static'? func-item
 ```
@@ -449,14 +414,17 @@ Specifically the following types are available:
 ```wit
 ty ::= 'u8' | 'u16' | 'u32' | 'u64'
      | 's8' | 's16' | 's32' | 's64'
-     | 'f32' | 'f64'
+     | 'float32' | 'float64'
      | 'char'
      | 'bool'
      | 'string'
+     | 'unit'
      | tuple
      | list
      | option
      | expected
+     | future
+     | stream
      | id
 
 tuple ::= 'tuple' '<' tuple-list '>'
@@ -467,9 +435,11 @@ list ::= 'list' '<' ty '>'
 
 option ::= 'option' '<' ty '>'
 
-expected ::= 'expected' '<' expected-ty ',' expected-ty '>'
-expected-ty ::= '_'
-              | ty
+expected ::= 'expected' '<' ty ',' ty '>'
+
+future ::= 'future' '<' ty '>'
+
+stream ::= 'stream' '<' ty ',' ty '>'
 ```
 
 The `tuple` type is semantically equivalent to a `record` with numerical fields,
@@ -506,9 +476,9 @@ by '-'s starts with a `XID_Start` scalar value with a zero Canonical Combining
 Class:
 
 ```wit
-foo: function(bar: u32)
+foo: func(bar: u32)
 
-red-green-blue: function(r: u32, g: u32, b: u32)
+red-green-blue: func(r: u32, g: u32, b: u32)
 ```
 
 This form can't name identifiers which have the same name as wit keywords, so
@@ -516,12 +486,12 @@ the second form is the same syntax with the same restrictions as the first, but
 prefixed with '%':
 
 ```wit
-%foo: function(%bar: u32)
+%foo: func(%bar: u32)
 
-%red-green-blue: function(%r: u32, %g: u32, %b: u32)
+%red-green-blue: func(%r: u32, %g: u32, %b: u32)
 
 // This form also supports identifiers that would otherwise be keywords.
-%variant: function(%enum: s32)
+%variant: func(%enum: s32)
 ```
 
 [kebab-case]: https://en.wikipedia.org/wiki/Letter_case#Kebab_case
