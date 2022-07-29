@@ -8,17 +8,10 @@ pub fn instantiate<T, I>(
     wasm: &str,
     store: &mut Store,
     add_imports: impl FnOnce(&mut Store, &mut Imports) -> I,
-    mk_exports: impl FnOnce(
-        &mut Store,
-        &Module,
-        &mut Imports,
-    ) -> Result<(T, Instance)>,
+    mk_exports: impl FnOnce(&mut Store, &Module, &mut Imports) -> Result<(T, Instance)>,
 ) -> Result<T>
 where
-    I: FnOnce(
-        &Instance,
-        &dyn wasmer::AsStoreRef,
-    ) -> Result<(), anyhow::Error>,
+    I: FnOnce(&Instance, &dyn wasmer::AsStoreRef) -> Result<(), anyhow::Error>,
 {
     let module = Module::from_file(&store, wasm)?;
 

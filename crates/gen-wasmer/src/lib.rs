@@ -654,13 +654,16 @@ impl Generator for Wasmer {
                     .get()
                     .unwrap()
                     .func_{name}
-                    .clone();\n"));
+                    .clone();\n"
+            ));
         }
         self.needs_functions.extend(needs_functions);
         self.needs_memory |= needs_memory || needs_borrow_checker;
 
         if self.needs_memory {
-            self.src.push_str("let _memory: wasmer::Memory = store.data().lazy.get().unwrap().memory.clone();\n");
+            self.src.push_str(
+                "let _memory: wasmer::Memory = store.data().lazy.get().unwrap().memory.clone();\n",
+            );
         }
 
         if needs_borrow_checker {
@@ -669,13 +672,15 @@ impl Generator for Wasmer {
             self.src.push_str(
                 "let mut _bc = wit_bindgen_wasmer::BorrowChecker::new(unsafe {
                         _memory.data_unchecked_mut(&store)
-                 });\n");
+                 });\n",
+            );
         }
 
         self.src.push_str("let data_mut = store.data_mut();\n");
 
         if self.all_needed_handles.len() > 0 {
-            self.src.push_str("let tables = data_mut.tables.borrow_mut();\n");
+            self.src
+                .push_str("let tables = data_mut.tables.borrow_mut();\n");
         }
 
         self.src.push_str(&String::from(src));
@@ -750,9 +755,7 @@ impl Generator for Wasmer {
         for (name, func) in needs_functions {
             self.src
                 .push_str(&format!("let func_{name} = &self.func_{name};\n"));
-            let get = format!(
-                "_instance.exports.get_typed_function(store, \"{name}\")?",
-            );
+            let get = format!("_instance.exports.get_typed_function(store, \"{name}\")?",);
             exports
                 .fields
                 .insert(format!("func_{name}"), (func.ty(), get));
@@ -921,9 +924,9 @@ impl Generator for Wasmer {
                 }
                 for (name, func) in &self.needs_functions {
                     self.src.push_str(&format!(
-                            "func_{name}: wasmer::TypedFunction<{cvt}>,\n",
-                            name = name,
-                            cvt = func.cvt(),
+                        "func_{name}: wasmer::TypedFunction<{cvt}>,\n",
+                        name = name,
+                        cvt = func.cvt(),
                     ));
                 }
                 self.push_str("}\n");
@@ -990,7 +993,10 @@ impl Generator for Wasmer {
                     f.name, f.closure,
                 ));
             }
-            self.push_str(&format!("imports.register_namespace(\"{}\", exports);\n", module));
+            self.push_str(&format!(
+                "imports.register_namespace(\"{}\", exports);\n",
+                module
+            ));
 
             if !self.all_needed_handles.is_empty() {
                 self.push_str("let mut canonical_abi = imports.get_namespace_exports(\"canonical_abi\").unwrap_or_else(wasmer::Exports::new);\n");
@@ -1023,21 +1029,26 @@ impl Generator for Wasmer {
                 self.push_str("imports.register_namespace(\"canonical_abi\", canonical_abi);\n");
             }
 
-            self.push_str("move |_instance: &wasmer::Instance, _store: &dyn wasmer::AsStoreRef| {\n");
+            self.push_str(
+                "move |_instance: &wasmer::Instance, _store: &dyn wasmer::AsStoreRef| {\n",
+            );
             if self.needs_lazy_initialized {
                 if self.needs_memory {
-                    self.push_str("let memory = _instance.exports.get_memory(\"memory\")?.clone();\n");
+                    self.push_str(
+                        "let memory = _instance.exports.get_memory(\"memory\")?.clone();\n",
+                    );
                 }
                 for name in self.needs_functions.keys() {
                     self.src.push_str(&format!(
-                            "let func_{name} = _instance
+                        "let func_{name} = _instance
                         .exports
                         .get_typed_function(
                             &_store.as_store_ref(),
                             \"{name}\",
                         )
                         .unwrap()
-                        .clone();\n"));
+                        .clone();\n"
+                    ));
                 }
                 self.push_str("lazy.set(LazyInitialized {\n");
                 if self.needs_memory {
@@ -1047,7 +1058,9 @@ impl Generator for Wasmer {
                     self.src.push_str(&format!("func_{name},\n"));
                 }
                 self.push_str("})\n");
-                self.push_str(".map_err(|_e| anyhow::anyhow!(\"Couldn't set lazy initialized data\"))?;\n");
+                self.push_str(
+                    ".map_err(|_e| anyhow::anyhow!(\"Couldn't set lazy initialized data\"))?;\n",
+                );
             }
             self.push_str("Ok(())\n");
             self.push_str("}\n");
@@ -1085,10 +1098,7 @@ impl Generator for Wasmer {
             self.push_str(&name);
             self.push_str(" {\n");
             self.push_str("#[allow(dead_code)]\n");
-            self.push_str(&format!(
-                "env: wasmer::FunctionEnv<{}Data>,\n",
-                name
-            ));
+            self.push_str(&format!("env: wasmer::FunctionEnv<{}Data>,\n", name));
             for (name, (ty, _)) in exports.fields.iter() {
                 self.push_str(name);
                 self.push_str(": ");
@@ -1115,9 +1125,7 @@ impl Generator for Wasmer {
                 ",
                 name,
             ));
-            self.push_str(
-                "let env = wasmer::FunctionEnv::new(store, Default::default());\n",
-            );
+            self.push_str("let env = wasmer::FunctionEnv::new(store, Default::default());\n");
             if !self.all_needed_handles.is_empty() {
                 self.push_str("let mut canonical_abi = imports.get_namespace_exports(\"canonical_abi\").unwrap_or_else(wasmer::Exports::new);\n");
                 for r in self.exported_resources.iter() {
@@ -1226,7 +1234,7 @@ impl Generator for Wasmer {
                 self.push_str("{\n");
                 for r in self.exported_resources.iter() {
                     self.src.push_str(&format!(
-                            "let dtor{idx} = instance
+                        "let dtor{idx} = instance
                                 .exports
                                 .get_typed_function(
                                     store,
@@ -1234,8 +1242,8 @@ impl Generator for Wasmer {
                                 )?
                                 .clone();
                                 ",
-                                name = iface.resources[*r].name,
-                                idx = r.index(),
+                        name = iface.resources[*r].name,
+                        idx = r.index(),
                     ));
                 }
                 self.push_str("\n");
@@ -1943,7 +1951,10 @@ impl Bindgen for FunctionBindgen<'_> {
                 self.push_str(&format!("let {} = ", ptr));
                 self.call_intrinsic(
                     realloc,
-                    format!("&mut store.as_store_mut(), 0, 0, {}, ({}.len() as i32) * {}", align, val, size),
+                    format!(
+                        "&mut store.as_store_mut(), 0, 0, {}, ({}.len() as i32) * {}",
+                        align, val, size
+                    ),
                 );
 
                 // ... and then copy over the result.
@@ -2004,7 +2015,10 @@ impl Bindgen for FunctionBindgen<'_> {
                 // ... and then realloc space for the result in the guest module
                 let ptr = format!("ptr{}", tmp);
                 self.push_str(&format!("let {} = ", ptr));
-                self.call_intrinsic(realloc, format!("&mut store.as_store_mut(), 0, 0, 1, {}.len() as i32", val));
+                self.call_intrinsic(
+                    realloc,
+                    format!("&mut store.as_store_mut(), 0, 0, 1, {}.len() as i32", val),
+                );
 
                 // ... and then copy over the result.
                 let mem = self.memory_src();
@@ -2074,7 +2088,13 @@ impl Bindgen for FunctionBindgen<'_> {
 
                 // ... then realloc space for the result in the guest module
                 self.push_str(&format!("let {} = ", result));
-                self.call_intrinsic(realloc, format!("&mut store.as_store_mut(), 0, 0, {}, {} * {}", align, len, size));
+                self.call_intrinsic(
+                    realloc,
+                    format!(
+                        "&mut store.as_store_mut(), 0, 0, {}, {} * {}",
+                        align, len, size
+                    ),
+                );
 
                 // ... then consume the vector and use the block to lower the
                 // result.
@@ -2121,7 +2141,13 @@ impl Bindgen for FunctionBindgen<'_> {
                 results.push(result);
 
                 if let Some(free) = free {
-                    self.call_intrinsic(free, format!("&mut store.as_store_mut(), {}, {} * {}, {}", base, len, size, align));
+                    self.call_intrinsic(
+                        free,
+                        format!(
+                            "&mut store.as_store_mut(), {}, {} * {}, {}",
+                            base, len, size, align
+                        ),
+                    );
                     self.needs_functions
                         .insert(free.to_string(), NeededFunction::Free);
                 }
