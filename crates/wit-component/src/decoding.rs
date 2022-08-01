@@ -1,13 +1,10 @@
 use anyhow::{anyhow, bail, Context, Result};
-use std::collections::HashMap;
+use indexmap::IndexMap;
 use wasmparser::{
-    types, Chunk, ComponentExportKind, Encoding, Parser, Payload, PrimitiveInterfaceType,
-    Validator, WasmFeatures,
+    types, Chunk, ComponentExternalKind, Encoding, Parser, Payload, PrimitiveValType, Validator,
+    WasmFeatures,
 };
-use wit_parser::{
-    abi::Abi, validate_id, Case, Docs, Field, Function, FunctionKind, Int, Interface, Record,
-    RecordKind, Type, TypeDef, TypeDefKind, TypeId, Variant,
-};
+use wit_parser::*;
 
 /// Represents information about a decoded WebAssembly component.
 pub struct ComponentInfo<'a> {
@@ -91,15 +88,6 @@ impl<'a> ComponentInfo<'a> {
                             validator.code_section_entry(&f)?;
                         }
 
-                        Payload::ComponentTypeSection(s) => {
-                            validator.component_type_section(&s)?;
-                        }
-                        Payload::ComponentImportSection(s) => {
-                            validator.component_import_section(&s)?;
-                        }
-                        Payload::ComponentFunctionSection(s) => {
-                            validator.component_function_section(&s)?;
-                        }
                         Payload::ModuleSection {
                             parser: inner,
                             range,
@@ -107,6 +95,15 @@ impl<'a> ComponentInfo<'a> {
                             validator.module_section(&range)?;
                             parsers.push(parser);
                             parser = inner;
+                        }
+                        Payload::InstanceSection(s) => {
+                            validator.instance_section(&s)?;
+                        }
+                        Payload::AliasSection(s) => {
+                            validator.alias_section(&s)?;
+                        }
+                        Payload::CoreTypeSection(s) => {
+                            validator.core_type_section(&s)?;
                         }
                         Payload::ComponentSection {
                             parser: inner,
@@ -116,8 +113,23 @@ impl<'a> ComponentInfo<'a> {
                             parsers.push(parser);
                             parser = inner;
                         }
-                        Payload::InstanceSection(s) => {
-                            validator.instance_section(&s)?;
+                        Payload::ComponentInstanceSection(s) => {
+                            validator.component_instance_section(&s)?;
+                        }
+                        Payload::ComponentAliasSection(s) => {
+                            validator.component_alias_section(&s)?;
+                        }
+                        Payload::ComponentTypeSection(s) => {
+                            validator.component_type_section(&s)?;
+                        }
+                        Payload::ComponentCanonicalSection(s) => {
+                            validator.component_canonical_section(&s)?;
+                        }
+                        Payload::ComponentStartSection(s) => {
+                            validator.component_start_section(&s)?;
+                        }
+                        Payload::ComponentImportSection(s) => {
+                            validator.component_import_section(&s)?;
                         }
                         Payload::ComponentExportSection(s) => {
                             validator.component_export_section(&s)?;
@@ -126,22 +138,16 @@ impl<'a> ComponentInfo<'a> {
                                 for export in s {
                                     let export = export?;
                                     match export.kind {
-                                        ComponentExportKind::Function(index) => {
-                                            exported_functions.push((export.name, index));
+                                        ComponentExternalKind::Func => {
+                                            exported_functions.push((export.name, export.index));
                                         }
-                                        ComponentExportKind::Type(index) => {
-                                            exported_types.push((export.name, index));
+                                        ComponentExternalKind::Type => {
+                                            exported_types.push((export.name, export.index));
                                         }
                                         _ => {}
                                     }
                                 }
                             }
-                        }
-                        Payload::ComponentStartSection(s) => {
-                            validator.component_start_section(&s)?;
-                        }
-                        Payload::AliasSection(s) => {
-                            validator.alias_section(&s)?;
                         }
                         Payload::CustomSection { .. } => {
                             // Skip custom sections
@@ -175,10 +181,8 @@ impl<'a> ComponentInfo<'a> {
 pub struct InterfaceDecoder<'a> {
     info: &'a ComponentInfo<'a>,
     interface: Interface,
-    type_map: HashMap<types::TypeId, Type>,
-    name_map: HashMap<types::TypeId, &'a str>,
-    bool_ty: Option<TypeId>,
-    string_ty: Option<TypeId>,
+    type_map: IndexMap<types::TypeId, Type>,
+    name_map: IndexMap<types::TypeId, &'a str>,
 }
 
 impl<'a> InterfaceDecoder<'a> {
@@ -187,10 +191,8 @@ impl<'a> InterfaceDecoder<'a> {
         Self {
             info,
             interface: Interface::default(),
-            name_map: HashMap::new(),
-            type_map: HashMap::new(),
-            bool_ty: None,
-            string_ty: None,
+            name_map: IndexMap::new(),
+            type_map: IndexMap::new(),
         }
     }
 
@@ -198,15 +200,17 @@ impl<'a> InterfaceDecoder<'a> {
     pub fn decode(mut self) -> Result<Interface> {
         // Populate names in the name map first
         for (name, index) in &self.info.exported_types {
-            if let types::TypeDef::Interface(_) = self.info.types.type_at(*index).unwrap() {
-                self.name_map
-                    .insert(self.info.types.id_from_type_index(*index).unwrap(), name);
+            if let types::Type::Defined(_) = self.info.types.type_at(*index, false).unwrap() {
+                self.name_map.insert(
+                    self.info.types.id_from_type_index(*index, false).unwrap(),
+                    name,
+                );
             }
         }
 
         for (name, index) in &self.info.exported_types {
-            let ty = match self.info.types.type_at(*index).unwrap() {
-                types::TypeDef::ComponentFunc(ty) => ty,
+            let ty = match self.info.types.type_at(*index, false).unwrap() {
+                types::Type::ComponentFunc(ty) => ty,
                 _ => continue,
             };
 
@@ -242,29 +246,24 @@ impl<'a> InterfaceDecoder<'a> {
             params.push((name, self.decode_type(ty)?));
         }
 
-        let mut results = Vec::new();
-        if let types::InterfaceTypeRef::Primitive(PrimitiveInterfaceType::Unit) = &ty.result {
-        } else {
-            results.push(("".to_string(), self.decode_type(&ty.result)?));
-        }
+        let result = self.decode_type(&ty.result)?;
 
         self.interface.functions.push(Function {
-            abi: Abi::Canonical,
             is_async: false,
             docs: Docs::default(),
             name: func_name.to_string(),
             kind: FunctionKind::Freestanding,
             params,
-            results,
+            result,
         });
 
         Ok(())
     }
 
-    fn decode_type(&mut self, ty: &types::InterfaceTypeRef) -> Result<Type> {
+    fn decode_type(&mut self, ty: &types::ComponentValType) -> Result<Type> {
         Ok(match ty {
-            types::InterfaceTypeRef::Primitive(ty) => self.decode_primitive(*ty)?,
-            types::InterfaceTypeRef::Type(id) => {
+            types::ComponentValType::Primitive(ty) => self.decode_primitive(*ty)?,
+            types::ComponentValType::Type(id) => {
                 if let Some(ty) = self.type_map.get(id) {
                     return Ok(*ty);
                 }
@@ -278,30 +277,34 @@ impl<'a> InterfaceDecoder<'a> {
                 }
 
                 let ty = match &self.info.types.type_from_id(*id).unwrap() {
-                    types::TypeDef::Interface(ty) => match ty {
-                        types::InterfaceType::Primitive(ty) => {
+                    types::Type::Defined(ty) => match ty {
+                        types::ComponentDefinedType::Primitive(ty) => {
                             self.decode_named_primitive(name, ty)?
                         }
-                        types::InterfaceType::Record(fields) => {
-                            self.decode_record(name, fields.iter())?
+                        types::ComponentDefinedType::Record(r) => {
+                            self.decode_record(name, r.fields.iter())?
                         }
-                        types::InterfaceType::Variant(cases) => {
-                            self.decode_variant(name, cases.iter())?
+                        types::ComponentDefinedType::Variant(v) => {
+                            self.decode_variant(name, v.cases.iter())?
                         }
-                        types::InterfaceType::List(ty) => {
+                        types::ComponentDefinedType::List(ty) => {
                             let inner = self.decode_type(ty)?;
                             Type::Id(self.alloc_type(name, TypeDefKind::List(inner)))
                         }
-                        types::InterfaceType::Tuple(tys) => self.decode_tuple(name, tys)?,
-                        types::InterfaceType::Flags(names) => {
+                        types::ComponentDefinedType::Tuple(t) => {
+                            self.decode_tuple(name, &t.types)?
+                        }
+                        types::ComponentDefinedType::Flags(names) => {
                             self.decode_flags(name, names.iter())?
                         }
-                        types::InterfaceType::Enum(names) => {
+                        types::ComponentDefinedType::Enum(names) => {
                             self.decode_enum(name, names.iter())?
                         }
-                        types::InterfaceType::Union(tys) => self.decode_union(name, tys)?,
-                        types::InterfaceType::Option(ty) => self.decode_option(name, ty)?,
-                        types::InterfaceType::Expected(ok, err) => {
+                        types::ComponentDefinedType::Union(u) => {
+                            self.decode_union(name, &u.types)?
+                        }
+                        types::ComponentDefinedType::Option(ty) => self.decode_option(name, ty)?,
+                        types::ComponentDefinedType::Expected(ok, err) => {
                             self.decode_expected(name, ok, err)?
                         }
                     },
@@ -317,7 +320,7 @@ impl<'a> InterfaceDecoder<'a> {
     fn decode_named_primitive(
         &mut self,
         name: Option<String>,
-        ty: &PrimitiveInterfaceType,
+        ty: &PrimitiveValType,
     ) -> Result<Type> {
         let mut ty = self.decode_primitive(*ty)?;
         if let Some(name) = name {
@@ -330,29 +333,29 @@ impl<'a> InterfaceDecoder<'a> {
         Ok(ty)
     }
 
-    fn decode_primitive(&mut self, ty: PrimitiveInterfaceType) -> Result<Type> {
+    fn decode_primitive(&mut self, ty: PrimitiveValType) -> Result<Type> {
         Ok(match ty {
-            PrimitiveInterfaceType::Unit => bail!("unexpected unit type in interface function"),
-            PrimitiveInterfaceType::Bool => self.bool(),
-            PrimitiveInterfaceType::S8 => Type::S8,
-            PrimitiveInterfaceType::U8 => Type::U8,
-            PrimitiveInterfaceType::S16 => Type::S16,
-            PrimitiveInterfaceType::U16 => Type::U16,
-            PrimitiveInterfaceType::S32 => Type::S32,
-            PrimitiveInterfaceType::U32 => Type::U32,
-            PrimitiveInterfaceType::S64 => Type::S64,
-            PrimitiveInterfaceType::U64 => Type::U64,
-            PrimitiveInterfaceType::Float32 => Type::F32,
-            PrimitiveInterfaceType::Float64 => Type::F64,
-            PrimitiveInterfaceType::Char => Type::Char,
-            PrimitiveInterfaceType::String => self.string(),
+            PrimitiveValType::Unit => Type::Unit,
+            PrimitiveValType::Bool => Type::Bool,
+            PrimitiveValType::S8 => Type::S8,
+            PrimitiveValType::U8 => Type::U8,
+            PrimitiveValType::S16 => Type::S16,
+            PrimitiveValType::U16 => Type::U16,
+            PrimitiveValType::S32 => Type::S32,
+            PrimitiveValType::U32 => Type::U32,
+            PrimitiveValType::S64 => Type::S64,
+            PrimitiveValType::U64 => Type::U64,
+            PrimitiveValType::Float32 => Type::Float32,
+            PrimitiveValType::Float64 => Type::Float64,
+            PrimitiveValType::Char => Type::Char,
+            PrimitiveValType::String => Type::String,
         })
     }
 
     fn decode_record(
         &mut self,
         record_name: Option<String>,
-        fields: impl ExactSizeIterator<Item = (&'a String, &'a types::InterfaceTypeRef)>,
+        fields: impl ExactSizeIterator<Item = (&'a String, &'a types::ComponentValType)>,
     ) -> Result<Type> {
         let record_name =
             record_name.ok_or_else(|| anyhow!("interface has an unnamed record type"))?;
@@ -374,7 +377,6 @@ impl<'a> InterfaceDecoder<'a> {
                     })
                 })
                 .collect::<Result<_>>()?,
-            kind: RecordKind::Other,
         };
 
         Ok(Type::Id(self.alloc_type(
@@ -391,8 +393,6 @@ impl<'a> InterfaceDecoder<'a> {
         let variant_name =
             variant_name.ok_or_else(|| anyhow!("interface has an unnamed variant type"))?;
 
-        let cases_len = cases.len();
-
         let variant = Variant {
             cases: cases
                 .map(|(name, case)| {
@@ -406,16 +406,10 @@ impl<'a> InterfaceDecoder<'a> {
                     Ok(Case {
                         docs: Docs::default(),
                         name: name.to_string(),
-                        ty: match case.ty {
-                            types::InterfaceTypeRef::Primitive(PrimitiveInterfaceType::Unit) => {
-                                None
-                            }
-                            _ => Some(self.decode_type(&case.ty)?),
-                        },
+                        ty: self.decode_type(&case.ty)?,
                     })
                 })
                 .collect::<Result<_>>()?,
-            tag: Variant::infer_tag(cases_len),
         };
 
         Ok(Type::Id(self.alloc_type(
@@ -427,24 +421,16 @@ impl<'a> InterfaceDecoder<'a> {
     fn decode_tuple(
         &mut self,
         name: Option<String>,
-        tys: &[types::InterfaceTypeRef],
+        tys: &[types::ComponentValType],
     ) -> Result<Type> {
-        let record = Record {
-            fields: tys
+        let tuple = Tuple {
+            types: tys
                 .iter()
-                .enumerate()
-                .map(|(i, ty)| {
-                    Ok(Field {
-                        docs: Docs::default(),
-                        name: i.to_string(),
-                        ty: self.decode_type(ty)?,
-                    })
-                })
+                .map(|ty| self.decode_type(ty))
                 .collect::<Result<_>>()?,
-            kind: RecordKind::Tuple,
         };
 
-        Ok(Type::Id(self.alloc_type(name, TypeDefKind::Record(record))))
+        Ok(Type::Id(self.alloc_type(name, TypeDefKind::Tuple(tuple))))
     }
 
     fn decode_flags(
@@ -455,8 +441,8 @@ impl<'a> InterfaceDecoder<'a> {
         let flags_name =
             flags_name.ok_or_else(|| anyhow!("interface has an unnamed flags type"))?;
 
-        let record = Record {
-            fields: names
+        let flags = Flags {
+            flags: names
                 .map(|name| {
                     validate_id(name).with_context(|| {
                         format!(
@@ -465,18 +451,16 @@ impl<'a> InterfaceDecoder<'a> {
                         )
                     })?;
 
-                    Ok(Field {
+                    Ok(Flag {
                         docs: Docs::default(),
                         name: name.clone(),
-                        ty: self.decode_primitive(PrimitiveInterfaceType::Bool)?,
                     })
                 })
                 .collect::<Result<_>>()?,
-            kind: RecordKind::Flags(None),
         };
 
         Ok(Type::Id(
-            self.alloc_type(Some(flags_name), TypeDefKind::Record(record)),
+            self.alloc_type(Some(flags_name), TypeDefKind::Flags(flags)),
         ))
     }
 
@@ -486,10 +470,7 @@ impl<'a> InterfaceDecoder<'a> {
         names: impl ExactSizeIterator<Item = &'a String>,
     ) -> Result<Type> {
         let enum_name = enum_name.ok_or_else(|| anyhow!("interface has an unnamed enum type"))?;
-
-        let names_len = names.len();
-
-        let variant = Variant {
+        let enum_ = Enum {
             cases: names
                 .map(|name| {
                     validate_id(name).with_context(|| {
@@ -499,104 +480,62 @@ impl<'a> InterfaceDecoder<'a> {
                         )
                     })?;
 
-                    Ok(Case {
+                    Ok(EnumCase {
                         docs: Docs::default(),
                         name: name.to_string(),
-                        ty: None,
                     })
                 })
                 .collect::<Result<_>>()?,
-            tag: Variant::infer_tag(names_len),
         };
 
-        Ok(Type::Id(self.alloc_type(
-            Some(enum_name),
-            TypeDefKind::Variant(variant),
-        )))
+        Ok(Type::Id(
+            self.alloc_type(Some(enum_name), TypeDefKind::Enum(enum_)),
+        ))
     }
 
     fn decode_union(
         &mut self,
         name: Option<String>,
-        tys: &[types::InterfaceTypeRef],
+        tys: &[types::ComponentValType],
     ) -> Result<Type> {
-        let variant = Variant {
+        let union = Union {
             cases: tys
                 .iter()
-                .enumerate()
-                .map(|(i, ty)| {
-                    Ok(Case {
+                .map(|ty| {
+                    Ok(UnionCase {
                         docs: Docs::default(),
-                        name: i.to_string(),
-                        ty: Some(self.decode_type(ty)?),
+                        ty: self.decode_type(ty)?,
                     })
                 })
                 .collect::<Result<_>>()?,
-            tag: Variant::infer_tag(tys.len()),
         };
 
-        Ok(Type::Id(
-            self.alloc_type(name, TypeDefKind::Variant(variant)),
-        ))
+        Ok(Type::Id(self.alloc_type(name, TypeDefKind::Union(union))))
     }
 
     fn decode_option(
         &mut self,
         name: Option<String>,
-        ty: &types::InterfaceTypeRef,
+        payload: &types::ComponentValType,
     ) -> Result<Type> {
-        let variant = Variant {
-            cases: vec![
-                Case {
-                    docs: Docs::default(),
-                    name: "none".to_string(),
-                    ty: None,
-                },
-                Case {
-                    docs: Docs::default(),
-                    name: "some".to_string(),
-                    ty: Some(self.decode_type(ty)?),
-                },
-            ],
-            tag: Variant::infer_tag(2),
-        };
-
+        let payload = self.decode_type(payload)?;
         Ok(Type::Id(
-            self.alloc_type(name, TypeDefKind::Variant(variant)),
+            self.alloc_type(name, TypeDefKind::Option(payload)),
         ))
     }
 
     fn decode_expected(
         &mut self,
         name: Option<String>,
-        ok: &types::InterfaceTypeRef,
-        error: &types::InterfaceTypeRef,
+        ok: &types::ComponentValType,
+        err: &types::ComponentValType,
     ) -> Result<Type> {
-        let variant = Variant {
-            cases: vec![
-                Case {
-                    docs: Docs::default(),
-                    name: "ok".to_string(),
-                    ty: match ok {
-                        types::InterfaceTypeRef::Primitive(PrimitiveInterfaceType::Unit) => None,
-                        _ => Some(self.decode_type(ok)?),
-                    },
-                },
-                Case {
-                    docs: Docs::default(),
-                    name: "err".to_string(),
-                    ty: match error {
-                        types::InterfaceTypeRef::Primitive(PrimitiveInterfaceType::Unit) => None,
-                        _ => Some(self.decode_type(error)?),
-                    },
-                },
-            ],
-            tag: Variant::infer_tag(2),
-        };
-
-        Ok(Type::Id(
-            self.alloc_type(name, TypeDefKind::Variant(variant)),
-        ))
+        let ok = self.decode_type(ok)?;
+        let err = self.decode_type(err)?;
+        Ok(Type::Id(self.alloc_type(
+            name,
+            TypeDefKind::Expected(Expected { ok, err }),
+        )))
     }
 
     fn alloc_type(&mut self, name: Option<String>, kind: TypeDefKind) -> TypeId {
@@ -606,36 +545,5 @@ impl<'a> InterfaceDecoder<'a> {
             name,
             foreign_module: None,
         })
-    }
-
-    fn bool(&mut self) -> Type {
-        if self.bool_ty.is_none() {
-            self.bool_ty = Some(self.alloc_type(
-                None,
-                TypeDefKind::Variant(Variant {
-                    cases: vec![
-                        Case {
-                            docs: Docs::default(),
-                            name: "false".to_string(),
-                            ty: None,
-                        },
-                        Case {
-                            docs: Docs::default(),
-                            name: "true".to_string(),
-                            ty: None,
-                        },
-                    ],
-                    tag: Int::U8,
-                }),
-            ));
-        }
-        Type::Id(self.bool_ty.unwrap())
-    }
-
-    fn string(&mut self) -> Type {
-        if self.string_ty.is_none() {
-            self.string_ty = Some(self.alloc_type(None, TypeDefKind::List(Type::Char)));
-        }
-        Type::Id(self.string_ty.unwrap())
     }
 }

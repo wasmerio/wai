@@ -17,6 +17,18 @@
     },
     {
       "name": "f"
+    },
+    {
+      "name": "g",
+      "supertype": "a"
+    },
+    {
+      "name": "h",
+      "supertype": "b"
+    },
+    {
+      "name": "i",
+      "supertype": "e"
     }
   ],
   "types": [
@@ -43,6 +55,18 @@
     {
       "idx": 5,
       "primitive": "handle-5"
+    },
+    {
+      "idx": 6,
+      "primitive": "handle-6"
+    },
+    {
+      "idx": 7,
+      "primitive": "handle-7"
+    },
+    {
+      "idx": 8,
+      "primitive": "handle-8"
     }
   ],
   "functions": [
@@ -51,21 +75,28 @@
       "params": [
         "handle-4"
       ],
-      "results": []
+      "result": "unit"
     },
     {
       "name": "f::x",
       "params": [
         "handle-5"
       ],
-      "results": []
+      "result": "unit"
     },
     {
       "name": "f::y",
       "params": [
         "handle-5"
       ],
-      "results": []
+      "result": "unit"
+    },
+    {
+      "name": "i::z",
+      "params": [
+        "handle-8"
+      ],
+      "result": "unit"
     }
   ]
 }

@@ -1,7 +1,7 @@
 use anyhow::Result;
 use wasmer::WasmerEnv;
 
-wit_bindgen_wasmer::export!("./tests/runtime/numbers/imports.wit");
+wit_bindgen_wasmer::export!("../../tests/runtime/numbers/imports.wit");
 
 #[derive(Default, WasmerEnv, Clone)]
 pub struct MyImports {
@@ -41,11 +41,11 @@ impl imports::Imports for MyImports {
         val
     }
 
-    fn roundtrip_f32(&mut self, val: f32) -> f32 {
+    fn roundtrip_float32(&mut self, val: f32) -> f32 {
         val
     }
 
-    fn roundtrip_f64(&mut self, val: f64) -> f64 {
+    fn roundtrip_float64(&mut self, val: f64) -> f64 {
         val
     }
 
@@ -62,7 +62,7 @@ impl imports::Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("./tests/runtime/numbers/exports.wit");
+wit_bindgen_wasmer::import!("../../tests/runtime/numbers/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
@@ -104,15 +104,15 @@ fn run(wasm: &str) -> Result<()> {
     assert_eq!(exports.roundtrip_s64(i64::min_value())?, i64::min_value());
     assert_eq!(exports.roundtrip_s64(i64::max_value())?, i64::max_value());
 
-    assert_eq!(exports.roundtrip_f32(1.0)?, 1.0);
-    assert_eq!(exports.roundtrip_f32(f32::INFINITY)?, f32::INFINITY);
-    assert_eq!(exports.roundtrip_f32(f32::NEG_INFINITY)?, f32::NEG_INFINITY);
-    assert!(exports.roundtrip_f32(f32::NAN)?.is_nan());
+    assert_eq!(exports.roundtrip_float32(1.0)?, 1.0);
+    assert_eq!(exports.roundtrip_float32(f32::INFINITY)?, f32::INFINITY);
+    assert_eq!(exports.roundtrip_float32(f32::NEG_INFINITY)?, f32::NEG_INFINITY);
+    assert!(exports.roundtrip_float32(f32::NAN)?.is_nan());
 
-    assert_eq!(exports.roundtrip_f64(1.0)?, 1.0);
-    assert_eq!(exports.roundtrip_f64(f64::INFINITY)?, f64::INFINITY);
-    assert_eq!(exports.roundtrip_f64(f64::NEG_INFINITY)?, f64::NEG_INFINITY);
-    assert!(exports.roundtrip_f64(f64::NAN)?.is_nan());
+    assert_eq!(exports.roundtrip_float64(1.0)?, 1.0);
+    assert_eq!(exports.roundtrip_float64(f64::INFINITY)?, f64::INFINITY);
+    assert_eq!(exports.roundtrip_float64(f64::NEG_INFINITY)?, f64::NEG_INFINITY);
+    assert!(exports.roundtrip_float64(f64::NAN)?.is_nan());
 
     assert_eq!(exports.roundtrip_char('a')?, 'a');
     assert_eq!(exports.roundtrip_char(' ')?, ' ');

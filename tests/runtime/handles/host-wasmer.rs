@@ -1,4 +1,4 @@
-wit_bindgen_wasmer::export!("./tests/runtime/handles/imports.wit");
+wit_bindgen_wasmer::export!("../../tests/runtime/handles/imports.wit");
 
 use anyhow::Result;
 use imports::*;
@@ -66,7 +66,7 @@ impl Imports for MyImports {
         Ok(())
     }
     fn host_state2_result_variant(&mut self) -> HostStateResultVariant<Self> {
-        HostStateResultVariant::V0(())
+        HostStateResultVariant::HostState2(())
     }
     fn host_state2_result_list(&mut self) -> Vec<()> {
         vec![(), ()]
@@ -88,7 +88,7 @@ impl Imports for MyImports {
     fn odd_name_frob_the_odd(&mut self, _: &()) {}
 }
 
-wit_bindgen_wasmer::import!("./tests/runtime/handles/exports.wit");
+wit_bindgen_wasmer::import!("../../tests/runtime/handles/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -124,8 +124,8 @@ fn run(wasm: &str) -> Result<()> {
     exports.wasm_state2_param_option(None)?;
     exports.wasm_state2_param_result(Ok(&s2))?;
     exports.wasm_state2_param_result(Err(2))?;
-    exports.wasm_state2_param_variant(WasmStateParamVariant::V0(&s2))?;
-    exports.wasm_state2_param_variant(WasmStateParamVariant::V1(2))?;
+    exports.wasm_state2_param_variant(WasmStateParamVariant::WasmState2(&s2))?;
+    exports.wasm_state2_param_variant(WasmStateParamVariant::U32(2))?;
     exports.wasm_state2_param_list(&[])?;
     exports.wasm_state2_param_list(&[&s2])?;
     exports.wasm_state2_param_list(&[&s2, &s2])?;
@@ -139,8 +139,8 @@ fn run(wasm: &str) -> Result<()> {
     exports.drop_wasm_state2(s)?;
     let s = exports.wasm_state2_result_result()?.unwrap();
     match exports.wasm_state2_result_variant()? {
-        WasmStateResultVariant::V0(s) => exports.drop_wasm_state2(s)?,
-        WasmStateResultVariant::V1(_) => panic!(),
+        WasmStateResultVariant::WasmState2(s) => exports.drop_wasm_state2(s)?,
+        WasmStateResultVariant::U32(_) => panic!(),
     }
     exports.drop_wasm_state2(s)?;
     for s in exports.wasm_state2_result_list()? {

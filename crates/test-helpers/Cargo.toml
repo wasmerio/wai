@@ -25,7 +25,7 @@ wit-bindgen-gen-c = { path = '../gen-c', optional = true }
 wit-bindgen-gen-spidermonkey = { path = '../gen-spidermonkey', optional = true }
 wit-bindgen-gen-wasmer = { path = '../gen-wasmer', optional = true }
 wit-bindgen-gen-wasmer-py = { path = '../gen-wasmer-py', optional = true }
-wit-parser = { path = '../parser', features = ['witx-compat'] }
+wit-parser = { path = '../parser' }
 filetime = "0.2"
 
 [build-dependencies]
@@ -35,7 +35,6 @@ wit-bindgen-gen-core = { path = '../gen-core' }
 
 [features]
 default = ['wasm-rust', 'wasm-c', 'wasm-spidermonkey']
-witx-compat = ['wit-bindgen-gen-core/witx-compat']
 wasm-rust = []
 wasm-c = []
 wasm-spidermonkey = []

@@ -30,10 +30,10 @@ class MyImports:
     def roundtrip_s64(self, a: int) -> int:
         return a
 
-    def roundtrip_f32(self, a: float) -> float:
+    def roundtrip_float32(self, a: float) -> float:
         return a
 
-    def roundtrip_f64(self, a: float) -> float:
+    def roundtrip_float64(self, a: float) -> float:
         return a
 
     def roundtrip_char(self, a: str) -> str:
@@ -88,15 +88,15 @@ def run(wasm_file: str) -> None:
     assert(wasm.roundtrip_s64(-(1 << (64 - 1))) == -(1 << (64 - 1)))
 
     inf = float('inf')
-    assert(wasm.roundtrip_f32(1.0) == 1.0)
-    assert(wasm.roundtrip_f32(inf) == inf)
-    assert(wasm.roundtrip_f32(-inf) == -inf)
-    assert(math.isnan(wasm.roundtrip_f32(float('nan'))))
+    assert(wasm.roundtrip_float32(1.0) == 1.0)
+    assert(wasm.roundtrip_float32(inf) == inf)
+    assert(wasm.roundtrip_float32(-inf) == -inf)
+    assert(math.isnan(wasm.roundtrip_float32(float('nan'))))
 
-    assert(wasm.roundtrip_f64(1.0) == 1.0)
-    assert(wasm.roundtrip_f64(inf) == inf)
-    assert(wasm.roundtrip_f64(-inf) == -inf)
-    assert(math.isnan(wasm.roundtrip_f64(float('nan'))))
+    assert(wasm.roundtrip_float64(1.0) == 1.0)
+    assert(wasm.roundtrip_float64(inf) == inf)
+    assert(wasm.roundtrip_float64(-inf) == -inf)
+    assert(math.isnan(wasm.roundtrip_float64(float('nan'))))
 
     assert(wasm.roundtrip_char('a') == 'a')
     assert(wasm.roundtrip_char(' ') == ' ')

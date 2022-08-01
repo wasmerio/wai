@@ -3,9 +3,14 @@ resource b
 resource c
 resource d {}
 resource e {
-  x: function()
+  x: func()
 }
 resource f {
-  x: function()
-  y: function()
+  x: func()
+  y: func()
+}
+resource g implements a
+resource h implements b {}
+resource i implements e {
+  z: func()
 }

@@ -1,7 +1,7 @@
 use anyhow::Result;
 use wasmer::WasmerEnv;
 
-wit_bindgen_wasmer::export!("./tests/runtime/flavorful/imports.wit");
+wit_bindgen_wasmer::export!("../../tests/runtime/flavorful/imports.wit");
 
 use imports::*;
 
@@ -42,8 +42,8 @@ impl Imports for MyImports {
         assert_eq!(a.unwrap(), "foo");
         assert_eq!(b.unwrap_err(), "bar");
         match c {
-            ListInVariant1V3::V0(s) => assert_eq!(s, "baz"),
-            ListInVariant1V3::V1(_) => panic!(),
+            ListInVariant1V3::String(s) => assert_eq!(s, "baz"),
+            ListInVariant1V3::F32(_) => panic!(),
         }
     }
 
@@ -92,7 +92,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("./tests/runtime/flavorful/exports.wit");
+wit_bindgen_wasmer::import!("../../tests/runtime/flavorful/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -124,7 +124,7 @@ fn run(wasm: &str) -> Result<()> {
         "result4"
     );
 
-    exports.list_in_variant1(Some("foo"), Err("bar"), ListInVariant1V3::V0("baz"))?;
+    exports.list_in_variant1(Some("foo"), Err("bar"), ListInVariant1V3::String("baz"))?;
     assert_eq!(
         exports.list_in_variant2()?,
         Some("list_in_variant2".to_string())

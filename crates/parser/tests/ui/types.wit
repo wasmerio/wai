@@ -8,16 +8,16 @@ type t5 = s8
 type t6 = s16
 type t7 = s32
 type t8 = s64
-type t9 = f32
-type t10 = f64
+type t9 = float32
+type t10 = float64
 type t11 = char
 type t12 = list<char>
 type t13 = string
 type t14 = option<u32>
 type t15 = expected<u32, u32>
-type t16 = expected<_, u32>
-type t17 = expected<u32, _>
-type t18 = expected<_, _>
+type t16 = expected<unit, u32>
+type t17 = expected<u32, unit>
+type t18 = expected<unit, unit>
 type t19 = handle x
 record t20 {}
 record t21 { a: u32 }
@@ -48,8 +48,12 @@ type t44 = string
 type t45 = list<list<list<t32>>>
 type t46 = t44
 type t47 = %t44
-type t48 = push-buffer<u8>
-type t49 = pull-buffer<u8>
+type t48 = stream<u32, u32>
+type t49 = stream<unit, u32>
+type t50 = stream<u32, unit>
+type t51 = stream<unit, unit>
+type t52 = future<u32>
+type t53 = future<unit>
 
 // type order doesn't matter
 type foo = bar

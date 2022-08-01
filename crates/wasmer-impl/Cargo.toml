@@ -16,6 +16,5 @@ wit-bindgen-gen-core = { path = "../gen-core", version = "0.1" }
 wit-bindgen-gen-wasmer = { path = "../gen-wasmer", version = "0.1" }
 
 [features]
-witx-compat = ['wit-bindgen-gen-wasmer/witx-compat']
 tracing = []
 async = []

@@ -49,7 +49,7 @@ pub enum Token {
     Use,
     Type,
     Resource,
-    Function,
+    Func,
     U8,
     U16,
     U32,
@@ -58,8 +58,8 @@ pub enum Token {
     S16,
     S32,
     S64,
-    F32,
-    F64,
+    Float32,
+    Float64,
     Char,
     Handle,
     Record,
@@ -71,16 +71,18 @@ pub enum Token {
     String_,
     Option_,
     Expected,
+    Future,
+    Stream,
     List,
     Underscore,
-    PushBuffer,
-    PullBuffer,
     As,
     From_,
     Static,
     Interface,
     Tuple,
     Async,
+    Unit,
+    Implements,
 
     Id,
     ExplicitId,
@@ -238,7 +240,7 @@ impl<'a> Tokenizer<'a> {
                     "use" => Use,
                     "type" => Type,
                     "resource" => Resource,
-                    "function" => Function,
+                    "func" => Func,
                     "u8" => U8,
                     "u16" => U16,
                     "u32" => U32,
@@ -247,8 +249,8 @@ impl<'a> Tokenizer<'a> {
                     "s16" => S16,
                     "s32" => S32,
                     "s64" => S64,
-                    "f32" => F32,
-                    "f64" => F64,
+                    "float32" => Float32,
+                    "float64" => Float64,
                     "char" => Char,
                     "handle" => Handle,
                     "record" => Record,
@@ -260,16 +262,18 @@ impl<'a> Tokenizer<'a> {
                     "string" => String_,
                     "option" => Option_,
                     "expected" => Expected,
+                    "future" => Future,
+                    "stream" => Stream,
                     "list" => List,
                     "_" => Underscore,
-                    "push-buffer" => PushBuffer,
-                    "pull-buffer" => PullBuffer,
                     "as" => As,
                     "from" => From_,
                     "static" => Static,
                     "interface" => Interface,
                     "tuple" => Tuple,
                     "async" => Async,
+                    "unit" => Unit,
+                    "implements" => Implements,
                     _ => Id,
                 }
             }
@@ -501,7 +505,7 @@ impl Token {
             Use => "keyword `use`",
             Type => "keyword `type`",
             Resource => "keyword `resource`",
-            Function => "keyword `function`",
+            Func => "keyword `func`",
             U8 => "keyword `u8`",
             U16 => "keyword `u16`",
             U32 => "keyword `u32`",
@@ -510,8 +514,8 @@ impl Token {
             S16 => "keyword `s16`",
             S32 => "keyword `s32`",
             S64 => "keyword `s64`",
-            F32 => "keyword `f32`",
-            F64 => "keyword `f64`",
+            Float32 => "keyword `float32`",
+            Float64 => "keyword `float64`",
             Char => "keyword `char`",
             Handle => "keyword `handle`",
             Record => "keyword `record`",
@@ -523,12 +527,12 @@ impl Token {
             String_ => "keyword `string`",
             Option_ => "keyword `option`",
             Expected => "keyword `expected`",
+            Future => "keyword `future`",
+            Stream => "keyword `stream`",
             List => "keyword `list`",
             Underscore => "keyword `_`",
             Id => "an identifier",
             ExplicitId => "an '%' identifier",
-            PushBuffer => "keyword `push-buffer`",
-            PullBuffer => "keyword `pull-buffer`",
             RArrow => "`->`",
             Star => "`*`",
             As => "keyword `as`",
@@ -537,6 +541,8 @@ impl Token {
             Interface => "keyword `interface`",
             Tuple => "keyword `tuple`",
             Async => "keyword `async`",
+            Unit => "keyword `unit`",
+            Implements => "keyword `implements`",
         }
     }
 }
@@ -677,6 +683,18 @@ fn test_tokenizer() {
     assert_eq!(collect("%a-a").unwrap(), vec![Token::ExplicitId]);
     assert_eq!(collect("%bool").unwrap(), vec![Token::ExplicitId]);
     assert_eq!(collect("%").unwrap(), vec![Token::ExplicitId]);
+
+    assert_eq!(collect("func").unwrap(), vec![Token::Func]);
+    assert_eq!(
+        collect("a: func()").unwrap(),
+        vec![
+            Token::Id,
+            Token::Colon,
+            Token::Func,
+            Token::LeftParen,
+            Token::RightParen
+        ]
+    );
 
     assert!(collect("\u{149}").is_err(), "strongly discouraged");
     assert!(collect("\u{673}").is_err(), "strongly discouraged");
