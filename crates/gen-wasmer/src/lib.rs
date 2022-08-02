@@ -1119,13 +1119,13 @@ impl Generator for Wasmer {
                     /// This function returns the `{0}Data` which needs to be
                     /// passed through to `{0}::new`.
                     fn add_to_imports(
-                        store: &mut wasmer::StoreMut<'_>,
+                        mut store: impl wasmer::AsStoreMut,
                         imports: &mut wasmer::Imports,
                     ) -> wasmer::FunctionEnv<{0}Data> {{
                 ",
                 name,
             ));
-            self.push_str("let env = wasmer::FunctionEnv::new(store, Default::default());\n");
+            self.push_str("let env = wasmer::FunctionEnv::new(&mut store, Default::default());\n");
             if !self.all_needed_handles.is_empty() {
                 self.push_str("let mut canonical_abi = imports.get_namespace_exports(\"canonical_abi\").unwrap_or_else(wasmer::Exports::new);\n");
                 for r in self.exported_resources.iter() {
@@ -1137,7 +1137,7 @@ impl Generator for Wasmer {
                         canonical_abi.insert(
                             \"resource_drop_{resource}\",
                             wasmer::Function::new_native(
-                                store,
+                                &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, idx: u32| -> Result<(), wasmer::RuntimeError> {{
                                     let resource_idx = store.data_mut().index_slab{idx}.remove(idx)?;
@@ -1154,7 +1154,7 @@ impl Generator for Wasmer {
                         canonical_abi.insert(
                             \"resource_clone_{resource}\",
                             wasmer::Function::new_native(
-                                store,
+                                &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, idx: u32| -> Result<u32, wasmer::RuntimeError>  {{
                                     let state = &mut *store.data_mut();
@@ -1167,7 +1167,7 @@ impl Generator for Wasmer {
                         canonical_abi.insert(
                             \"resource_get_{resource}\",
                             wasmer::Function::new_native(
-                                store,
+                                &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, idx: u32| -> Result<i32, wasmer::RuntimeError>  {{
                                     let state = &mut *store.data_mut();
@@ -1179,7 +1179,7 @@ impl Generator for Wasmer {
                         canonical_abi.insert(
                             \"resource_new_{resource}\",
                             wasmer::Function::new_native(
-                                store,
+                                &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, val: i32| -> Result<u32, wasmer::RuntimeError>  {{
                                     let state = &mut *store.data_mut();
