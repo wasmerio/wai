@@ -1125,7 +1125,9 @@ impl Generator for Wasmer {
                 ",
                 name,
             ));
-            self.push_str("let env = wasmer::FunctionEnv::new(&mut store, Default::default());\n");
+            self.push_str(&format!(
+                "let env = wasmer::FunctionEnv::new(&mut store, {name}Data::default());\n"
+            ));
             if !self.all_needed_handles.is_empty() {
                 self.push_str("let mut canonical_abi = imports.get_namespace_exports(\"canonical_abi\").unwrap_or_else(wasmer::Exports::new);\n");
                 for r in self.exported_resources.iter() {
