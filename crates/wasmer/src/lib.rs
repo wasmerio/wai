@@ -5,11 +5,9 @@ pub use async_trait::async_trait;
 #[cfg(feature = "tracing-lib")]
 pub use tracing_lib as tracing;
 #[doc(hidden)]
-pub use {anyhow, bitflags, wasmer};
+pub use {anyhow, bitflags, once_cell, wasmer};
 
 mod error;
-pub mod exports;
-pub mod imports;
 mod le;
 mod region;
 mod slab;
@@ -109,8 +107,9 @@ pub mod rt {
     }
 
     pub fn copy_slice<T: Endian>(
+        store: &mut wasmer::Store,
         memory: &Memory,
-        free: &NativeFunc<(i32, i32, i32), ()>,
+        free: &TypedFunction<(i32, i32, i32), ()>,
         base: i32,
         len: i32,
         align: i32,
@@ -120,13 +119,13 @@ pub mod rt {
             .ok_or_else(|| RuntimeError::new("array too large to fit in wasm memory"))?;
         let slice = unsafe {
             memory
-                .data_unchecked()
+                .data_unchecked(store)
                 .get(base as usize..)
                 .and_then(|s| s.get(..size as usize))
                 .ok_or_else(|| RuntimeError::new("out of bounds read"))?
         };
         let result = Le::from_slice(slice).iter().map(|s| s.get()).collect();
-        free.call(base, size as i32, align)?;
+        free.call(store, base, size as i32, align)?;
         Ok(result)
     }
 

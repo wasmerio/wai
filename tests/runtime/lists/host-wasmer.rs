@@ -1,12 +1,11 @@
 use anyhow::Result;
-use wasmer::WasmerEnv;
 
 wit_bindgen_wasmer::export!("../../tests/runtime/lists/imports.wit");
 
 use imports::*;
 use wit_bindgen_wasmer::Le;
 
-#[derive(WasmerEnv, Clone)]
+#[derive(Clone)]
 pub struct MyImports;
 
 impl Imports for MyImports {
@@ -131,30 +130,46 @@ wit_bindgen_wasmer::import!("../../tests/runtime/lists/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
+    use wasmer::AsStoreMut as _;
+
+    let mut store = wasmer::Store::default();
 
     let exports = crate::instantiate(
         wasm,
-        |store, import_object| imports::add_to_imports(store, import_object, MyImports),
-        |store, module, import_object| Exports::instantiate(store, module, import_object),
+        &mut store,
+        |store, imports| {
+            imports::add_to_imports(
+                store,
+                imports,
+                MyImports,
+            )
+        },
+        |store, module, imports| {
+            Exports::instantiate(
+                &mut store.as_store_mut().as_store_mut(),
+                &module,
+                imports,
+            )
+        },
     )?;
 
-    let bytes = exports.allocated_bytes()?;
-    exports.test_imports()?;
-    exports.list_param( &[1, 2, 3, 4])?;
-    exports.list_param2( "foo")?;
-    exports.list_param3( &["foo", "bar", "baz"])?;
-    exports.list_param4( &[&["foo", "bar"], &["baz"]])?;
-    assert_eq!(exports.list_result()?, [1, 2, 3, 4, 5]);
-    assert_eq!(exports.list_result2()?, "hello!");
-    assert_eq!(exports.list_result3()?, ["hello,", "world!"]);
-    assert_eq!(exports.string_roundtrip( "x")?, "x");
-    assert_eq!(exports.string_roundtrip( "")?, "");
+    let bytes = exports.allocated_bytes(&mut store)?;
+    exports.test_imports(&mut store)?;
+    exports.list_param(&mut store, &[1, 2, 3, 4])?;
+    exports.list_param2(&mut store, "foo")?;
+    exports.list_param3(&mut store, &["foo", "bar", "baz"])?;
+    exports.list_param4(&mut store, &[&["foo", "bar"], &["baz"]])?;
+    assert_eq!(exports.list_result(&mut store)?, [1, 2, 3, 4, 5]);
+    assert_eq!(exports.list_result2(&mut store)?, "hello!");
+    assert_eq!(exports.list_result3(&mut store)?, ["hello,", "world!"]);
+    assert_eq!(exports.string_roundtrip(&mut store, "x")?, "x");
+    assert_eq!(exports.string_roundtrip(&mut store, "")?, "");
     assert_eq!(
-        exports.string_roundtrip( "hello ⚑ world")?,
+        exports.string_roundtrip(&mut store, "hello ⚑ world")?,
         "hello ⚑ world"
     );
     // Ensure that we properly called `free` everywhere in all the glue that we
     // needed to.
-    assert_eq!(bytes, exports.allocated_bytes()?);
+    assert_eq!(bytes, exports.allocated_bytes(&mut store)?);
     Ok(())
 }

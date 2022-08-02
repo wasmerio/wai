@@ -1,11 +1,10 @@
 use anyhow::Result;
-use wasmer::WasmerEnv;
 
 wit_bindgen_wasmer::export!("../../tests/runtime/flavorful/imports.wit");
 
 use imports::*;
 
-#[derive(WasmerEnv, Clone)]
+#[derive(Clone)]
 pub struct MyImports;
 
 impl Imports for MyImports {
@@ -96,23 +95,39 @@ wit_bindgen_wasmer::import!("../../tests/runtime/flavorful/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
+    use wasmer::AsStoreMut as _;
+
+    let mut store = wasmer::Store::default();
 
     let exports = crate::instantiate(
         wasm,
-        |store, import_object| imports::add_to_imports(store, import_object, MyImports),
-        |store, module, import_object| exports::Exports::instantiate(store, module, import_object),
+        &mut store,
+        |store, imports| {
+            imports::add_to_imports(
+                store,
+                imports,
+                MyImports,
+            )
+        },
+        |store, module, imports| {
+            exports::Exports::instantiate(
+                &mut store.as_store_mut().as_store_mut(),
+                &module,
+                imports,
+            )
+        },
     )?;
 
-    exports.test_imports()?;
+    exports.test_imports(&mut store)?;
 
-    exports.list_in_record1(ListInRecord1 {
+    exports.list_in_record1(&mut store, ListInRecord1 {
         a: "list_in_record1",
     })?;
-    assert_eq!(exports.list_in_record2()?.a, "list_in_record2");
+    assert_eq!(exports.list_in_record2(&mut store)?.a, "list_in_record2");
 
     assert_eq!(
         exports
-            .list_in_record3(ListInRecord3Param {
+            .list_in_record3(&mut store, ListInRecord3Param {
                 a: "list_in_record3 input"
             })?
             .a,
@@ -120,27 +135,27 @@ fn run(wasm: &str) -> Result<()> {
     );
 
     assert_eq!(
-        exports.list_in_record4(ListInAliasParam { a: "input4" })?.a,
+        exports.list_in_record4(&mut store, ListInAliasParam { a: "input4" })?.a,
         "result4"
     );
 
-    exports.list_in_variant1(Some("foo"), Err("bar"), ListInVariant1V3::String("baz"))?;
+    exports.list_in_variant1(&mut store, Some("foo"), Err("bar"), ListInVariant1V3::String("baz"))?;
     assert_eq!(
-        exports.list_in_variant2()?,
+        exports.list_in_variant2(&mut store)?,
         Some("list_in_variant2".to_string())
     );
     assert_eq!(
-        exports.list_in_variant3(Some("input3"))?,
+        exports.list_in_variant3(&mut store, Some("input3"))?,
         Some("output3".to_string())
     );
 
-    assert!(exports.errno_result()?.is_err());
+    assert!(exports.errno_result(&mut store)?.is_err());
     MyErrno::A.to_string();
     format!("{:?}", MyErrno::A);
     fn assert_error<T: std::error::Error>() {}
     assert_error::<MyErrno>();
 
-    let (a, b) = exports.list_typedefs("typedef1", &["typedef2"])?;
+    let (a, b) = exports.list_typedefs(&mut store, "typedef1", &["typedef2"])?;
     assert_eq!(a, b"typedef3");
     assert_eq!(b.len(), 1);
     assert_eq!(b[0], "typedef4");

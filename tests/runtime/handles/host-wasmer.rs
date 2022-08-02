@@ -3,9 +3,8 @@ wit_bindgen_wasmer::export!("../../tests/runtime/handles/imports.wit");
 use anyhow::Result;
 use imports::*;
 use std::cell::RefCell;
-use wasmer::WasmerEnv;
 
-#[derive(Default, WasmerEnv, Clone)]
+#[derive(Default, Clone)]
 pub struct MyImports {
     host_state2_closed: bool,
 }
@@ -92,59 +91,75 @@ wit_bindgen_wasmer::import!("../../tests/runtime/handles/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
+    use wasmer::AsStoreMut as _;
+
+    let mut store = wasmer::Store::default();
 
     let exports = crate::instantiate(
         wasm,
-        |store, import_object| imports::add_to_imports(store, import_object, MyImports::default()),
-        |store, module, import_object| exports::Exports::instantiate(store, module, import_object),
+        &mut store,
+        |store, imports| {
+            imports::add_to_imports(
+                store,
+                imports,
+                MyImports::default(),
+            )
+        },
+        |store, module, imports| {
+            exports::Exports::instantiate(
+                &mut store.as_store_mut().as_store_mut(),
+                &module,
+                imports,
+            )
+        },
     )?;
 
-    exports.test_imports()?;
+    exports.test_imports(&mut store)?;
 
-    let s: WasmState = exports.wasm_state_create()?;
-    assert_eq!(exports.wasm_state_get_val(&s)?, 100);
-    exports.drop_wasm_state(s)?;
+    let s: WasmState = exports.wasm_state_create(&mut store)?;
+    assert_eq!(exports.wasm_state_get_val(&mut store, &s)?, 100);
+    exports.drop_wasm_state(&mut store, s)?;
 
-    assert_eq!(exports.wasm_state2_saw_close()?, false);
-    let s: WasmState2 = exports.wasm_state2_create()?;
-    assert_eq!(exports.wasm_state2_saw_close()?, false);
-    exports.drop_wasm_state2(s)?;
-    assert_eq!(exports.wasm_state2_saw_close()?, true);
+    assert_eq!(exports.wasm_state2_saw_close(&mut store)?, false);
+    let s: WasmState2 = exports.wasm_state2_create(&mut store)?;
+    assert_eq!(exports.wasm_state2_saw_close(&mut store)?, false);
+    exports.drop_wasm_state2(&mut store, s)?;
+    assert_eq!(exports.wasm_state2_saw_close(&mut store)?, true);
 
-    let a = exports.wasm_state_create()?;
-    let b = exports.wasm_state2_create()?;
-    let (s1, s2) = exports.two_wasm_states(&a, &b)?;
-    exports.drop_wasm_state(a)?;
-    exports.drop_wasm_state(s1)?;
-    exports.drop_wasm_state2(b)?;
+    let a = exports.wasm_state_create(&mut store)?;
+    let b = exports.wasm_state2_create(&mut store)?;
+    let (s1, s2) = exports.two_wasm_states(&mut store, &a, &b)?;
+    exports.drop_wasm_state(&mut store, a)?;
+    exports.drop_wasm_state(&mut store, s1)?;
+    exports.drop_wasm_state2(&mut store, b)?;
 
-    exports.wasm_state2_param_record(WasmStateParamRecord { a: &s2 })?;
-    exports.wasm_state2_param_tuple((&s2,))?;
-    exports.wasm_state2_param_option(Some(&s2))?;
-    exports.wasm_state2_param_option(None)?;
-    exports.wasm_state2_param_result(Ok(&s2))?;
-    exports.wasm_state2_param_result(Err(2))?;
-    exports.wasm_state2_param_variant(WasmStateParamVariant::WasmState2(&s2))?;
-    exports.wasm_state2_param_variant(WasmStateParamVariant::U32(2))?;
-    exports.wasm_state2_param_list(&[])?;
-    exports.wasm_state2_param_list(&[&s2])?;
-    exports.wasm_state2_param_list(&[&s2, &s2])?;
-    exports.drop_wasm_state2(s2)?;
+    exports.wasm_state2_param_record(&mut store, WasmStateParamRecord { a: &s2 })?;
+    exports.wasm_state2_param_tuple(&mut store, (&s2,))?;
+    exports.wasm_state2_param_option(&mut store, Some(&s2))?;
+    exports.wasm_state2_param_option(&mut store, None)?;
+    exports.wasm_state2_param_result(&mut store, Ok(&s2))?;
+    exports.wasm_state2_param_result(&mut store, Err(2))?;
+    exports.wasm_state2_param_variant(&mut store, WasmStateParamVariant::WasmState2(&s2))?;
+    exports.wasm_state2_param_variant(&mut store, WasmStateParamVariant::U32(2))?;
+    exports.wasm_state2_param_list(&mut store, &[])?;
+    exports.wasm_state2_param_list(&mut store, &[&s2])?;
+    exports.wasm_state2_param_list(&mut store, &[&s2, &s2])?;
+    exports.drop_wasm_state2(&mut store, s2)?;
 
-    let s = exports.wasm_state2_result_record()?.a;
-    exports.drop_wasm_state2(s)?;
-    let s = exports.wasm_state2_result_tuple()?.0;
-    exports.drop_wasm_state2(s)?;
-    let s = exports.wasm_state2_result_option()?.unwrap();
-    exports.drop_wasm_state2(s)?;
-    let s = exports.wasm_state2_result_result()?.unwrap();
-    match exports.wasm_state2_result_variant()? {
-        WasmStateResultVariant::WasmState2(s) => exports.drop_wasm_state2(s)?,
+    let s = exports.wasm_state2_result_record(&mut store)?.a;
+    exports.drop_wasm_state2(&mut store, s)?;
+    let s = exports.wasm_state2_result_tuple(&mut store)?.0;
+    exports.drop_wasm_state2(&mut store, s)?;
+    let s = exports.wasm_state2_result_option(&mut store)?.unwrap();
+    exports.drop_wasm_state2(&mut store, s)?;
+    let s = exports.wasm_state2_result_result(&mut store)?.unwrap();
+    match exports.wasm_state2_result_variant(&mut store)? {
+        WasmStateResultVariant::WasmState2(s) => exports.drop_wasm_state2(&mut store, s)?,
         WasmStateResultVariant::U32(_) => panic!(),
     }
-    exports.drop_wasm_state2(s)?;
-    for s in exports.wasm_state2_result_list()? {
-        exports.drop_wasm_state2(s)?;
+    exports.drop_wasm_state2(&mut store, s)?;
+    for s in exports.wasm_state2_result_list(&mut store)? {
+        exports.drop_wasm_state2(&mut store, s)?;
     }
     Ok(())
 }

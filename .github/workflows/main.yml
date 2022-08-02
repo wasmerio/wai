@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, wasmer]
   pull_request:
-    branches: [main]
+    branches: [main, wasmer]
 defaults:
   run:
     shell: bash

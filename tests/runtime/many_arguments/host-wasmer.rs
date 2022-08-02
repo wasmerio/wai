@@ -1,9 +1,8 @@
 use anyhow::Result;
-use wasmer::WasmerEnv;
 
 wit_bindgen_wasmer::export!("../../tests/runtime/many_arguments/imports.wit");
 
-#[derive(Default, WasmerEnv, Clone)]
+#[derive(Default, Clone)]
 pub struct MyImports {
 }
 
@@ -57,13 +56,31 @@ impl imports::Imports for MyImports {
 wit_bindgen_wasmer::import!("../../tests/runtime/many_arguments/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
+    use wasmer::AsStoreMut as _;
+
+    let mut store = wasmer::Store::default();
+
     let exports = crate::instantiate(
         wasm,
-        |store, import_object| imports::add_to_imports(store, import_object, MyImports::default()),
-        |store, module, import_object| exports::Exports::instantiate(store, module, import_object),
+        &mut store,
+        |store, imports| {
+            imports::add_to_imports(
+                store,
+                imports,
+                MyImports::default(),
+            )
+        },
+        |store, module, imports| {
+            exports::Exports::instantiate(
+                &mut store.as_store_mut().as_store_mut(),
+                &module,
+                imports,
+            )
+        },
     )?;
 
     exports.many_arguments(
+        &mut store,
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     )?;
 

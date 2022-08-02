@@ -1,23 +1,33 @@
 use anyhow::Result;
-use wasmer::{ImportObject, Instance, Module, Store};
+use wasmer::{Imports, Instance, Module, Store};
 use wasmer_wasi::WasiState;
 
 test_helpers::runtime_tests_wasmer!();
 
-fn instantiate<T>(
+pub fn instantiate<T, I>(
     wasm: &str,
-    add_imports: impl FnOnce(&Store, &mut ImportObject),
-    mk_exports: impl FnOnce(&Store, &Module, &mut ImportObject) -> Result<(T, Instance)>,
-) -> Result<T> {
-    let store = Store::default();
+    store: &mut Store,
+    add_imports: impl FnOnce(&mut Store, &mut Imports) -> I,
+    mk_exports: impl FnOnce(&mut Store, &Module, &mut Imports) -> Result<(T, Instance)>,
+) -> Result<T>
+where
+    I: FnOnce(&Instance, &dyn wasmer::AsStoreRef) -> Result<(), anyhow::Error>,
+{
     let module = Module::from_file(&store, wasm)?;
 
-    let mut wasi_env = WasiState::new("test").finalize()?;
-    let mut import_object = wasi_env
-        .import_object(&module)
-        .unwrap_or(ImportObject::new());
-    add_imports(&store, &mut import_object);
+    let wasi_env = WasiState::new("test").finalize(store)?;
+    let mut imports = wasi_env
+        .import_object(store, &module)
+        .unwrap_or(Imports::new());
 
-    let (exports, _instance) = mk_exports(&store, &module, &mut import_object)?;
+    let initializer = add_imports(store, &mut imports);
+
+    let (exports, instance) = mk_exports(store, &module, &mut imports)?;
+
+    let memory = instance.exports.get_memory("memory")?;
+    wasi_env.data_mut(store).set_memory(memory.clone());
+
+    initializer(&instance, store)?;
+
     Ok(exports)
 }
