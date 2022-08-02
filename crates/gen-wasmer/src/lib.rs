@@ -755,7 +755,7 @@ impl Generator for Wasmer {
         for (name, func) in needs_functions {
             self.src
                 .push_str(&format!("let func_{name} = &self.func_{name};\n"));
-            let get = format!("_instance.exports.get_typed_function(store, \"{name}\")?",);
+            let get = format!("_instance.exports.get_typed_function(&store, \"{name}\")?",);
             exports
                 .fields
                 .insert(format!("func_{name}"), (func.ty(), get));
@@ -817,7 +817,7 @@ impl Generator for Wasmer {
             (
                 format!("wasmer::TypedFunction<{cvt}>"),
                 format!(
-                    "_instance.exports.get_typed_function(store, \"{}\")?",
+                    "_instance.exports.get_typed_function(&store, \"{}\")?",
                     func.name,
                 ),
             ),
@@ -1217,19 +1217,13 @@ impl Generator for Wasmer {
                     /// both an instance of this structure and the underlying
                     /// `wasmer::Instance` will be returned.
                     pub fn instantiate(
-                        store: &mut wasmer::StoreMut<'_>,
+                        mut store: impl wasmer::AsStoreMut,
                         module: &wasmer::Module,
                         imports: &mut wasmer::Imports,
                     ) -> anyhow::Result<(Self, wasmer::Instance)> {{
-                        let env = Self::add_to_imports(
-                            &mut store.as_store_mut().as_store_mut(),
-                            imports,
-                        );
+                        let env = Self::add_to_imports(&mut store, imports);
                         let instance = wasmer::Instance::new(
-                            &mut store.as_store_mut(),
-                            module,
-                            &*imports,
-                        )?;
+                            &mut store, module, &*imports)?;
                         "
             ));
             if !self.exported_resources.is_empty() {
@@ -1239,7 +1233,7 @@ impl Generator for Wasmer {
                         "let dtor{idx} = instance
                                 .exports
                                 .get_typed_function(
-                                    store,
+                                    &store,
                                     \"canonical_abi_drop_{name}\",
                                 )?
                                 .clone();
@@ -1253,7 +1247,7 @@ impl Generator for Wasmer {
                 for r in self.exported_resources.iter() {
                     self.src.push_str(&format!(
                             "env
-                                .as_mut(store)
+                                .as_mut(&mut store)
                                 .dtor{idx}
                                 .set(dtor{idx})
                                 .map_err(|_e| anyhow::anyhow!(\"Couldn't set canonical_abi_drop_{name}\"))?;
@@ -1281,7 +1275,7 @@ impl Generator for Wasmer {
                     /// and wrap them all up in the returned structure which can
                     /// be used to interact with the wasm module.
                     pub fn new(
-                        store: &mut wasmer::StoreMut<'_>,
+                        store: impl wasmer::AsStoreMut,
                         _instance: &wasmer::Instance,
                         env: wasmer::FunctionEnv<{}Data>,
                     ) -> Result<Self, wasmer::ExportError> {{
