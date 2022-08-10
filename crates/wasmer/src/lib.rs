@@ -117,9 +117,10 @@ pub mod rt {
         let size = (len as u32)
             .checked_mul(mem::size_of::<T>() as u32)
             .ok_or_else(|| RuntimeError::new("array too large to fit in wasm memory"))?;
+        let memory_view = memory.view(store);
         let slice = unsafe {
-            memory
-                .data_unchecked(store)
+            memory_view
+                .data_unchecked()
                 .get(base as usize..)
                 .and_then(|s| s.get(..size as usize))
                 .ok_or_else(|| RuntimeError::new("out of bounds read"))?
