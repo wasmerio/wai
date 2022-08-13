@@ -670,8 +670,9 @@ impl Generator for Wasmer {
             // TODO: This isn't actually sound and should be replaced with use
             // of WasmPtr/WasmCell.
             self.src.push_str(
-                "let mut _bc = wit_bindgen_wasmer::BorrowChecker::new(unsafe {
-                        _memory.data_unchecked_mut(&store)
+                "let _memory_view = _memory.view(&store);
+                let mut _bc = wit_bindgen_wasmer::BorrowChecker::new(unsafe {
+                        _memory_view.data_unchecked_mut()
                  });\n",
             );
         }
@@ -985,7 +986,7 @@ impl Generator for Wasmer {
                 self.push_str(&format!(
                     "exports.insert(
                         \"{}\",
-                        wasmer::Function::new_native(
+                        wasmer::Function::new_typed_with_env(
                             &mut store,
                             &env,
                             {}
@@ -1004,7 +1005,7 @@ impl Generator for Wasmer {
                     self.src.push_str(&format!(
                         "canonical_abi.insert(
                             \"resource_drop_{name}\",
-                            wasmer::Function::new_native(
+                            wasmer::Function::new_typed_with_env(
                                 &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<EnvWrapper<T>>, handle: u32| -> Result<(), wasmer::RuntimeError> {{
@@ -1138,7 +1139,7 @@ impl Generator for Wasmer {
                         "
                         canonical_abi.insert(
                             \"resource_drop_{resource}\",
-                            wasmer::Function::new_native(
+                            wasmer::Function::new_typed_with_env(
                                 &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, idx: u32| -> Result<(), wasmer::RuntimeError> {{
@@ -1155,7 +1156,7 @@ impl Generator for Wasmer {
                         );
                         canonical_abi.insert(
                             \"resource_clone_{resource}\",
-                            wasmer::Function::new_native(
+                            wasmer::Function::new_typed_with_env(
                                 &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, idx: u32| -> Result<u32, wasmer::RuntimeError>  {{
@@ -1168,7 +1169,7 @@ impl Generator for Wasmer {
                         );
                         canonical_abi.insert(
                             \"resource_get_{resource}\",
-                            wasmer::Function::new_native(
+                            wasmer::Function::new_typed_with_env(
                                 &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, idx: u32| -> Result<i32, wasmer::RuntimeError>  {{
@@ -1180,7 +1181,7 @@ impl Generator for Wasmer {
                         );
                         canonical_abi.insert(
                             \"resource_new_{resource}\",
-                            wasmer::Function::new_native(
+                            wasmer::Function::new_typed_with_env(
                                 &mut store,
                                 &env,
                                 move |mut store: wasmer::FunctionEnvMut<{name}Data>, val: i32| -> Result<u32, wasmer::RuntimeError>  {{
@@ -1450,12 +1451,16 @@ impl FunctionBindgen<'_> {
             if !self.caller_memory_available {
                 self.needs_memory = true;
                 self.caller_memory_available = true;
-                self.push_str("let caller_memory = unsafe { _memory.data_unchecked_mut(&store.as_store_ref()) };\n");
+                self.push_str("let _memory_view = _memory.view(&store);\n");
+                self.push_str(
+                    "let caller_memory = unsafe { _memory_view.data_unchecked_mut() };\n",
+                );
             }
             format!("caller_memory")
         } else {
             self.needs_memory = true;
-            format!("unsafe {{ _memory.data_unchecked_mut(&store.as_store_ref()) }}")
+            self.push_str("let _memory_view = _memory.view(&store);\n");
+            format!("unsafe {{ _memory_view.data_unchecked_mut() }}")
         }
     }
 

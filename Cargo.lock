@@ -365,15 +365,6 @@ dependencies = [
 
 [[package]]
 name = "cranelift-bforest"
-version = "0.82.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38faa2a16616c8e78a18d37b4726b98bfd2de192f2fdc8a39ddf568a408a0f75"
-dependencies = [
- "cranelift-entity 0.82.3",
-]
-
-[[package]]
-name = "cranelift-bforest"
 version = "0.85.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "899dc8d22f7771e7f887fb8bafa0c0d3ac1dea0c7f2c0ded6e20a855a7a1e890"
@@ -382,20 +373,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "cranelift-codegen"
-version = "0.82.3"
+name = "cranelift-bforest"
+version = "0.86.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26f192472a3ba23860afd07d2b0217dc628f21fcc72617aa1336d98e1671f33b"
+checksum = "529ffacce2249ac60edba2941672dfedf3d96558b415d0d8083cd007456e0f55"
 dependencies = [
- "cranelift-bforest 0.82.3",
- "cranelift-codegen-meta 0.82.3",
- "cranelift-codegen-shared 0.82.3",
- "cranelift-entity 0.82.3",
- "gimli",
- "log",
- "regalloc",
- "smallvec",
- "target-lexicon",
+ "cranelift-entity 0.86.1",
 ]
 
 [[package]]
@@ -408,21 +391,30 @@ dependencies = [
  "cranelift-codegen-meta 0.85.0",
  "cranelift-codegen-shared 0.85.0",
  "cranelift-entity 0.85.0",
- "cranelift-isle",
+ "cranelift-isle 0.85.0",
  "gimli",
  "log",
- "regalloc2",
+ "regalloc2 0.2.2",
  "smallvec",
  "target-lexicon",
 ]
 
 [[package]]
-name = "cranelift-codegen-meta"
-version = "0.82.3"
+name = "cranelift-codegen"
+version = "0.86.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f32ddb89e9b89d3d9b36a5b7d7ea3261c98235a76ac95ba46826b8ec40b1a24"
+checksum = "427d105f617efc8cb55f8d036a7fded2e227892d8780b4985e5551f8d27c4a92"
 dependencies = [
- "cranelift-codegen-shared 0.82.3",
+ "cranelift-bforest 0.86.1",
+ "cranelift-codegen-meta 0.86.1",
+ "cranelift-codegen-shared 0.86.1",
+ "cranelift-entity 0.86.1",
+ "cranelift-isle 0.86.1",
+ "gimli",
+ "log",
+ "regalloc2 0.3.2",
+ "smallvec",
+ "target-lexicon",
 ]
 
 [[package]]
@@ -435,10 +427,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "cranelift-codegen-shared"
-version = "0.82.3"
+name = "cranelift-codegen-meta"
+version = "0.86.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01fd0d9f288cc1b42d9333b7a776b17e278fc888c28e6a0f09b5573d45a150bc"
+checksum = "551674bed85b838d45358e3eab4f0ffaa6790c70dc08184204b9a54b41cdb7d1"
+dependencies = [
+ "cranelift-codegen-shared 0.86.1",
+]
 
 [[package]]
 name = "cranelift-codegen-shared"
@@ -447,10 +442,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712fbebd119a476f59122b4ba51fdce893a66309b5c92bd5506bfb11a0587496"
 
 [[package]]
-name = "cranelift-entity"
-version = "0.82.3"
+name = "cranelift-codegen-shared"
+version = "0.86.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e3bfe172b83167604601faf9dc60453e0d0a93415b57a9c4d1a7ae6849185cf"
+checksum = "2b3a63ae57498c3eb495360944a33571754241e15e47e3bcae6082f40fec5866"
 
 [[package]]
 name = "cranelift-entity"
@@ -462,16 +457,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "cranelift-frontend"
-version = "0.82.3"
+name = "cranelift-entity"
+version = "0.86.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a006e3e32d80ce0e4ba7f1f9ddf66066d052a8c884a110b91d05404d6ce26dce"
-dependencies = [
- "cranelift-codegen 0.82.3",
- "log",
- "smallvec",
- "target-lexicon",
-]
+checksum = "11aa8aa624c72cc1c94ea3d0739fa61248260b5b14d3646f51593a88d67f3e6e"
 
 [[package]]
 name = "cranelift-frontend"
@@ -486,10 +475,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "cranelift-frontend"
+version = "0.86.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "544ee8f4d1c9559c9aa6d46e7aaeac4a13856d620561094f35527356c7d21bd0"
+dependencies = [
+ "cranelift-codegen 0.86.1",
+ "log",
+ "smallvec",
+ "target-lexicon",
+]
+
+[[package]]
 name = "cranelift-isle"
 version = "0.85.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "86d4f53bc86fb458e59c695c6a95ce8346e6a8377ee7ffc058e3ac08b5f94cb1"
+
+[[package]]
+name = "cranelift-isle"
+version = "0.86.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed16b14363d929b8c37e3c557d0a7396791b383ecc302141643c054343170aad"
 
 [[package]]
 name = "cranelift-native"
@@ -1444,21 +1451,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "regalloc"
-version = "0.0.34"
+name = "regalloc2"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62446b1d3ebf980bdc68837700af1d77b37bc430e524bf95319c6eada2a4cc02"
+checksum = "0d37148700dbb38f994cd99a1431613057f37ed934d7e4d799b7ab758c482461"
 dependencies = [
+ "fxhash",
  "log",
- "rustc-hash",
+ "slice-group-by",
  "smallvec",
 ]
 
 [[package]]
 name = "regalloc2"
-version = "0.2.2"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d37148700dbb38f994cd99a1431613057f37ed934d7e4d799b7ab758c482461"
+checksum = "d43a209257d978ef079f3d446331d0f1794f5e0fc19b306a199983857833a779"
 dependencies = [
  "fxhash",
  "log",
@@ -1549,12 +1557,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ef03e0a2b150c7a90d01faf6254c9c48a41e95fb2a8c2ac1c6f0d2b9aefc342"
 
 [[package]]
-name = "rustc-hash"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
-
-[[package]]
 name = "rustc_version"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1628,15 +1630,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "61ea8d54c77f8315140a05f4c7237403bf38b72704d031543aa1d16abbf517d1"
 dependencies = [
  "serde_derive",
-]
-
-[[package]]
-name = "serde_bytes"
-version = "0.11.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16ae07dd2f88a366f15bd0632ba725227018c69a1c8550a927324f8eb8368bb9"
-dependencies = [
- "serde",
 ]
 
 [[package]]
@@ -2220,8 +2213,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "cfg-if 1.0.0",
  "indexmap",
@@ -2241,8 +2234,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-compiler"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "backtrace",
  "cfg-if 1.0.0",
@@ -2254,8 +2247,6 @@ dependencies = [
  "more-asserts",
  "region 3.0.0",
  "rustc-demangle",
- "serde",
- "serde_bytes",
  "smallvec",
  "thiserror",
  "wasmer-types",
@@ -2266,12 +2257,12 @@ dependencies = [
 
 [[package]]
 name = "wasmer-compiler-cranelift"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
- "cranelift-codegen 0.82.3",
- "cranelift-entity 0.82.3",
- "cranelift-frontend 0.82.3",
+ "cranelift-codegen 0.86.1",
+ "cranelift-entity 0.86.1",
+ "cranelift-frontend 0.86.1",
  "gimli",
  "more-asserts",
  "rayon",
@@ -2284,8 +2275,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-derive"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -2295,24 +2286,22 @@ dependencies = [
 
 [[package]]
 name = "wasmer-types"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "enum-iterator",
  "enumset",
  "indexmap",
  "more-asserts",
  "rkyv",
- "serde",
- "serde_bytes",
  "target-lexicon",
  "thiserror",
 ]
 
 [[package]]
 name = "wasmer-vbus"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "thiserror",
  "tracing",
@@ -2321,8 +2310,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-vfs"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "libc",
  "thiserror",
@@ -2331,8 +2320,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-vm"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "backtrace",
  "cc",
@@ -2347,7 +2336,6 @@ dependencies = [
  "more-asserts",
  "region 3.0.0",
  "scopeguard",
- "serde",
  "thiserror",
  "wasmer-types",
  "winapi",
@@ -2355,8 +2343,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-vnet"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "bytes",
  "thiserror",
@@ -2366,8 +2354,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-wasi"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "bytes",
  "cfg-if 1.0.0",
@@ -2389,8 +2377,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-wasi-local-networking"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "bytes",
  "tracing",
@@ -2400,8 +2388,8 @@ dependencies = [
 
 [[package]]
 name = "wasmer-wasi-types"
-version = "2.3.0"
-source = "git+https://github.com/wasmerio/wasmer.git?branch=master#5e26bc499c45251072f5cfaedc8eec0a61b36a61"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
 dependencies = [
  "byteorder",
  "time",
