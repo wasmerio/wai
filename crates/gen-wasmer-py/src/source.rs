@@ -199,7 +199,13 @@ impl<'s, 'd, 'i> SourceBuilder<'s, 'd, 'i> {
             Type::Id(id) => {
                 let ty = &self.iface.types[*id];
                 if let Some(name) = &ty.name {
+                    if forward_ref {
+                        self.push_str("'");
+                    }
                     self.push_str(&name.to_camel_case());
+                    if forward_ref {
+                        self.push_str("'");
+                    }
                     return;
                 }
                 match &ty.kind {
@@ -335,11 +341,11 @@ impl<'s, 'd, 'i> SourceBuilder<'s, 'd, 'i> {
     /// @dataclass
     /// class Foo0:
     ///     value: int
-    ///  
+    ///
     /// @dataclass
     /// class Foo1:
     ///     value: int
-    ///  
+    ///
     /// Foo = Union[Foo0, Foo1]
     /// ```
     pub fn print_union_wrapped(&mut self, name: &str, union: &Union, docs: &Docs) {
