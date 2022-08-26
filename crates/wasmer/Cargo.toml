@@ -15,7 +15,8 @@ async-trait = { version = "0.1.50", optional = true }
 
 [dependencies.wasmer]
 git = "https://github.com/wasmerio/wasmer.git"
-branch = "master"
+branch = "silwol/wasi-types-generation"
+default-features = false
 
 [features]
 # Enables generated code to emit events via the `tracing` crate whenever wasm is
@@ -26,3 +27,6 @@ tracing = ['tracing-lib', 'wit-bindgen-wasmer-impl/tracing']
 # Enables async support for generated code, although when enabled this still
 # needs to be configured through the macro invocation.
 async = ['async-trait', 'wit-bindgen-wasmer-impl/async']
+
+js = ['wasmer/js-default']
+sys = ['wasmer/sys-default']

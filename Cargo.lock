@@ -2223,11 +2223,33 @@ dependencies = [
  "target-lexicon",
  "thiserror",
  "wasm-bindgen",
- "wasmer-compiler",
- "wasmer-compiler-cranelift",
- "wasmer-derive",
- "wasmer-types",
- "wasmer-vm",
+ "wasmer-compiler 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmer-compiler-cranelift 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmer-derive 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmer-vm 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wat",
+ "winapi",
+]
+
+[[package]]
+name = "wasmer"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation#7aacc7ab1572fd864ae3eab9411c044db7d81be1"
+dependencies = [
+ "cfg-if 1.0.0",
+ "indexmap",
+ "js-sys",
+ "more-asserts",
+ "target-lexicon",
+ "thiserror",
+ "wasm-bindgen",
+ "wasmer-compiler 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
+ "wasmer-compiler-cranelift 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
+ "wasmer-derive 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
+ "wasmer-vm 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
+ "wasmparser 0.83.0",
  "wat",
  "winapi",
 ]
@@ -2249,8 +2271,31 @@ dependencies = [
  "rustc-demangle",
  "smallvec",
  "thiserror",
- "wasmer-types",
- "wasmer-vm",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmer-vm 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmparser 0.83.0",
+ "winapi",
+]
+
+[[package]]
+name = "wasmer-compiler"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation#7aacc7ab1572fd864ae3eab9411c044db7d81be1"
+dependencies = [
+ "backtrace",
+ "cfg-if 1.0.0",
+ "enum-iterator",
+ "enumset",
+ "lazy_static",
+ "leb128",
+ "memmap2",
+ "more-asserts",
+ "region 3.0.0",
+ "rustc-demangle",
+ "smallvec",
+ "thiserror",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
+ "wasmer-vm 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
  "wasmparser 0.83.0",
  "winapi",
 ]
@@ -2269,8 +2314,26 @@ dependencies = [
  "smallvec",
  "target-lexicon",
  "tracing",
- "wasmer-compiler",
- "wasmer-types",
+ "wasmer-compiler 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+]
+
+[[package]]
+name = "wasmer-compiler-cranelift"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation#7aacc7ab1572fd864ae3eab9411c044db7d81be1"
+dependencies = [
+ "cranelift-codegen 0.86.1",
+ "cranelift-entity 0.86.1",
+ "cranelift-frontend 0.86.1",
+ "gimli",
+ "more-asserts",
+ "rayon",
+ "smallvec",
+ "target-lexicon",
+ "tracing",
+ "wasmer-compiler 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
 ]
 
 [[package]]
@@ -2285,9 +2348,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasmer-derive"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation#7aacc7ab1572fd864ae3eab9411c044db7d81be1"
+dependencies = [
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "wasmer-types"
 version = "3.0.0-beta"
 source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f778989d70124b09a87cfa5ccc3b0d"
+dependencies = [
+ "enum-iterator",
+ "enumset",
+ "indexmap",
+ "more-asserts",
+ "rkyv",
+ "target-lexicon",
+ "thiserror",
+]
+
+[[package]]
+name = "wasmer-types"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation#7aacc7ab1572fd864ae3eab9411c044db7d81be1"
 dependencies = [
  "enum-iterator",
  "enumset",
@@ -2337,7 +2425,30 @@ dependencies = [
  "region 3.0.0",
  "scopeguard",
  "thiserror",
- "wasmer-types",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "winapi",
+]
+
+[[package]]
+name = "wasmer-vm"
+version = "3.0.0-beta"
+source = "git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation#7aacc7ab1572fd864ae3eab9411c044db7d81be1"
+dependencies = [
+ "backtrace",
+ "cc",
+ "cfg-if 1.0.0",
+ "corosensei",
+ "enum-iterator",
+ "indexmap",
+ "lazy_static",
+ "libc",
+ "mach",
+ "memoffset",
+ "more-asserts",
+ "region 3.0.0",
+ "scopeguard",
+ "thiserror",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
  "winapi",
 ]
 
@@ -2366,7 +2477,7 @@ dependencies = [
  "thiserror",
  "tracing",
  "wasm-bindgen",
- "wasmer",
+ "wasmer 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
  "wasmer-vbus",
  "wasmer-vfs",
  "wasmer-vnet",
@@ -2393,8 +2504,8 @@ source = "git+https://github.com/wasmerio/wasmer.git?branch=master#2ac8b77e23f77
 dependencies = [
  "byteorder",
  "time",
- "wasmer-derive",
- "wasmer-types",
+ "wasmer-derive 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
+ "wasmer-types 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
 ]
 
 [[package]]
@@ -2915,7 +3026,7 @@ dependencies = [
  "heck 0.3.3",
  "structopt",
  "test-helpers",
- "wasmer",
+ "wasmer 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=master)",
  "wasmer-wasi",
  "wit-bindgen-gen-core",
  "wit-bindgen-gen-rust",
@@ -2986,7 +3097,7 @@ dependencies = [
  "once_cell",
  "thiserror",
  "tracing",
- "wasmer",
+ "wasmer 3.0.0-beta (git+https://github.com/wasmerio/wasmer.git?branch=silwol/wasi-types-generation)",
  "wit-bindgen-wasmer-impl",
 ]
 
