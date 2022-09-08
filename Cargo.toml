@@ -3,6 +3,7 @@ name = "wit-bindgen-cli"
 version = "0.1.0"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
+description = "Generate glue code for *.wit files"
 
 [workspace]
 members = [
@@ -34,3 +35,10 @@ wit-bindgen-gen-wasmer-py = { path = 'crates/gen-wasmer-py', features = ['struct
 [profile.dev.package.cranelift-codegen]
 debug-assertions = false
 opt-level = 2
+
+[package.metadata.wapm]
+namespace = "Michael-F-Bryan"
+abi = "wasi"
+
+[package.metadata.wapm.fs]
+"."="."
