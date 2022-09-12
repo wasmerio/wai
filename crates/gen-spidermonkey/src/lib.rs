@@ -947,8 +947,9 @@ impl Generator for SpiderMonkeyWasm<'_> {
         name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        let _ = (iface, id, name, record, docs);
+        let _ = (iface, id, name, record, docs, generate_structs);
         todo!()
     }
 
@@ -959,8 +960,9 @@ impl Generator for SpiderMonkeyWasm<'_> {
         name: &str,
         tuple: &Tuple,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        let _ = (iface, id, name, tuple, docs);
+        let _ = (iface, id, name, tuple, docs, generate_structs);
         todo!()
     }
 
@@ -971,8 +973,9 @@ impl Generator for SpiderMonkeyWasm<'_> {
         name: &str,
         flags: &Flags,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        let _ = (iface, id, name, flags, docs);
+        let _ = (iface, id, name, flags, docs, generate_structs);
         todo!()
     }
 
@@ -983,8 +986,9 @@ impl Generator for SpiderMonkeyWasm<'_> {
         name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        let _ = (iface, id, name, variant, docs);
+        let _ = (iface, id, name, variant, docs, generate_structs);
         todo!()
     }
 
@@ -995,8 +999,9 @@ impl Generator for SpiderMonkeyWasm<'_> {
         name: &str,
         union: &Union,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        let _ = (iface, id, name, union, docs);
+        let _ = (iface, id, name, union, docs, generate_structs);
         todo!()
     }
 
@@ -1007,8 +1012,9 @@ impl Generator for SpiderMonkeyWasm<'_> {
         name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        let _ = (iface, id, name, payload, docs);
+        let _ = (iface, id, name, payload, docs, generate_structs);
         todo!()
     }
 
@@ -1019,12 +1025,21 @@ impl Generator for SpiderMonkeyWasm<'_> {
         name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        let _ = (iface, id, name, expected, docs);
+        let _ = (iface, id, name, expected, docs, generate_structs);
         todo!()
     }
 
-    fn type_enum(&mut self, iface: &Interface, id: TypeId, name: &str, enum_: &Enum, docs: &Docs) {
+    fn type_enum(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let _ = (iface, id, name, enum_, docs);
         todo!()
     }
@@ -1034,22 +1049,46 @@ impl Generator for SpiderMonkeyWasm<'_> {
         todo!()
     }
 
-    fn type_alias(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let _ = (iface, id, name, ty, docs);
         todo!()
     }
 
-    fn type_list(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let _ = (iface, id, name, ty, docs);
         todo!()
     }
 
-    fn type_builtin(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let _ = (iface, id, name, name, ty, docs);
         todo!()
     }
 
-    fn import(&mut self, iface: &Interface, func: &Function) {
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
 
         // Add the raw Wasm import.
@@ -1086,7 +1125,7 @@ impl Generator for SpiderMonkeyWasm<'_> {
         self.import_glue_fns.push(func_encoder);
     }
 
-    fn export(&mut self, iface: &Interface, func: &Function) {
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
 
         let wasm_sig = iface.wasm_signature(AbiVariant::GuestExport, func);

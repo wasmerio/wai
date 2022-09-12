@@ -175,8 +175,9 @@ impl Generator for RustWasm {
         _name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_record(iface, id, record, docs);
+        self.print_typedef_record(iface, id, record, docs, generate_structs);
     }
 
     fn type_tuple(
@@ -186,8 +187,9 @@ impl Generator for RustWasm {
         _name: &str,
         tuple: &Tuple,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_tuple(iface, id, tuple, docs);
+        self.print_typedef_tuple(iface, id, tuple, docs, generate_structs);
     }
 
     fn type_flags(
@@ -197,6 +199,7 @@ impl Generator for RustWasm {
         name: &str,
         flags: &Flags,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.src
             .push_str("wit_bindgen_rust::bitflags::bitflags! {\n");
@@ -239,8 +242,9 @@ impl Generator for RustWasm {
         _name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_variant(iface, id, variant, docs);
+        self.print_typedef_variant(iface, id, variant, docs, generate_structs);
     }
 
     fn type_union(
@@ -250,8 +254,9 @@ impl Generator for RustWasm {
         _name: &str,
         union: &Union,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_union(iface, id, union, docs);
+        self.print_typedef_union(iface, id, union, docs, generate_structs);
     }
 
     fn type_option(
@@ -261,8 +266,9 @@ impl Generator for RustWasm {
         _name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_option(iface, id, payload, docs);
+        self.print_typedef_option(iface, id, payload, docs, generate_structs);
     }
 
     fn type_expected(
@@ -272,12 +278,21 @@ impl Generator for RustWasm {
         _name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_expected(iface, id, expected, docs);
+        self.print_typedef_expected(iface, id, expected, docs, generate_structs);
     }
 
-    fn type_enum(&mut self, _iface: &Interface, id: TypeId, name: &str, enum_: &Enum, docs: &Docs) {
-        self.print_typedef_enum(id, name, enum_, docs);
+    fn type_enum(
+        &mut self,
+        _iface: &Interface,
+        id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.print_typedef_enum(id, name, enum_, docs, generate_structs);
     }
 
     fn type_resource(&mut self, iface: &Interface, ty: ResourceId) {
@@ -446,15 +461,39 @@ impl Generator for RustWasm {
         ));
     }
 
-    fn type_alias(&mut self, iface: &Interface, id: TypeId, _name: &str, ty: &Type, docs: &Docs) {
-        self.print_typedef_alias(iface, id, ty, docs);
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        _name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.print_typedef_alias(iface, id, ty, docs, generate_structs);
     }
 
-    fn type_list(&mut self, iface: &Interface, id: TypeId, _name: &str, ty: &Type, docs: &Docs) {
-        self.print_type_list(iface, id, ty, docs);
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        _name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.print_type_list(iface, id, ty, docs, generate_structs);
     }
 
-    fn type_builtin(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         self.rustdoc(docs);
         self.src
             .push_str(&format!("pub type {}", name.to_camel_case()));
@@ -473,7 +512,7 @@ impl Generator for RustWasm {
         }
     }
 
-    fn import(&mut self, iface: &Interface, func: &Function) {
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         let mut sig = FnSig::default();
         let param_mode = TypeMode::AllBorrowed("'_");
         sig.async_ = func.is_async;
@@ -524,7 +563,7 @@ impl Generator for RustWasm {
         }
     }
 
-    fn export(&mut self, iface: &Interface, func: &Function) {
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         let iface_name = iface.name.to_snake_case();
 
         self.src.push_str("#[export_name = \"");

@@ -379,13 +379,18 @@ pub trait RustGenerator {
         self.push_str(wasm_type(ty));
     }
 
-    fn modes_of(&self, iface: &Interface, ty: TypeId) -> Vec<(String, TypeMode)> {
+    fn modes_of(
+        &self,
+        iface: &Interface,
+        ty: TypeId,
+        generate_struct_always: bool,
+    ) -> Vec<(String, TypeMode)> {
         let info = self.info(ty);
         let mut result = Vec::new();
-        if info.param {
+        if info.param || generate_struct_always {
             result.push((self.param_name(iface, ty), self.default_param_mode()));
         }
-        if info.result && (!info.param || self.uses_two_names(&info)) {
+        if info.result && (!(info.param || generate_struct_always) || self.uses_two_names(&info)) {
             result.push((self.result_name(iface, ty), TypeMode::Owned));
         }
         return result;
@@ -502,9 +507,10 @@ pub trait RustGenerator {
         id: TypeId,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let info = self.info(id);
-        for (name, mode) in self.modes_of(iface, id) {
+        for (name, mode) in self.modes_of(iface, id, generate_structs) {
             let lt = self.lifetime_for(&info, mode);
             self.rustdoc(docs);
             if !info.owns_data() {
@@ -549,9 +555,16 @@ pub trait RustGenerator {
         }
     }
 
-    fn print_typedef_tuple(&mut self, iface: &Interface, id: TypeId, tuple: &Tuple, docs: &Docs) {
+    fn print_typedef_tuple(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        tuple: &Tuple,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let info = self.info(id);
-        for (name, mode) in self.modes_of(iface, id) {
+        for (name, mode) in self.modes_of(iface, id, generate_structs) {
             let lt = self.lifetime_for(&info, mode);
             self.rustdoc(docs);
             self.push_str(&format!("pub type {}", name));
@@ -571,6 +584,7 @@ pub trait RustGenerator {
         id: TypeId,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) where
         Self: Sized,
     {
@@ -582,11 +596,18 @@ pub trait RustGenerator {
                 .iter()
                 .map(|c| (c.name.to_camel_case(), &c.docs, &c.ty)),
             docs,
+            generate_structs,
         );
     }
 
-    fn print_typedef_union(&mut self, iface: &Interface, id: TypeId, union: &Union, docs: &Docs)
-    where
+    fn print_typedef_union(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        union: &Union,
+        docs: &Docs,
+        generate_structs: bool,
+    ) where
         Self: Sized,
     {
         self.print_rust_enum(
@@ -595,6 +616,7 @@ pub trait RustGenerator {
             zip(self.union_case_names(iface, union), &union.cases)
                 .map(|(name, case)| (name, &case.docs, &case.ty)),
             docs,
+            generate_structs,
         );
     }
 
@@ -604,12 +626,13 @@ pub trait RustGenerator {
         id: TypeId,
         cases: impl IntoIterator<Item = (String, &'a Docs, &'a Type)> + Clone,
         docs: &Docs,
+        generate_structs: bool,
     ) where
         Self: Sized,
     {
         let info = self.info(id);
 
-        for (name, mode) in self.modes_of(iface, id) {
+        for (name, mode) in self.modes_of(iface, id, generate_structs) {
             let name = name.to_camel_case();
             self.rustdoc(docs);
             let lt = self.lifetime_for(&info, mode);
@@ -684,10 +707,17 @@ pub trait RustGenerator {
         self.push_str("}\n");
     }
 
-    fn print_typedef_option(&mut self, iface: &Interface, id: TypeId, payload: &Type, docs: &Docs) {
+    fn print_typedef_option(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        payload: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let info = self.info(id);
 
-        for (name, mode) in self.modes_of(iface, id) {
+        for (name, mode) in self.modes_of(iface, id, generate_structs) {
             self.rustdoc(docs);
             let lt = self.lifetime_for(&info, mode);
             self.push_str(&format!("pub type {}", name));
@@ -704,10 +734,11 @@ pub trait RustGenerator {
         id: TypeId,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let info = self.info(id);
 
-        for (name, mode) in self.modes_of(iface, id) {
+        for (name, mode) in self.modes_of(iface, id, generate_structs) {
             self.rustdoc(docs);
             let lt = self.lifetime_for(&info, mode);
             self.push_str(&format!("pub type {}", name));
@@ -720,8 +751,14 @@ pub trait RustGenerator {
         }
     }
 
-    fn print_typedef_enum(&mut self, id: TypeId, name: &str, enum_: &Enum, docs: &Docs)
-    where
+    fn print_typedef_enum(
+        &mut self,
+        id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    ) where
         Self: Sized,
     {
         // TODO: should this perhaps be an attribute in the wit file?
@@ -817,9 +854,16 @@ pub trait RustGenerator {
         }
     }
 
-    fn print_typedef_alias(&mut self, iface: &Interface, id: TypeId, ty: &Type, docs: &Docs) {
+    fn print_typedef_alias(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let info = self.info(id);
-        for (name, mode) in self.modes_of(iface, id) {
+        for (name, mode) in self.modes_of(iface, id, generate_structs) {
             self.rustdoc(docs);
             self.push_str(&format!("pub type {}", name));
             let lt = self.lifetime_for(&info, mode);
@@ -830,9 +874,16 @@ pub trait RustGenerator {
         }
     }
 
-    fn print_type_list(&mut self, iface: &Interface, id: TypeId, ty: &Type, docs: &Docs) {
+    fn print_type_list(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let info = self.info(id);
-        for (name, mode) in self.modes_of(iface, id) {
+        for (name, mode) in self.modes_of(iface, id, generate_structs) {
             let lt = self.lifetime_for(&info, mode);
             self.rustdoc(docs);
             self.push_str(&format!("pub type {}", name));

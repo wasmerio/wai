@@ -327,13 +327,14 @@ impl Generator for Wasmtime {
         name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_record(iface, id, record, docs);
+        self.print_typedef_record(iface, id, record, docs, generate_structs);
 
         // If this record might be used as a slice type in various places then
         // we synthesize an `Endian` implementation for it so `&[Le<ThisType>]`
         // is usable.
-        if self.modes_of(iface, id).len() > 0
+        if self.modes_of(iface, id, generate_structs).len() > 0
             && record.fields.iter().all(|f| iface.all_bits_valid(&f.ty))
         {
             self.src.push_str("impl wit_bindgen_wasmtime::Endian for ");
@@ -381,8 +382,9 @@ impl Generator for Wasmtime {
         _name: &str,
         tuple: &Tuple,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_tuple(iface, id, tuple, docs);
+        self.print_typedef_tuple(iface, id, tuple, docs, generate_structs);
     }
 
     fn type_flags(
@@ -392,6 +394,7 @@ impl Generator for Wasmtime {
         name: &str,
         flags: &Flags,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.src
             .push_str("wit_bindgen_wasmtime::bitflags::bitflags! {\n");
@@ -437,8 +440,9 @@ impl Generator for Wasmtime {
         _name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_variant(iface, id, variant, docs);
+        self.print_typedef_variant(iface, id, variant, docs, generate_structs);
     }
 
     fn type_union(
@@ -448,8 +452,9 @@ impl Generator for Wasmtime {
         _name: &str,
         union: &Union,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_union(iface, id, union, docs);
+        self.print_typedef_union(iface, id, union, docs, generate_structs);
     }
 
     fn type_option(
@@ -459,8 +464,9 @@ impl Generator for Wasmtime {
         _name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_option(iface, id, payload, docs);
+        self.print_typedef_option(iface, id, payload, docs, generate_structs);
     }
 
     fn type_expected(
@@ -470,12 +476,21 @@ impl Generator for Wasmtime {
         _name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
-        self.print_typedef_expected(iface, id, expected, docs);
+        self.print_typedef_expected(iface, id, expected, docs, generate_structs);
     }
 
-    fn type_enum(&mut self, _iface: &Interface, id: TypeId, name: &str, enum_: &Enum, docs: &Docs) {
-        self.print_typedef_enum(id, name, enum_, docs);
+    fn type_enum(
+        &mut self,
+        _iface: &Interface,
+        id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.print_typedef_enum(id, name, enum_, docs, generate_structs);
     }
 
     fn type_resource(&mut self, iface: &Interface, ty: ResourceId) {
@@ -501,15 +516,39 @@ impl Generator for Wasmtime {
         ));
     }
 
-    fn type_alias(&mut self, iface: &Interface, id: TypeId, _name: &str, ty: &Type, docs: &Docs) {
-        self.print_typedef_alias(iface, id, ty, docs);
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        _name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.print_typedef_alias(iface, id, ty, docs, generate_structs);
     }
 
-    fn type_list(&mut self, iface: &Interface, id: TypeId, _name: &str, ty: &Type, docs: &Docs) {
-        self.print_type_list(iface, id, ty, docs);
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        _name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.print_type_list(iface, id, ty, docs, generate_structs);
     }
 
-    fn type_builtin(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         self.rustdoc(docs);
         self.src
             .push_str(&format!("pub type {}", name.to_camel_case()));
@@ -521,7 +560,7 @@ impl Generator for Wasmtime {
     // As with `abi_variant` above, we're generating host-side bindings here
     // so a user "export" uses the "guest import" ABI variant on the inside of
     // this `Generator` implementation.
-    fn export(&mut self, iface: &Interface, func: &Function) {
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
         let prev = mem::take(&mut self.src);
 
@@ -680,7 +719,7 @@ impl Generator for Wasmtime {
     // As with `abi_variant` above, we're generating host-side bindings here
     // so a user "import" uses the "export" ABI variant on the inside of
     // this `Generator` implementation.
-    fn import(&mut self, iface: &Interface, func: &Function) {
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
         let prev = mem::take(&mut self.src);
 

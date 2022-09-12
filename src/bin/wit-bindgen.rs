@@ -84,6 +84,11 @@ struct Common {
     /// specified multiple times.
     #[structopt(long = "export", short)]
     exports: Vec<PathBuf>,
+
+    /// Generate export bindings for the given `*.wit` interface. Can be
+    /// specified multiple times.
+    #[structopt(long = "force-generate-structs", short)]
+    generate_structs: bool,
 }
 
 fn main() -> Result<()> {
@@ -116,7 +121,7 @@ fn main() -> Result<()> {
         .collect::<Result<Vec<_>>>()?;
 
     let mut files = Files::default();
-    generator.generate_all(&imports, &exports, &mut files);
+    generator.generate_all(&imports, &exports, &mut files, common.generate_structs);
 
     for (name, contents) in files.iter() {
         let dst = match &common.out_dir {
