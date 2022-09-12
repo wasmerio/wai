@@ -119,7 +119,7 @@ impl Markdown {
         }
     }
 
-    fn docs(&mut self, docs: &Docs) {
+    fn docs(&mut self, docs: &Docs, generate_structs: bool) {
         let docs = match &docs.contents {
             Some(docs) => docs,
             None => return,
@@ -144,8 +144,8 @@ impl Markdown {
             .insert(name.to_string(), format!("#{}", name.to_snake_case()));
     }
 
-    fn print_type_info(&mut self, ty: TypeId, docs: &Docs) {
-        self.docs(docs);
+    fn print_type_info(&mut self, ty: TypeId, docs: &Docs, generate_structs: bool) {
+        self.docs(docs, generate_structs);
         self.src.push_str("\n");
         self.src
             .push_str(&format!("Size: {}, ", self.sizes.size(&Type::Id(ty))));
@@ -166,10 +166,11 @@ impl Generator for Markdown {
         name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.print_type_header(name);
         self.src.push_str("record\n\n");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
         self.src.push_str("\n### Record Fields\n\n");
         for field in record.fields.iter() {
             self.src.push_str(&format!(
@@ -185,7 +186,7 @@ impl Generator for Markdown {
             self.print_ty(iface, &field.ty, false);
             self.src.indent(1);
             self.src.push_str("\n\n");
-            self.docs(&field.docs);
+            self.docs(&field.docs, generate_structs);
             self.src.deindent(1);
             self.src.push_str("\n");
         }
@@ -198,10 +199,11 @@ impl Generator for Markdown {
         name: &str,
         tuple: &Tuple,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.print_type_header(name);
         self.src.push_str("tuple\n\n");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
         self.src.push_str("\n### Tuple Fields\n\n");
         for (i, ty) in tuple.types.iter().enumerate() {
             self.src.push_str(&format!(
@@ -226,10 +228,11 @@ impl Generator for Markdown {
         name: &str,
         flags: &Flags,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.print_type_header(name);
         self.src.push_str("record\n\n");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
         self.src.push_str("\n### Record Fields\n\n");
         for (i, flag) in flags.flags.iter().enumerate() {
             self.src.push_str(&format!(
@@ -244,7 +247,7 @@ impl Generator for Markdown {
             );
             self.src.indent(1);
             self.src.push_str("\n\n");
-            self.docs(&flag.docs);
+            self.docs(&flag.docs, generate_structs);
             self.src.deindent(1);
             self.src.push_str(&format!("Bit: {}\n", i));
             self.src.push_str("\n");
@@ -258,10 +261,11 @@ impl Generator for Markdown {
         name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.print_type_header(name);
         self.src.push_str("variant\n\n");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
         self.src.push_str("\n### Variant Cases\n\n");
         for case in variant.cases.iter() {
             self.src.push_str(&format!(
@@ -278,7 +282,7 @@ impl Generator for Markdown {
             self.print_ty(iface, &case.ty, false);
             self.src.indent(1);
             self.src.push_str("\n\n");
-            self.docs(&case.docs);
+            self.docs(&case.docs, generate_structs);
             self.src.deindent(1);
             self.src.push_str("\n");
         }
@@ -291,10 +295,11 @@ impl Generator for Markdown {
         name: &str,
         union: &Union,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.print_type_header(name);
         self.src.push_str("union\n\n");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
         self.src.push_str("\n### Union Cases\n\n");
         let snake = name.to_snake_case();
         for (i, case) in union.cases.iter().enumerate() {
@@ -307,16 +312,24 @@ impl Generator for Markdown {
             self.print_ty(iface, &case.ty, false);
             self.src.indent(1);
             self.src.push_str("\n\n");
-            self.docs(&case.docs);
+            self.docs(&case.docs, generate_structs);
             self.src.deindent(1);
             self.src.push_str("\n");
         }
     }
 
-    fn type_enum(&mut self, _iface: &Interface, id: TypeId, name: &str, enum_: &Enum, docs: &Docs) {
+    fn type_enum(
+        &mut self,
+        _iface: &Interface,
+        id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         self.print_type_header(name);
         self.src.push_str("enum\n\n");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
         self.src.push_str("\n### Enum Cases\n\n");
         for case in enum_.cases.iter() {
             self.src.push_str(&format!(
@@ -331,7 +344,7 @@ impl Generator for Markdown {
             );
             self.src.indent(1);
             self.src.push_str("\n\n");
-            self.docs(&case.docs);
+            self.docs(&case.docs, generate_structs);
             self.src.deindent(1);
             self.src.push_str("\n");
         }
@@ -344,12 +357,13 @@ impl Generator for Markdown {
         name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.print_type_header(name);
         self.src.push_str("option<");
         self.print_ty(iface, payload, false);
         self.src.push_str(">");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
     }
 
     fn type_expected(
@@ -359,6 +373,7 @@ impl Generator for Markdown {
         name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.print_type_header(name);
         self.src.push_str("expected<");
@@ -366,30 +381,54 @@ impl Generator for Markdown {
         self.src.push_str(", ");
         self.print_ty(iface, &expected.err, false);
         self.src.push_str(">");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
     }
 
     fn type_resource(&mut self, iface: &Interface, ty: ResourceId) {
         drop((iface, ty));
     }
 
-    fn type_alias(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         self.print_type_header(name);
         self.print_ty(iface, ty, true);
         self.src.push_str("\n\n");
-        self.print_type_info(id, docs);
+        self.print_type_info(id, docs, generate_structs);
         self.src.push_str("\n");
     }
 
-    fn type_list(&mut self, iface: &Interface, id: TypeId, name: &str, _ty: &Type, docs: &Docs) {
-        self.type_alias(iface, id, name, &Type::Id(id), docs);
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        _ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.type_alias(iface, id, name, &Type::Id(id), docs, generate_structs);
     }
 
-    fn type_builtin(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
-        self.type_alias(iface, id, name, ty, docs)
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.type_alias(iface, id, name, ty, docs, generate_structs)
     }
 
-    fn import(&mut self, iface: &Interface, func: &Function) {
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         if self.funcs == 0 {
             self.src.push_str("# Functions\n\n");
         }
@@ -405,7 +444,7 @@ impl Generator for Markdown {
         self.src.push_str(&func.name);
         self.src.push_str("` ");
         self.src.push_str("\n\n");
-        self.docs(&func.docs);
+        self.docs(&func.docs, generate_structs);
 
         if !func.params.is_empty() {
             self.src.push_str("##### Params\n\n");
@@ -438,8 +477,8 @@ impl Generator for Markdown {
         self.src.push_str("\n");
     }
 
-    fn export(&mut self, iface: &Interface, func: &Function) {
-        self.import(iface, func);
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
+        self.import(iface, func, generate_structs);
     }
 
     fn finish_one(&mut self, _iface: &Interface, files: &mut Files) {

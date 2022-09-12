@@ -715,6 +715,7 @@ impl Generator for C {
         name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
@@ -741,6 +742,7 @@ impl Generator for C {
         name: &str,
         tuple: &Tuple,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
@@ -765,6 +767,7 @@ impl Generator for C {
         name: &str,
         flags: &Flags,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
@@ -798,6 +801,7 @@ impl Generator for C {
         name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
@@ -841,6 +845,7 @@ impl Generator for C {
         name: &str,
         union: &Union,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
@@ -869,6 +874,7 @@ impl Generator for C {
         name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
@@ -894,6 +900,7 @@ impl Generator for C {
         name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
@@ -918,7 +925,15 @@ impl Generator for C {
         self.types.insert(id, mem::replace(&mut self.src.h, prev));
     }
 
-    fn type_enum(&mut self, iface: &Interface, id: TypeId, name: &str, enum_: &Enum, docs: &Docs) {
+    fn type_enum(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
         self.names.insert(&name.to_snake_case()).unwrap();
@@ -946,7 +961,15 @@ impl Generator for C {
         drop((iface, ty));
     }
 
-    fn type_alias(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
         self.src.h("typedef ");
@@ -958,7 +981,15 @@ impl Generator for C {
         self.types.insert(id, mem::replace(&mut self.src.h, prev));
     }
 
-    fn type_list(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let prev = mem::take(&mut self.src.h);
         self.docs(docs);
         self.src.h("typedef struct {\n");
@@ -972,11 +1003,19 @@ impl Generator for C {
         self.types.insert(id, mem::replace(&mut self.src.h, prev));
     }
 
-    fn type_builtin(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         drop((iface, _id, name, ty, docs));
     }
 
-    fn import(&mut self, iface: &Interface, func: &Function) {
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
         let prev = mem::take(&mut self.src);
         let sig = iface.wasm_signature(AbiVariant::GuestImport, func);
@@ -1052,7 +1091,7 @@ impl Generator for C {
             .push(Func { src });
     }
 
-    fn export(&mut self, iface: &Interface, func: &Function) {
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
         let prev = mem::take(&mut self.src);
         let sig = iface.wasm_signature(AbiVariant::GuestExport, func);

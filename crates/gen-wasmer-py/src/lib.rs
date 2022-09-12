@@ -136,6 +136,7 @@ impl Generator for WasmerPy {
         name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.pyimport("dataclasses", "dataclass");
@@ -164,6 +165,7 @@ impl Generator for WasmerPy {
         name: &str,
         tuple: &Tuple,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.comment(docs);
@@ -179,6 +181,7 @@ impl Generator for WasmerPy {
         name: &str,
         flags: &Flags,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.pyimport("enum", "Flag");
@@ -205,6 +208,7 @@ impl Generator for WasmerPy {
         name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.pyimport("dataclasses", "dataclass");
@@ -242,6 +246,7 @@ impl Generator for WasmerPy {
         name: &str,
         union: &Union,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let mut py_type_classes = BTreeSet::new();
         for case in union.cases.iter() {
@@ -269,6 +274,7 @@ impl Generator for WasmerPy {
         name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.pyimport("typing", "Optional");
@@ -286,6 +292,7 @@ impl Generator for WasmerPy {
         name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.deps.needs_expected = true;
 
@@ -298,7 +305,15 @@ impl Generator for WasmerPy {
         builder.push_str("]\n\n");
     }
 
-    fn type_enum(&mut self, iface: &Interface, _id: TypeId, name: &str, enum_: &Enum, docs: &Docs) {
+    fn type_enum(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.pyimport("enum", "Enum");
         builder.push_str(&format!("class {}(Enum):\n", name.to_camel_case()));
@@ -328,7 +343,15 @@ impl Generator for WasmerPy {
         // }
     }
 
-    fn type_alias(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.comment(docs);
         builder.push_str(&format!("{} = ", name.to_camel_case()));
@@ -336,7 +359,15 @@ impl Generator for WasmerPy {
         builder.push_str("\n");
     }
 
-    fn type_list(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         let mut builder = self.src.builder(&mut self.deps, iface);
         builder.comment(docs);
         builder.push_str(&format!("{} = ", name.to_camel_case()));
@@ -344,14 +375,22 @@ impl Generator for WasmerPy {
         builder.push_str("\n");
     }
 
-    fn type_builtin(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs) {
-        self.type_alias(iface, id, name, ty, docs);
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
+        self.type_alias(iface, id, name, ty, docs, generate_structs);
     }
 
     // As with `abi_variant` above, we're generating host-side bindings here
     // so a user "export" uses the "guest import" ABI variant on the inside of
     // this `Generator` implementation.
-    fn export(&mut self, iface: &Interface, func: &Function) {
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
         let mut pysig = Source::default();
         let mut builder = pysig.builder(&mut self.deps, iface);
@@ -466,7 +505,7 @@ impl Generator for WasmerPy {
     // As with `abi_variant` above, we're generating host-side bindings here
     // so a user "import" uses the "export" ABI variant on the inside of
     // this `Generator` implementation.
-    fn import(&mut self, iface: &Interface, func: &Function) {
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         assert!(!func.is_async, "async not supported yet");
         let mut func_body = Source::default();
         let mut builder = func_body.builder(&mut self.deps, iface);

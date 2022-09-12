@@ -362,6 +362,7 @@ impl Generator for Js {
         name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.docs(docs);
         self.src
@@ -386,6 +387,7 @@ impl Generator for Js {
         name: &str,
         tuple: &Tuple,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.docs(docs);
         self.src
@@ -401,6 +403,7 @@ impl Generator for Js {
         name: &str,
         flags: &Flags,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.docs(docs);
         let repr = js_flags_repr(flags);
@@ -427,6 +430,7 @@ impl Generator for Js {
         name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.docs(docs);
         self.src
@@ -464,6 +468,7 @@ impl Generator for Js {
         name: &str,
         union: &Union,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.docs(docs);
         let name = name.to_camel_case();
@@ -493,6 +498,7 @@ impl Generator for Js {
         name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.docs(docs);
         let name = name.to_camel_case();
@@ -516,6 +522,7 @@ impl Generator for Js {
         name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         self.docs(docs);
         let name = name.to_camel_case();
@@ -534,6 +541,7 @@ impl Generator for Js {
         name: &str,
         enum_: &Enum,
         docs: &Docs,
+        generate_structs: bool,
     ) {
         // The complete documentation for this enum, including documentation for variants.
         let mut complete_docs = String::new();
@@ -575,7 +583,15 @@ impl Generator for Js {
         }
     }
 
-    fn type_alias(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         self.docs(docs);
         self.src
             .ts(&format!("export type {} = ", name.to_camel_case()));
@@ -583,7 +599,15 @@ impl Generator for Js {
         self.src.ts(";\n");
     }
 
-    fn type_list(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         self.docs(docs);
         self.src
             .ts(&format!("export type {} = ", name.to_camel_case()));
@@ -591,14 +615,22 @@ impl Generator for Js {
         self.src.ts(";\n");
     }
 
-    fn type_builtin(&mut self, iface: &Interface, _id: TypeId, name: &str, ty: &Type, docs: &Docs) {
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        _id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    ) {
         drop((iface, _id, name, ty, docs));
     }
 
     // As with `abi_variant` above, we're generating host-side bindings here
     // so a user "export" uses the "guest import" ABI variant on the inside of
     // this `Generator` implementation.
-    fn export(&mut self, iface: &Interface, func: &Function) {
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         let prev = mem::take(&mut self.src);
 
         let sig = iface.wasm_signature(AbiVariant::GuestImport, func);
@@ -671,7 +703,7 @@ impl Generator for Js {
     // As with `abi_variant` above, we're generating host-side bindings here
     // so a user "import" uses the "export" ABI variant on the inside of
     // this `Generator` implementation.
-    fn import(&mut self, iface: &Interface, func: &Function) {
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool) {
         let prev = mem::take(&mut self.src);
 
         let mut params = func

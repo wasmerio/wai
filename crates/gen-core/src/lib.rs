@@ -55,9 +55,26 @@ pub trait Generator {
         name: &str,
         record: &Record,
         docs: &Docs,
+        generate_structs: bool,
     );
-    fn type_flags(&mut self, iface: &Interface, id: TypeId, name: &str, flags: &Flags, docs: &Docs);
-    fn type_tuple(&mut self, iface: &Interface, id: TypeId, name: &str, flags: &Tuple, docs: &Docs);
+    fn type_flags(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        flags: &Flags,
+        docs: &Docs,
+        generate_structs: bool,
+    );
+    fn type_tuple(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        flags: &Tuple,
+        docs: &Docs,
+        generate_structs: bool,
+    );
     fn type_variant(
         &mut self,
         iface: &Interface,
@@ -65,6 +82,7 @@ pub trait Generator {
         name: &str,
         variant: &Variant,
         docs: &Docs,
+        generate_structs: bool,
     );
     fn type_option(
         &mut self,
@@ -73,6 +91,7 @@ pub trait Generator {
         name: &str,
         payload: &Type,
         docs: &Docs,
+        generate_structs: bool,
     );
     fn type_expected(
         &mut self,
@@ -81,19 +100,60 @@ pub trait Generator {
         name: &str,
         expected: &Expected,
         docs: &Docs,
+        generate_structs: bool,
     );
-    fn type_union(&mut self, iface: &Interface, id: TypeId, name: &str, union: &Union, docs: &Docs);
-    fn type_enum(&mut self, iface: &Interface, id: TypeId, name: &str, enum_: &Enum, docs: &Docs);
+    fn type_union(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        union: &Union,
+        docs: &Docs,
+        generate_structs: bool,
+    );
+    fn type_enum(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        enum_: &Enum,
+        docs: &Docs,
+        generate_structs: bool,
+    );
     fn type_resource(&mut self, iface: &Interface, ty: ResourceId);
-    fn type_alias(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs);
-    fn type_list(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs);
-    fn type_builtin(&mut self, iface: &Interface, id: TypeId, name: &str, ty: &Type, docs: &Docs);
+    fn type_alias(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    );
+    fn type_list(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    );
+    fn type_builtin(
+        &mut self,
+        iface: &Interface,
+        id: TypeId,
+        name: &str,
+        ty: &Type,
+        docs: &Docs,
+        generate_structs: bool,
+    );
 
     fn preprocess_functions(&mut self, iface: &Interface, dir: Direction) {
         drop((iface, dir));
     }
-    fn import(&mut self, iface: &Interface, func: &Function);
-    fn export(&mut self, iface: &Interface, func: &Function);
+    fn import(&mut self, iface: &Interface, func: &Function, generate_structs: bool);
+    fn export(&mut self, iface: &Interface, func: &Function, generate_structs: bool);
     fn finish_functions(&mut self, iface: &Interface, dir: Direction) {
         drop((iface, dir));
     }
@@ -104,7 +164,13 @@ pub trait Generator {
         drop(files);
     }
 
-    fn generate_one(&mut self, iface: &Interface, dir: Direction, files: &mut Files) {
+    fn generate_one(
+        &mut self,
+        iface: &Interface,
+        dir: Direction,
+        files: &mut Files,
+        generate_structs: bool,
+    ) {
         self.preprocess_one(iface, dir);
 
         for (id, ty) in iface.types.iter() {
@@ -114,18 +180,36 @@ pub trait Generator {
                 None => continue,
             };
             match &ty.kind {
-                TypeDefKind::Record(record) => self.type_record(iface, id, name, record, &ty.docs),
-                TypeDefKind::Flags(flags) => self.type_flags(iface, id, name, flags, &ty.docs),
-                TypeDefKind::Tuple(tuple) => self.type_tuple(iface, id, name, tuple, &ty.docs),
-                TypeDefKind::Enum(enum_) => self.type_enum(iface, id, name, enum_, &ty.docs),
-                TypeDefKind::Variant(variant) => {
-                    self.type_variant(iface, id, name, variant, &ty.docs)
+                TypeDefKind::Record(record) => {
+                    self.type_record(iface, id, name, record, &ty.docs, generate_structs)
                 }
-                TypeDefKind::Option(t) => self.type_option(iface, id, name, t, &ty.docs),
-                TypeDefKind::Expected(e) => self.type_expected(iface, id, name, e, &ty.docs),
-                TypeDefKind::Union(u) => self.type_union(iface, id, name, u, &ty.docs),
-                TypeDefKind::List(t) => self.type_list(iface, id, name, t, &ty.docs),
-                TypeDefKind::Type(t) => self.type_alias(iface, id, name, t, &ty.docs),
+                TypeDefKind::Flags(flags) => {
+                    self.type_flags(iface, id, name, flags, &ty.docs, generate_structs)
+                }
+                TypeDefKind::Tuple(tuple) => {
+                    self.type_tuple(iface, id, name, tuple, &ty.docs, generate_structs)
+                }
+                TypeDefKind::Enum(enum_) => {
+                    self.type_enum(iface, id, name, enum_, &ty.docs, generate_structs)
+                }
+                TypeDefKind::Variant(variant) => {
+                    self.type_variant(iface, id, name, variant, &ty.docs, generate_structs)
+                }
+                TypeDefKind::Option(t) => {
+                    self.type_option(iface, id, name, t, &ty.docs, generate_structs)
+                }
+                TypeDefKind::Expected(e) => {
+                    self.type_expected(iface, id, name, e, &ty.docs, generate_structs)
+                }
+                TypeDefKind::Union(u) => {
+                    self.type_union(iface, id, name, u, &ty.docs, generate_structs)
+                }
+                TypeDefKind::List(t) => {
+                    self.type_list(iface, id, name, t, &ty.docs, generate_structs)
+                }
+                TypeDefKind::Type(t) => {
+                    self.type_alias(iface, id, name, t, &ty.docs, generate_structs)
+                }
                 TypeDefKind::Future(_) => todo!("generate for future"),
                 TypeDefKind::Stream(_) => todo!("generate for stream"),
             }
@@ -139,8 +223,8 @@ pub trait Generator {
 
         for f in iface.functions.iter() {
             match dir {
-                Direction::Import => self.import(iface, f),
-                Direction::Export => self.export(iface, f),
+                Direction::Import => self.import(iface, &f, generate_structs),
+                Direction::Export => self.export(iface, &f, generate_structs),
             }
         }
 
@@ -149,15 +233,21 @@ pub trait Generator {
         self.finish_one(iface, files)
     }
 
-    fn generate_all(&mut self, imports: &[Interface], exports: &[Interface], files: &mut Files) {
+    fn generate_all(
+        &mut self,
+        imports: &[Interface],
+        exports: &[Interface],
+        files: &mut Files,
+        generate_structs: bool,
+    ) {
         self.preprocess_all(imports, exports);
 
         for imp in imports {
-            self.generate_one(imp, Direction::Import, files);
+            self.generate_one(imp, Direction::Import, files, generate_structs);
         }
 
         for exp in exports {
-            self.generate_one(exp, Direction::Export, files);
+            self.generate_one(exp, Direction::Export, files, generate_structs);
         }
 
         self.finish_all(files);
