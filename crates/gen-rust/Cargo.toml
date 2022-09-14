@@ -1,14 +1,10 @@
 [package]
-name = "wai-bindgen-gen-rust"
-description = "Abstractions for generating Rust glue code for WAI"
-authors.workspace = true
-edition.workspace = true
-homepage.workspace = true
-license.workspace = true
-readme.workspace = true
-repository.workspace = true
-rust-version.workspace = true
-version.workspace = true
+name = "wit-bindgen-gen-rust"
+version = "0.1.0"
+authors = ["Alex Crichton <alex@alexcrichton.com>"]
+edition = "2018"
+license = "MPL-2.0"
+description = "WIT bindgen generator for Rust code"
 
 [lib]
 doctest = false
