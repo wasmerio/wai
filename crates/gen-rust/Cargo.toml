@@ -3,6 +3,8 @@ name = "wit-bindgen-gen-rust"
 version = "0.1.0"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
+license = "MPL-2.0"
+description = "WIT bindgen generator for Rust code"
 
 [lib]
 doctest = false
