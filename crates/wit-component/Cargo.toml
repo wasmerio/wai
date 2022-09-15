@@ -3,7 +3,7 @@ name = "wasmer-wit-component"
 version = "0.1.0"
 authors = ["Peter Huene <peter@huene.dev>"]
 edition = "2021"
-license = "MIT"
+license = "Apache-2.0"
 description = "wit-bindgen-gen-c"
 
 [[bin]]
