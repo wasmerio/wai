@@ -1,10 +1,10 @@
 use heck::*;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::mem;
-use wit_bindgen_gen_core::wit_parser::abi::{
+use wasmer_wit_bindgen_gen_core::wit_parser::abi::{
     AbiVariant, Bindgen, Bitcast, Instruction, LiftLower, WasmType,
 };
-use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator, Ns};
+use wasmer_wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator, Ns};
 
 pub mod dependencies;
 pub mod source;

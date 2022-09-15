@@ -1,7 +1,7 @@
 use anyhow::{bail, Result};
 use indexmap::IndexSet;
 use std::fmt::Write;
-use wit_parser::{
+use wasmer_wit_parser::{
     Enum, Expected, Flags, Interface, Record, Tuple, Type, TypeDefKind, TypeId, Union, Variant,
 };
 

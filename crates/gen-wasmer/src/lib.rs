@@ -4,11 +4,11 @@ use std::io::{Read, Write};
 use std::mem;
 use std::process::{Command, Stdio};
 use std::str::FromStr;
-use wit_bindgen_gen_core::wit_parser::abi::{
+use wasmer_wit_bindgen_gen_core::wit_parser::abi::{
     AbiVariant, Bindgen, Instruction, LiftLower, WasmType,
 };
-use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator, Source, TypeInfo, Types};
-use wit_bindgen_gen_rust::{
+use wasmer_wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator, Source, TypeInfo, Types};
+use wasmer_wit_bindgen_gen_rust::{
     to_rust_ident, wasm_type, FnSig, RustFlagsRepr, RustFunctionGenerator, RustGenerator, TypeMode,
 };
 
@@ -169,7 +169,7 @@ impl Wasmer {
 
     fn print_intrinsics(&mut self) {
         if self.needs_lazy_initialized || !self.exported_resources.is_empty() {
-            self.push_str("use wit_bindgen_wasmer::once_cell::unsync::OnceCell;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::once_cell::unsync::OnceCell;\n");
         }
 
         self.push_str("#[allow(unused_imports)]\n");
@@ -177,26 +177,26 @@ impl Wasmer {
         self.push_str("#[allow(unused_imports)]\n");
         self.push_str("use wasmer::AsStoreRef as _;\n");
         if self.needs_raw_mem {
-            self.push_str("use wit_bindgen_wasmer::rt::RawMem;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::rt::RawMem;\n");
         }
         if self.needs_char_from_i32 {
-            self.push_str("use wit_bindgen_wasmer::rt::char_from_i32;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::rt::char_from_i32;\n");
         }
         if self.needs_invalid_variant {
-            self.push_str("use wit_bindgen_wasmer::rt::invalid_variant;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::rt::invalid_variant;\n");
         }
         if self.needs_bad_int {
             self.push_str("use core::convert::TryFrom;\n");
-            self.push_str("use wit_bindgen_wasmer::rt::bad_int;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::rt::bad_int;\n");
         }
         if self.needs_validate_flags {
-            self.push_str("use wit_bindgen_wasmer::rt::validate_flags;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::rt::validate_flags;\n");
         }
         if self.needs_le {
-            self.push_str("use wit_bindgen_wasmer::Le;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::Le;\n");
         }
         if self.needs_copy_slice {
-            self.push_str("use wit_bindgen_wasmer::rt::copy_slice;\n");
+            self.push_str("use wasmer_wit_bindgen_wasmer::rt::copy_slice;\n");
         }
     }
 
@@ -324,7 +324,7 @@ impl Generator for Wasmer {
             iface.name.to_snake_case()
         ));
         self.src
-            .push_str("#[allow(unused_imports)]\nuse wit_bindgen_wasmer::{anyhow, wasmer};\n");
+            .push_str("#[allow(unused_imports)]\nuse wasmer_wit_bindgen_wasmer::{anyhow, wasmer};\n");
         self.sizes.fill(iface);
     }
 
@@ -925,7 +925,7 @@ impl Generator for Wasmer {
                 for handle in self.all_needed_handles.iter() {
                     self.src.push_str("pub(crate) ");
                     self.src.push_str(&handle.to_snake_case());
-                    self.src.push_str("_table: wit_bindgen_wasmer::Table<T::");
+                    self.src.push_str("_table: wasmer_wit_bindgen_wasmer::Table<T::");
                     self.src.push_str(&handle.to_camel_case());
                     self.src.push_str(">,\n");
                 }
@@ -1125,8 +1125,8 @@ impl Generator for Wasmer {
             for r in self.exported_resources.iter() {
                 self.src.push_str(&format!(
                     "
-                        index_slab{idx}: wit_bindgen_wasmer::rt::IndexSlab,
-                        resource_slab{idx}: wit_bindgen_wasmer::rt::ResourceSlab,
+                        index_slab{idx}: wasmer_wit_bindgen_wasmer::rt::IndexSlab,
+                        resource_slab{idx}: wasmer_wit_bindgen_wasmer::rt::ResourceSlab,
                         dtor{idx}: OnceCell<wasmer::TypedFunction<i32, ()>>,
                     ",
                     idx = r.index(),
@@ -1527,7 +1527,7 @@ impl FunctionBindgen<'_> {
         let mem = self.memory_src();
         self.gen.needs_raw_mem = true;
         self.push_str(&format!(
-            "{}.store({} + {}, wit_bindgen_wasmer::rt::{}({}){})?;\n",
+            "{}.store({} + {}, wasmer_wit_bindgen_wasmer::rt::{}({}){})?;\n",
             mem, operands[1], offset, method, operands[0], extra
         ));
     }
@@ -1673,7 +1673,7 @@ impl Bindgen for FunctionBindgen<'_> {
             }
 
             Instruction::Bitcasts { casts } => {
-                wit_bindgen_gen_rust::bitcast(casts, operands, results)
+                wasmer_wit_bindgen_gen_rust::bitcast(casts, operands, results)
             }
 
             Instruction::UnitLower => {

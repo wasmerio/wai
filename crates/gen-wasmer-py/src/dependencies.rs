@@ -28,7 +28,7 @@ impl Dependencies {
     ///
     /// Examples
     /// ```
-    /// # use wit_bindgen_gen_wasmer_py::dependencies::Dependencies;
+    /// # use wasmer_wit_bindgen_gen_wasmer_py::dependencies::Dependencies;
     /// # let mut deps = Dependencies::default();
     /// // Import a specific item from a module
     /// deps.pyimport("typing", "NamedTuple");

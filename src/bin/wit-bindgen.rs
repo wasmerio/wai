@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use std::path::PathBuf;
 use structopt::StructOpt;
-use wit_bindgen_gen_core::{wit_parser, Files, Generator};
+use wasmer_wit_bindgen_gen_core::{wit_parser, Files, Generator};
 use wit_parser::Interface;
 
 #[derive(Debug, StructOpt)]
@@ -14,56 +14,56 @@ struct Opt {
 enum Command {
     RustWasm {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_rust_wasm::Opts,
+        opts: wasmer_wit_bindgen_gen_rust_wasm::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     Wasmtime {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_wasmtime::Opts,
+        opts: wasmer_wit_bindgen_gen_wasmtime::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     WasmtimePy {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_wasmtime_py::Opts,
+        opts: wasmer_wit_bindgen_gen_wasmtime_py::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     Js {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_js::Opts,
+        opts: wasmer_wit_bindgen_gen_js::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     C {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_c::Opts,
+        opts: wasmer_wit_bindgen_gen_c::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     Markdown {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_markdown::Opts,
+        opts: wasmer_wit_bindgen_gen_markdown::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     #[structopt(name = "spidermonkey")]
     SpiderMonkey {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_spidermonkey::Opts,
+        opts: wasmer_wit_bindgen_gen_spidermonkey::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     Wasmer {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_wasmer::Opts,
+        opts: wasmer_wit_bindgen_gen_wasmer::Opts,
         #[structopt(flatten)]
         common: Common,
     },
     WasmerPy {
         #[structopt(flatten)]
-        opts: wit_bindgen_gen_wasmer_py::Opts,
+        opts: wasmer_wit_bindgen_gen_wasmer_py::Opts,
         #[structopt(flatten)]
         common: Common,
     },

@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 use std::sync::Once;
-use wit_bindgen_gen_core::wit_parser::Interface;
-use wit_bindgen_gen_core::Generator;
-use wit_bindgen_rust::Handle;
+use wasmer_wit_bindgen_gen_core::wit_parser::Interface;
+use wasmer_wit_bindgen_gen_core::Generator;
+use wasmer_wit_bindgen_rust::Handle;
 
 wit_bindgen_rust::export!("demo.wit");
 wit_bindgen_rust::import!("browser.wit");
@@ -94,7 +94,7 @@ impl demo::Config for Config {
         self.wasmtime.borrow_mut().custom_error = custom_error;
     }
     fn set_wasmtime_async(&self, async_: demo::WasmtimeAsync) {
-        use wit_bindgen_gen_wasmtime::Async;
+        use wasmer_wit_bindgen_gen_wasmtime::Async;
 
         self.wasmtime.borrow_mut().async_ = match async_ {
             demo::WasmtimeAsync::All => Async::All,
@@ -110,7 +110,7 @@ impl demo::Config for Config {
         self.wasmer.borrow_mut().custom_error = custom_error;
     }
     fn set_wasmer_async(&self, async_: demo::WasmtimeAsync) {
-        use wit_bindgen_gen_wasmer::Async;
+        use wasmer_wit_bindgen_gen_wasmer::Async;
 
         self.wasmer.borrow_mut().async_ = match async_ {
             demo::WasmtimeAsync::All => Async::All,

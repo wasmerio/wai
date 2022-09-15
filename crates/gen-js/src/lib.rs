@@ -2,10 +2,10 @@ use heck::*;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write;
 use std::mem;
-use wit_bindgen_gen_core::wit_parser::abi::{
+use wasmer_wit_bindgen_gen_core::wit_parser::abi::{
     AbiVariant, Bindgen, Bitcast, Instruction, LiftLower, WasmType,
 };
-use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator};
+use wasmer_wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator};
 
 #[derive(Default)]
 pub struct Js {
@@ -1198,7 +1198,7 @@ struct FunctionBindgen<'a> {
     gen: &'a mut Js,
     tmp: usize,
     src: Source,
-    block_storage: Vec<wit_bindgen_gen_core::Source>,
+    block_storage: Vec<wasmer_wit_bindgen_gen_core::Source>,
     blocks: Vec<(String, Vec<String>)>,
     in_import: bool,
     needs_memory: bool,
@@ -2640,8 +2640,8 @@ pub fn to_js_ident(name: &str) -> &str {
 
 #[derive(Default)]
 struct Source {
-    js: wit_bindgen_gen_core::Source,
-    ts: wit_bindgen_gen_core::Source,
+    js: wasmer_wit_bindgen_gen_core::Source,
+    ts: wasmer_wit_bindgen_gen_core::Source,
 }
 
 impl Source {

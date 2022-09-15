@@ -4,7 +4,7 @@ use wasmparser::{
     types, Chunk, ComponentExternalKind, Encoding, Parser, Payload, PrimitiveValType, Validator,
     WasmFeatures,
 };
-use wit_parser::*;
+use wasmer_wit_parser::*;
 
 /// Represents information about a decoded WebAssembly component.
 pub struct ComponentInfo<'a> {

@@ -4,7 +4,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime};
-use wit_bindgen_gen_core::{Direction, Generator};
+use wasmer_wit_bindgen_gen_core::{Direction, Generator};
 
 #[proc_macro]
 #[cfg(feature = "wit-bindgen-gen-rust-wasm")]
@@ -15,13 +15,13 @@ pub fn codegen_rust_wasm_import(input: TokenStream) -> TokenStream {
         &[
             (
                 "import",
-                || wit_bindgen_gen_rust_wasm::Opts::default().build(),
+                || wasmer_wit_bindgen_gen_rust_wasm::Opts::default().build(),
                 |_| quote::quote!(),
             ),
             (
                 "import-unchecked",
                 || {
-                    let mut opts = wit_bindgen_gen_rust_wasm::Opts::default();
+                    let mut opts = wasmer_wit_bindgen_gen_rust_wasm::Opts::default();
                     opts.unchecked = true;
                     opts.build()
                 },
@@ -36,7 +36,7 @@ pub fn codegen_rust_wasm_import(input: TokenStream) -> TokenStream {
 pub fn codegen_rust_wasm_export(input: TokenStream) -> TokenStream {
     use heck::*;
     use std::collections::BTreeMap;
-    use wit_parser::{FunctionKind, Type, TypeDefKind};
+    use wasmer_wit_parser::{FunctionKind, Type, TypeDefKind};
 
     return gen_rust(
         input,
@@ -44,13 +44,13 @@ pub fn codegen_rust_wasm_export(input: TokenStream) -> TokenStream {
         &[
             (
                 "export",
-                || wit_bindgen_gen_rust_wasm::Opts::default().build(),
+                || wasmer_wit_bindgen_gen_rust_wasm::Opts::default().build(),
                 gen_extra,
             ),
             (
                 "export-unchecked",
                 || {
-                    let mut opts = wit_bindgen_gen_rust_wasm::Opts::default();
+                    let mut opts = wasmer_wit_bindgen_gen_rust_wasm::Opts::default();
                     opts.unchecked = true;
                     opts.symbol_namespace = "unchecked".to_string();
                     opts.build()
@@ -165,7 +165,7 @@ pub fn codegen_rust_wasm_export(input: TokenStream) -> TokenStream {
     fn quote_id(
         param: bool,
         iface: &wit_parser::Interface,
-        id: wit_parser::TypeId,
+        id: wasmer_wit_parser::TypeId,
     ) -> proc_macro2::TokenStream {
         let ty = &iface.types[id];
         if let Some(name) = &ty.name {
@@ -431,7 +431,7 @@ where
     for test in tests {
         let (mut gen, dir) = mkgen(&test);
         let mut files = Default::default();
-        let iface = wit_parser::Interface::parse_file(&test).unwrap();
+        let iface = wasmer_wit_parser::Interface::parse_file(&test).unwrap();
         let (mut imports, mut exports) = match dir {
             Direction::Import => (vec![iface], vec![]),
             Direction::Export => (vec![], vec![iface]),

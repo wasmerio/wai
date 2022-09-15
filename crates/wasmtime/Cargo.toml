@@ -1,5 +1,5 @@
 [package]
-name = "wit-bindgen-wasmtime"
+name = "wasmer-wit-bindgen-wasmtime"
 version = "0.1.0"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
@@ -11,7 +11,7 @@ anyhow = "1.0"
 bitflags = "1.2"
 thiserror = "1.0"
 wasmtime = "0.38.0"
-wit-bindgen-wasmtime-impl = { path = "../wasmtime-impl", version = "0.1" }
+wasmer-wit-bindgen-wasmtime-impl = { path = "../wasmtime-impl", version = "0.1" }
 tracing-lib = { version = "0.1.26", optional = true, package = 'tracing' }
 async-trait = { version = "0.1.50", optional = true }
 
@@ -19,8 +19,8 @@ async-trait = { version = "0.1.50", optional = true }
 # Enables generated code to emit events via the `tracing` crate whenever wasm is
 # entered and when native functions are called. Note that tracing is currently
 # only done for imported functions.
-tracing = ['tracing-lib', 'wit-bindgen-wasmtime-impl/tracing']
+tracing = ['tracing-lib', 'wasmer-wit-bindgen-wasmtime-impl/tracing']
 
 # Enables async support for generated code, although when enabled this still
 # needs to be configured through the macro invocation.
-async = ['async-trait', 'wit-bindgen-wasmtime-impl/async']
+async = ['async-trait', 'wasmer-wit-bindgen-wasmtime-impl/async']

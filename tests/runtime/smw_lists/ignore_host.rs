@@ -1,5 +1,5 @@
 use anyhow::Context;
-use wit_bindgen_wasmtime::Le;
+use wasmer_wit_bindgen_wasmtime::Le;
 
 wit_bindgen_wasmtime::export!("../../tests/runtime/smw_lists/imports.wit");
 

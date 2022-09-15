@@ -1,4 +1,4 @@
-pub use wit_bindgen_wasmer_impl::{export, import};
+pub use wasmer_wit_bindgen_wasmer_impl::{export, import};
 
 #[cfg(feature = "async")]
 pub use async_trait::async_trait;

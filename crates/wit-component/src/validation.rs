@@ -5,7 +5,7 @@ use wasmparser::{
     types::Types, Encoding, ExternalKind, FuncType, Parser, Payload, TypeRef, ValType,
     ValidPayload, Validator,
 };
-use wit_parser::{
+use wasmer_wit_parser::{
     abi::{AbiVariant, WasmSignature, WasmType},
     Interface,
 };

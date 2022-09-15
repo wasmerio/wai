@@ -5,7 +5,7 @@
 use anyhow::{bail, Result};
 use std::str::FromStr;
 use wasm_encoder::CanonicalOption;
-use wit_parser::Interface;
+use wasmer_wit_parser::Interface;
 
 #[cfg(feature = "cli")]
 pub mod cli;

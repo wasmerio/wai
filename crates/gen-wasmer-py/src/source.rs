@@ -1,5 +1,5 @@
 use heck::*;
-use wit_bindgen_gen_core::wit_parser::*;
+use wasmer_wit_bindgen_gen_core::wit_parser::*;
 
 use crate::dependencies::Dependencies;
 
@@ -130,9 +130,9 @@ impl From<Source> for String {
 ///
 /// You can create a [SourceBuilder] easily using a [Source]
 /// ```
-/// # use wit_bindgen_gen_wasmer::dependencies::Dependencies;
-/// # use wit_bindgen_gen_core::wit_parser::{Interface, Type};
-/// # use wit_bindgen_gen_wasmer_py::source::Source;
+/// # use wasmer_wit_bindgen_gen_wasmer::dependencies::Dependencies;
+/// # use wasmer_wit_bindgen_gen_core::wit_parser::{Interface, Type};
+/// # use wasmer_wit_bindgen_gen_wasmer_py::source::Source;
 /// # let mut deps = Dependencies::default();
 /// # let mut interface = Interface::default();
 /// # let iface = &interface;

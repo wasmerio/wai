@@ -13,7 +13,7 @@ use std::ops::Range;
 use std::path::PathBuf;
 use std::{collections::HashMap, mem};
 use wasm_encoder::Instruction;
-use wit_bindgen_gen_core::{
+use wasmer_wit_bindgen_gen_core::{
     wit_parser::{
         abi::{self, AbiVariant, WasmSignature, WasmType},
         Docs, Enum, Expected, Flags, Function, Interface, Record, ResourceId, SizeAlign, Tuple,

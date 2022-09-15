@@ -3,7 +3,7 @@ use anyhow::Result;
 wit_bindgen_wasmer::export!("../../tests/runtime/lists/imports.wit");
 
 use imports::*;
-use wit_bindgen_wasmer::Le;
+use wasmer_wit_bindgen_wasmer::Le;
 
 #[derive(Clone)]
 pub struct MyImports;

@@ -3,9 +3,9 @@ use std::collections::{btree_map::Entry, BTreeMap, HashMap};
 use std::fmt::{self, Write};
 use std::ops::Deref;
 use std::path::Path;
-use wit_parser::*;
+use wasmer_wit_parser::*;
 
-pub use wit_parser;
+pub use wasmer_wit_parser as wit_parser;
 mod ns;
 
 pub use ns::Ns;

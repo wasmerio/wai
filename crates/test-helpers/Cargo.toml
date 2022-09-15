@@ -5,7 +5,7 @@ authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 publish = false
 license = "MIT"
-description = "wit-bindgen-gen-c"
+description = "wasmer-wit-bindgen-gen-c"
 
 [lib]
 proc-macro = true
@@ -18,22 +18,22 @@ heck = "0.3"
 ignore = "0.4"
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-wit-bindgen-gen-core = { path = '../gen-core' }
-wit-bindgen-gen-rust-wasm = { path = '../gen-rust-wasm', optional = true }
-wit-bindgen-gen-wasmtime = { path = '../gen-wasmtime', optional = true }
-wit-bindgen-gen-wasmtime-py = { path = '../gen-wasmtime-py', optional = true }
-wit-bindgen-gen-js = { path = '../gen-js', optional = true }
-wit-bindgen-gen-c = { path = '../gen-c', optional = true }
-wit-bindgen-gen-spidermonkey = { path = '../gen-spidermonkey', optional = true }
-wit-bindgen-gen-wasmer = { path = '../gen-wasmer', optional = true }
-wit-bindgen-gen-wasmer-py = { path = '../gen-wasmer-py', optional = true }
-wit-parser = { path = '../parser' }
+wasmer-wit-bindgen-gen-core = { version = "0.1.0", path = '../gen-core' }
+wasmer-wit-bindgen-gen-rust-wasm = { version = "0.1.0", path = '../gen-rust-wasm', optional = true }
+wasmer-wit-bindgen-gen-wasmtime = { version = "0.1.0", path = '../gen-wasmtime', optional = true }
+wasmer-wit-bindgen-gen-wasmtime-py = { version = "0.1.0", path = '../gen-wasmtime-py', optional = true }
+wasmer-wit-bindgen-gen-js = { version = "0.1.0", path = '../gen-js', optional = true }
+wasmer-wit-bindgen-gen-c = { version = "0.1.0", path = '../gen-c', optional = true }
+wasmer-wit-bindgen-gen-spidermonkey = { version = "0.1.0", path = '../gen-spidermonkey', optional = true }
+wasmer-wit-bindgen-gen-wasmer = { version = "0.1.0", path = '../gen-wasmer', optional = true }
+wasmer-wit-bindgen-gen-wasmer-py = { version = "0.1.0", path = '../gen-wasmer-py', optional = true }
+wasmer-wit-parser = { version = "0.1.0", path = '../parser' }
 filetime = "0.2"
 
 [build-dependencies]
-wit-bindgen-gen-c = { path = '../gen-c' }
-wit-bindgen-gen-spidermonkey = { path = '../gen-spidermonkey' }
-wit-bindgen-gen-core = { path = '../gen-core' }
+wasmer-wit-bindgen-gen-c = { version = "0.1.0", path = '../gen-c' }
+wasmer-wit-bindgen-gen-spidermonkey = { version = "0.1.0", path = '../gen-spidermonkey' }
+wasmer-wit-bindgen-gen-core = { version = "0.1.0", path = '../gen-core' }
 
 [features]
 default = ['wasm-rust', 'wasm-c', 'wasm-spidermonkey']

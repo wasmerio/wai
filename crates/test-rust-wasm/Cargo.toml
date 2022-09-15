@@ -9,7 +9,7 @@ description = "wit-bindgen-gen-c"
 
 [dependencies]
 futures-util = { version = "0.3.17", default-features = true }
-wit-bindgen-rust = { path = "../rust-wasm" }
+wasmer-wit-bindgen-rust = { version = "0.1.0", path = "../rust-wasm" }
 
 [features]
 unchecked = []

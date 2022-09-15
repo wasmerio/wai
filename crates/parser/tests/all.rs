@@ -17,7 +17,7 @@ use std::io;
 use std::path::{Path, PathBuf};
 use std::str;
 use std::sync::atomic::{AtomicUsize, Ordering::SeqCst};
-use wit_parser::*;
+use wasmer_wit_parser::*;
 
 fn main() {
     let tests = find_tests();
@@ -321,7 +321,7 @@ fn to_json(i: &Interface) -> String {
     }
 
     fn translate_type(ty: &wit_parser::Type) -> String {
-        use wit_parser::Type;
+        use wasmer_wit_parser::Type;
         match ty {
             Type::Unit => format!("unit"),
             Type::Bool => format!("bool"),
