@@ -1,6 +1,6 @@
 [package]
 name = "wasmer-wit-bindgen-gen-js"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -16,4 +16,4 @@ heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
 [dev-dependencies]
-test-helpers = { version = "0.1.0", path = '../test-helpers' }
+test-helpers = { version = "0.1.1", path = '../test-helpers' }

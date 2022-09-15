@@ -1,6 +1,6 @@
 [package]
 name = "wasmer-wit-bindgen-gen-rust"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -11,5 +11,5 @@ doctest = false
 test = false
 
 [dependencies]
-wasmer-wit-bindgen-gen-core = { version = "0.1.0", path = '../gen-core' }
+wasmer-wit-bindgen-gen-core = { version = "0.1.1", path = '../gen-core' }
 heck = "0.3"

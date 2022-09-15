@@ -1,6 +1,6 @@
 [package]
 name = "wasmer-wit-bindgen-gen-wasmer"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -18,8 +18,8 @@ structopt = { version = "0.3", default-features = false, optional = true }
 
 [dev-dependencies]
 anyhow = "1.0"
-test-helpers = { path = '../test-helpers', version = "0.1.0" }
-wasmer-wit-bindgen-wasmer = { version = "0.1.0", path = '../wasmer', features = ['tracing'] }
+test-helpers = { path = '../test-helpers', version = "0.1.1" }
+wasmer-wit-bindgen-wasmer = { version = "0.1.1", path = '../wasmer', features = ['tracing'] }
 
 [dev-dependencies.wasmer]
 git = "https://github.com/wasmerio/wasmer.git"

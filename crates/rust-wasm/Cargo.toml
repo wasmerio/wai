@@ -1,13 +1,13 @@
 [package]
 name = "wasmer-wit-bindgen-rust"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 license = "Apache-2.0"
 description = "wit-bindgen-gen-c"
 
 [dependencies]
-wasmer-wit-bindgen-rust-impl = { version = "0.1.0", path = "../rust-wasm-impl", optional = true }
+wasmer-wit-bindgen-rust-impl = { version = "0.1.1", path = "../rust-wasm-impl", optional = true }
 async-trait = { version = "0.1.51", optional = true }
 bitflags = "1.3"
 

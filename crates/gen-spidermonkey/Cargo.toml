@@ -1,6 +1,6 @@
 [package]
 name = "wasmer-wit-bindgen-gen-spidermonkey"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Nick Fitzgerald <fitzgen@gmail.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -14,9 +14,9 @@ doctest = false
 lazy_static = "1.4.0"
 structopt = { version = "0.3", optional = true }
 wasm-encoder = "0.8.0"
-wasmer-wit-bindgen-gen-core = { version = "0.1.0", path = "../gen-core" }
+wasmer-wit-bindgen-gen-core = { version = "0.1.1", path = "../gen-core" }
 heck = "0.3"
 
 [dev-dependencies]
-test-helpers = { version = "0.1.0", path = '../test-helpers', features = ['wasm-spidermonkey'] }
+test-helpers = { version = "0.1.1", path = '../test-helpers', features = ['wasm-spidermonkey'] }
 wasmparser = "0.80"

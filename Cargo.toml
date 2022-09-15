@@ -1,6 +1,6 @@
 [package]
 name = "wasmer-wit-bindgen-cli"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -21,16 +21,16 @@ test = false
 [dependencies]
 anyhow = "1.0"
 structopt = { version = "0.3", default-features = false }
-wasmer-wit-bindgen-gen-core = { version = "0.1.0", path = 'crates/gen-core' }
-wasmer-wit-bindgen-gen-rust-wasm = { version = "0.1.0", path = 'crates/gen-rust-wasm', features = ['structopt'] }
-wasmer-wit-bindgen-gen-wasmtime = { version = "0.1.0", path = 'crates/gen-wasmtime', features = ['structopt'] }
-wasmer-wit-bindgen-gen-wasmtime-py = { version = "0.1.0", path = 'crates/gen-wasmtime-py', features = ['structopt'] }
-wasmer-wit-bindgen-gen-js = { version = "0.1.0", path = 'crates/gen-js', features = ['structopt'] }
-wasmer-wit-bindgen-gen-c = { version = "0.1.0", path = 'crates/gen-c', features = ['structopt'] }
-wasmer-wit-bindgen-gen-markdown = { version = "0.1.0", path = 'crates/gen-markdown', features = ['structopt'] }
-wasmer-wit-bindgen-gen-spidermonkey = { version = "0.1.0", path = 'crates/gen-spidermonkey', features = ['structopt'] }
-wasmer-wit-bindgen-gen-wasmer = { version = "0.1.0", path = 'crates/gen-wasmer', features = ['structopt'] }
-wasmer-wit-bindgen-gen-wasmer-py = { version = "0.1.0", path = 'crates/gen-wasmer-py', features = ['structopt'] }
+wasmer-wit-bindgen-gen-core = { version = "0.1.1", path = 'crates/gen-core' }
+wasmer-wit-bindgen-gen-rust-wasm = { version = "0.1.1", path = 'crates/gen-rust-wasm', features = ['structopt'] }
+wasmer-wit-bindgen-gen-wasmtime = { version = "0.1.1", path = 'crates/gen-wasmtime', features = ['structopt'] }
+wasmer-wit-bindgen-gen-wasmtime-py = { version = "0.1.1", path = 'crates/gen-wasmtime-py', features = ['structopt'] }
+wasmer-wit-bindgen-gen-js = { version = "0.1.1", path = 'crates/gen-js', features = ['structopt'] }
+wasmer-wit-bindgen-gen-c = { version = "0.1.1", path = 'crates/gen-c', features = ['structopt'] }
+wasmer-wit-bindgen-gen-markdown = { version = "0.1.1", path = 'crates/gen-markdown', features = ['structopt'] }
+wasmer-wit-bindgen-gen-spidermonkey = { version = "0.1.1", path = 'crates/gen-spidermonkey', features = ['structopt'] }
+wasmer-wit-bindgen-gen-wasmer = { version = "0.1.1", path = 'crates/gen-wasmer', features = ['structopt'] }
+wasmer-wit-bindgen-gen-wasmer-py = { version = "0.1.1", path = 'crates/gen-wasmer-py', features = ['structopt'] }
 
 # Compiling `spidermonkey.wasm` takes way too long without this.
 [profile.dev.package.cranelift-codegen]
