@@ -2485,10 +2485,8 @@ version = "0.1.0"
 dependencies = [
  "heck 0.3.3",
  "structopt",
- "test-helpers",
  "wasmer-wit-bindgen-gen-core",
  "wasmer-wit-bindgen-gen-rust",
- "wasmer-wit-bindgen-rust",
 ]
 
 [[package]]

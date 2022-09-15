@@ -16,6 +16,6 @@ wasmer-wit-bindgen-gen-rust = { path = '../gen-rust', version = '0.1.0' }
 heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
-[dev-dependencies]
-wasmer-wit-bindgen-rust = { version = "0.1.0", path = '../rust-wasm' }
-wasmer-wit-bindgen-test-helpers = { version = "0.1.0", path = '../test-helpers', features = ['wasm-rust'] }
+# [dev-dependencies]
+# wasmer-wit-bindgen-rust = { version = "0.1.0", path = '../rust-wasm' }
+# wasmer-wit-bindgen-test-helpers = { version = "0.1.0", path = '../test-helpers', features = ['wasm-rust'] }

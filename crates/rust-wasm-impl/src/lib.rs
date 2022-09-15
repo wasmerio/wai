@@ -24,7 +24,7 @@ fn run(input: TokenStream, dir: Direction) -> TokenStream {
         Direction::Import => (input.interfaces, vec![]),
         Direction::Export => (vec![], input.interfaces),
     };
-    gen.generate_all(&imports, &exports, &mut files);
+    gen.generate_all(&imports, &exports, &mut files, true);
     let (_, contents) = files.iter().next().unwrap();
     let mut contents = std::str::from_utf8(contents).unwrap().to_string();
 
