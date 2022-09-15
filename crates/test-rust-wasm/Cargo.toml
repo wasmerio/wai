@@ -2,13 +2,8 @@
 name = "test-rust-wasm"
 version = "0.2.1"
 publish = false
-authors.workspace = true
-edition.workspace = true
-homepage.workspace = true
-license.workspace = true
-readme.workspace = true
-repository.workspace = true
-rust-version.workspace = true
+license = "MIT"
+description = "wit-bindgen-gen-c"
 
 [dependencies]
 futures-util = { version = "0.3.17", default-features = true }

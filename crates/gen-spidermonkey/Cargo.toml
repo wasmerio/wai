@@ -1,17 +1,10 @@
 [package]
-name = "wai-bindgen-gen-spidermonkey"
-description = "Generate WAI glue code for spidermonkey"
-authors = [
-    "Nick Fitzgerald <fitzgen@gmail.com>",
-    "Wasmer Engineering Team <engineering@wasmer.io>",
-]
-edition.workspace = true
-homepage.workspace = true
-license.workspace = true
-readme.workspace = true
-repository.workspace = true
-rust-version.workspace = true
-version.workspace = true
+name = "wit-bindgen-gen-spidermonkey"
+version = "0.1.0"
+authors = ["Nick Fitzgerald <fitzgen@gmail.com>"]
+edition = "2018"
+license = "MIT"
+description = "wit-bindgen-gen-c"
 
 [lib]
 test = false

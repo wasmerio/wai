@@ -1,14 +1,9 @@
 [package]
 name = "wai-component"
 authors = ["Peter Huene <peter@huene.dev>"]
-publish = false
-edition.workspace = true
-homepage.workspace = true
-license.workspace = true
-readme.workspace = true
-repository.workspace = true
-rust-version.workspace = true
-version.workspace = true
+edition = "2021"
+license = "MIT"
+description = "wit-bindgen-gen-c"
 
 [[bin]]
 name = "wai-component"

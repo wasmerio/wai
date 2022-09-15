@@ -1,14 +1,10 @@
 [package]
-name = "wai-bindgen-gen-wasmtime"
-description = "Generate WAI glue code for a Rust Wasmtime host"
-authors.workspace = true
-edition.workspace = true
-homepage.workspace = true
-license.workspace = true
-readme.workspace = true
-repository.workspace = true
-rust-version.workspace = true
-version.workspace = true
+name = "wit-bindgen-gen-wasmtime"
+version = "0.1.0"
+authors = ["Alex Crichton <alex@alexcrichton.com>"]
+edition = "2018"
+license = "MIT"
+description = "wit-bindgen-gen-c"
 
 [lib]
 test = false
