@@ -1,6 +1,6 @@
 [package]
-name = "wit-bindgen-gen-rust-wasm"
-version = "0.1.0"
+name = "wasmer-wit-bindgen-gen-rust-wasm"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 license = "MIT"
@@ -16,8 +16,6 @@ wai-bindgen-gen-rust = { path = "../gen-rust", version = "0.2.1" }
 heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
-[dev-dependencies]
-wai-bindgen-rust = { path = "../rust-wasm" }
-test-helpers = { path = "../test-helpers", features = [
-    "wai-bindgen-gen-rust-wasm",
-] }
+# [dev-dependencies]
+# wasmer-wit-bindgen-rust = { version = "0.1.1", path = '../rust-wasm' }
+# wasmer-wit-bindgen-test-helpers = { version = "0.1.1", path = '../test-helpers', features = ['wasm-rust'] }

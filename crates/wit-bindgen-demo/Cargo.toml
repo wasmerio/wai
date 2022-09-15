@@ -1,6 +1,6 @@
 [package]
-name = "wit-bindgen-demo"
-version = "0.1.0"
+name = "wasmer-wasmer-wit-bindgen-demo"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 publish = false
@@ -13,15 +13,15 @@ test = false
 doctest = false
 
 [dependencies]
-wit-bindgen-gen-core = { path = '../gen-core' }
-wit-bindgen-gen-rust-wasm = { path = '../gen-rust-wasm' }
-wit-bindgen-gen-wasmtime = { path = '../gen-wasmtime' }
-wit-bindgen-gen-wasmtime-py = { path = '../gen-wasmtime-py' }
-wit-bindgen-gen-js = { path = '../gen-js' }
-wit-bindgen-gen-c = { path = '../gen-c' }
-wit-bindgen-gen-markdown = { path = '../gen-markdown' }
-wit-bindgen-gen-spidermonkey = { path = '../gen-spidermonkey' }
-wit-bindgen-gen-wasmer = { path = '../gen-wasmer' }
-wit-bindgen-gen-wasmer-py = { path = '../gen-wasmer-py' }
-wit-bindgen-rust = { path = '../rust-wasm' }
+wasmer-wit-bindgen-gen-core = { version = "0.1.1", path = '../gen-core' }
+wasmer-wit-bindgen-gen-rust-wasm = { version = "0.1.1", path = '../gen-rust-wasm' }
+wasmer-wit-bindgen-gen-wasmtime = { version = "0.1.1", path = '../gen-wasmtime' }
+wasmer-wit-bindgen-gen-wasmtime-py = { version = "0.1.1", path = '../gen-wasmtime-py' }
+wasmer-wit-bindgen-gen-js = { version = "0.1.1", path = '../gen-js' }
+wasmer-wit-bindgen-gen-c = { version = "0.1.1", path = '../gen-c' }
+wasmer-wit-bindgen-gen-markdown = { version = "0.1.1", path = '../gen-markdown' }
+wasmer-wit-bindgen-gen-spidermonkey = { version = "0.1.1", path = '../gen-spidermonkey' }
+wasmer-wit-bindgen-gen-wasmer = { version = "0.1.1", path = '../gen-wasmer' }
+wasmer-wit-bindgen-gen-wasmer-py = { version = "0.1.1", path = '../gen-wasmer-py' }
+wasmer-wit-bindgen-rust = { version = "0.1.1", path = '../rust-wasm' }
 wasmprinter = "0.2.29"

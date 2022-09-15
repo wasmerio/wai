@@ -1,13 +1,13 @@
 [package]
-name = "wit-bindgen-rust"
-version = "0.1.0"
+name = "wasmer-wit-bindgen-rust"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
 license = "MIT"
 description = "wit-bindgen-gen-c"
 
 [dependencies]
-wai-bindgen-rust-impl = { path = "../rust-wasm-impl", version = "0.2.1", optional = true }
+wasmer-wit-bindgen-rust-impl = { version = "0.1.1", path = "../rust-wasm-impl", optional = true }
 async-trait = { version = "0.1.51", optional = true }
 bitflags = "1.3"
 
