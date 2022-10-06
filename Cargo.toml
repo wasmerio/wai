@@ -1,8 +1,9 @@
 [package]
 name = "wit-bindgen-cli"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
+description = "A language bindings generator for wit."
 
 [workspace]
 members = [
@@ -34,3 +35,7 @@ wit-bindgen-gen-wasmer-py = { path = 'crates/gen-wasmer-py', features = ['struct
 [profile.dev.package.cranelift-codegen]
 debug-assertions = false
 opt-level = 2
+
+[package.metadata.wapm]
+namespace = "wasmer"
+abi = "wasi"
