@@ -14,9 +14,9 @@ doctest = false
 test = false
 
 [dependencies]
-wai-bindgen-gen-core = { path = '../gen-core', version = '0.1.0' }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.1.1" }
 heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
 [dev-dependencies]
-test-helpers = { path = '../test-helpers', features = ['wai-bindgen-gen-c'] }
+test-helpers = { path = "../test-helpers", version = "0.0.0", features = ["wai-bindgen-gen-c"] }

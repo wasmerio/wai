@@ -1,5 +1,6 @@
 [package]
 name = "test-rust-wasm"
+version = "0.0.0"
 publish = false
 authors.workspace = true
 edition.workspace = true
@@ -8,11 +9,10 @@ license.workspace = true
 readme.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [dependencies]
 futures-util = { version = "0.3.17", default-features = true }
-wai-bindgen-rust = { path = "../rust-wasm" }
+wai-bindgen-rust = { path = "../rust-wasm", version = "0.1.1" }
 
 [features]
 unchecked = []

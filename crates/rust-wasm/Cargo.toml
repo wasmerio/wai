@@ -10,7 +10,7 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
-wai-bindgen-rust-impl = { path = "../rust-wasm-impl", optional = true }
+wai-bindgen-rust-impl = { path = "../rust-wasm-impl", version = "0.1.1", optional = true }
 async-trait = { version = "0.1.51", optional = true }
 bitflags = "1.3"
 

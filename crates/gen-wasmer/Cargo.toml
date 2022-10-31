@@ -14,17 +14,19 @@ test = false
 doctest = false
 
 [dependencies]
-wai-bindgen-gen-core = { path = '../gen-core', version = '0.1.0' }
-wai-bindgen-gen-rust = { path = '../gen-rust', version = '0.1.0' }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.1.1" }
+wai-bindgen-gen-rust = { path = "../gen-rust", version = "0.1.1" }
 heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
 [dev-dependencies]
 anyhow = "1.0"
-test-helpers = { path = '../test-helpers', features = [
-    'wai-bindgen-gen-wasmer',
+test-helpers = { path = "../test-helpers", version = "0.0.0", features = [
+    "wai-bindgen-gen-wasmer",
 ] }
-wai-bindgen-wasmer = { path = '../wasmer', features = ['tracing'] }
+wai-bindgen-wasmer = { path = "../wasmer", version = "0.1.1", features = [
+    "tracing",
+] }
 
 [dev-dependencies.wasmer]
 git = "https://github.com/wasmerio/wasmer.git"
