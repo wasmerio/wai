@@ -15,5 +15,5 @@ doctest = false
 test = false
 
 [dependencies]
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.1.1" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0-rc.1" }
 heck = "0.3"

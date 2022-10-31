@@ -18,8 +18,8 @@ test = false
 [dependencies]
 proc-macro2 = "1.0"
 syn = "1.0"
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.1.1" }
-wai-bindgen-gen-wasmtime = { path = "../gen-wasmtime", version = "0.1.1" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0-rc.1" }
+wai-bindgen-gen-wasmtime = { path = "../gen-wasmtime", version = "0.2.0-rc.1" }
 
 [features]
 tracing = []

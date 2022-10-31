@@ -14,5 +14,5 @@ version.workspace = true
 doctest = false
 
 [dependencies]
-wai-parser = { path = "../parser", version = "0.1.1" }
+wai-parser = { path = "../parser", version = "0.2.0-rc.1" }
 anyhow = "1"

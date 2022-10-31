@@ -11,15 +11,15 @@ test = false
 doctest = false
 
 [dependencies]
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.1.1" }
-wai-bindgen-gen-rust-wasm = { path = "../gen-rust-wasm", version = "0.1.1" }
-wai-bindgen-gen-wasmtime = { path = "../gen-wasmtime", version = "0.1.1" }
-wai-bindgen-gen-wasmtime-py = { path = "../gen-wasmtime-py", version = "0.1.1" }
-wai-bindgen-gen-js = { path = "../gen-js", version = "0.1.1" }
-wai-bindgen-gen-c = { path = "../gen-c", version = "0.1.1" }
-wai-bindgen-gen-markdown = { path = "../gen-markdown", version = "0.1.1" }
-wai-bindgen-gen-spidermonkey = { path = "../gen-spidermonkey", version = "0.1.1" }
-wai-bindgen-gen-wasmer = { path = "../gen-wasmer", version = "0.1.1" }
-wai-bindgen-gen-wasmer-py = { path = "../gen-wasmer-py", version = "0.1.1" }
-wai-bindgen-rust = { path = "../rust-wasm", version = "0.1.1" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0-rc.1" }
+wai-bindgen-gen-rust-wasm = { path = "../gen-rust-wasm", version = "0.2.0-rc.1" }
+wai-bindgen-gen-wasmtime = { path = "../gen-wasmtime", version = "0.2.0-rc.1" }
+wai-bindgen-gen-wasmtime-py = { path = "../gen-wasmtime-py", version = "0.2.0-rc.1" }
+wai-bindgen-gen-js = { path = "../gen-js", version = "0.2.0-rc.1" }
+wai-bindgen-gen-c = { path = "../gen-c", version = "0.2.0-rc.1" }
+wai-bindgen-gen-markdown = { path = "../gen-markdown", version = "0.2.0-rc.1" }
+wai-bindgen-gen-spidermonkey = { path = "../gen-spidermonkey", version = "0.2.0-rc.1" }
+wai-bindgen-gen-wasmer = { path = "../gen-wasmer", version = "0.2.0-rc.1" }
+wai-bindgen-gen-wasmer-py = { path = "../gen-wasmer-py", version = "0.2.0-rc.1" }
+wai-bindgen-rust = { path = "../rust-wasm", version = "0.2.0-rc.1" }
 wasmprinter = "0.2.29"

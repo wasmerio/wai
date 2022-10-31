@@ -15,13 +15,13 @@ test = false
 doctest = false
 
 [dependencies]
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.1.1" }
-wai-bindgen-gen-rust = { path = "../gen-rust", version = "0.1.1" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0-rc.1" }
+wai-bindgen-gen-rust = { path = "../gen-rust", version = "0.2.0-rc.1" }
 heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
 [dev-dependencies]
-wai-bindgen-rust = { path = "../rust-wasm", version = "0.1.1" }
+wai-bindgen-rust = { path = "../rust-wasm", version = "0.2.0-rc.1" }
 test-helpers = { path = "../test-helpers", version = "0.0.0", features = [
     "wai-bindgen-gen-rust-wasm",
 ] }
