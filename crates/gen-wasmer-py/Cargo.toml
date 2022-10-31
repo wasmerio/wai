@@ -20,6 +20,6 @@ heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
 [dev-dependencies]
-test-helpers = { path = "../test-helpers", version = "0.0.0", features = [
+test-helpers = { path = "../test-helpers", features = [
     "wai-bindgen-gen-wasmer-py",
 ] }

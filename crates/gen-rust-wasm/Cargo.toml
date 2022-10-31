@@ -21,7 +21,7 @@ heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
 [dev-dependencies]
-wai-bindgen-rust = { path = "../rust-wasm", version = "0.2.0-rc.1" }
-test-helpers = { path = "../test-helpers", version = "0.0.0", features = [
+wai-bindgen-rust = { path = "../rust-wasm" }
+test-helpers = { path = "../test-helpers", features = [
     "wai-bindgen-gen-rust-wasm",
 ] }

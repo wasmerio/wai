@@ -1,7 +1,10 @@
 [package]
 name = "wai-bindgen-gen-spidermonkey"
-authors = ["Nick Fitzgerald <fitzgen@gmail.com>"]
-publish = false
+description = "Generate WAI glue code for spidermonkey"
+authors = [
+    "Nick Fitzgerald <fitzgen@gmail.com>",
+    "Wasmer Engineering Team <engineering@wasmer.io>",
+]
 edition.workspace = true
 homepage.workspace = true
 license.workspace = true
@@ -22,7 +25,7 @@ wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0-rc.1" }
 heck = "0.3"
 
 [dev-dependencies]
-test-helpers = { path = "../test-helpers", version = "0.0.0", features = [
+test-helpers = { path = "../test-helpers", features = [
     "wai-bindgen-gen-spidermonkey",
 ] }
 wasmparser = "0.80"
