@@ -1,10 +1,10 @@
 use anyhow::{anyhow, bail, Context, Result};
 use indexmap::IndexMap;
+use wai_parser::*;
 use wasmparser::{
     types, Chunk, ComponentExternalKind, Encoding, Parser, Payload, PrimitiveValType, Validator,
     WasmFeatures,
 };
-use wit_parser::*;
 
 /// Represents information about a decoded WebAssembly component.
 pub struct ComponentInfo<'a> {

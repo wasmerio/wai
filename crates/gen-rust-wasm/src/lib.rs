@@ -3,11 +3,11 @@ use std::collections::BTreeMap;
 use std::io::{Read, Write};
 use std::mem;
 use std::process::{Command, Stdio};
-use wit_bindgen_gen_core::wit_parser::abi::{
+use wai_bindgen_gen_core::wai_parser::abi::{
     AbiVariant, Bindgen, Instruction, LiftLower, WasmType,
 };
-use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator, Source, TypeInfo, Types};
-use wit_bindgen_gen_rust::{
+use wai_bindgen_gen_core::{wai_parser::*, Direction, Files, Generator, Source, TypeInfo, Types};
+use wai_bindgen_gen_rust::{
     int_repr, wasm_type, FnSig, RustFlagsRepr, RustFunctionGenerator, RustGenerator, TypeMode,
 };
 
@@ -572,7 +572,7 @@ impl Generator for RustWasm {
             // Force the macro code to reference wit_bindgen_rust for standalone crates.
             // Also ensure any referenced types are also used from the external crate.
             self.src
-                .push_str("#[allow(unused_imports)]\nuse wit_bindgen_rust;\nuse ");
+                .push_str("#[allow(unused_imports)]\nuse wai_bindgen_rust;\nuse ");
             self.src.push_str(&iface_name);
             self.src.push_str("::*;\n");
         }

@@ -4,11 +4,11 @@ use std::io::{Read, Write};
 use std::mem;
 use std::process::{Command, Stdio};
 use std::str::FromStr;
-use wit_bindgen_gen_core::wit_parser::abi::{
+use wai_bindgen_gen_core::wai_parser::abi::{
     AbiVariant, Bindgen, Instruction, LiftLower, WasmType,
 };
-use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator, Source, TypeInfo, Types};
-use wit_bindgen_gen_rust::{
+use wai_bindgen_gen_core::{wai_parser::*, Direction, Files, Generator, Source, TypeInfo, Types};
+use wai_bindgen_gen_rust::{
     to_rust_ident, wasm_type, FnSig, RustFlagsRepr, RustFunctionGenerator, RustGenerator, TypeMode,
 };
 
@@ -169,7 +169,7 @@ impl Wasmer {
 
     fn print_intrinsics(&mut self) {
         if self.needs_lazy_initialized || !self.exported_resources.is_empty() {
-            self.push_str("use wit_bindgen_wasmer::once_cell::unsync::OnceCell;\n");
+            self.push_str("use wai_bindgen_wasmer::once_cell::unsync::OnceCell;\n");
         }
 
         self.push_str("#[allow(unused_imports)]\n");
@@ -177,26 +177,26 @@ impl Wasmer {
         self.push_str("#[allow(unused_imports)]\n");
         self.push_str("use wasmer::AsStoreRef as _;\n");
         if self.needs_raw_mem {
-            self.push_str("use wit_bindgen_wasmer::rt::RawMem;\n");
+            self.push_str("use wai_bindgen_wasmer::rt::RawMem;\n");
         }
         if self.needs_char_from_i32 {
-            self.push_str("use wit_bindgen_wasmer::rt::char_from_i32;\n");
+            self.push_str("use wai_bindgen_wasmer::rt::char_from_i32;\n");
         }
         if self.needs_invalid_variant {
-            self.push_str("use wit_bindgen_wasmer::rt::invalid_variant;\n");
+            self.push_str("use wai_bindgen_wasmer::rt::invalid_variant;\n");
         }
         if self.needs_bad_int {
             self.push_str("use core::convert::TryFrom;\n");
-            self.push_str("use wit_bindgen_wasmer::rt::bad_int;\n");
+            self.push_str("use wai_bindgen_wasmer::rt::bad_int;\n");
         }
         if self.needs_validate_flags {
-            self.push_str("use wit_bindgen_wasmer::rt::validate_flags;\n");
+            self.push_str("use wai_bindgen_wasmer::rt::validate_flags;\n");
         }
         if self.needs_le {
-            self.push_str("use wit_bindgen_wasmer::Le;\n");
+            self.push_str("use wai_bindgen_wasmer::Le;\n");
         }
         if self.needs_copy_slice {
-            self.push_str("use wit_bindgen_wasmer::rt::copy_slice;\n");
+            self.push_str("use wai_bindgen_wasmer::rt::copy_slice;\n");
         }
     }
 
@@ -324,7 +324,7 @@ impl Generator for Wasmer {
             iface.name.to_snake_case()
         ));
         self.src
-            .push_str("#[allow(unused_imports)]\nuse wit_bindgen_wasmer::{anyhow, wasmer};\n");
+            .push_str("#[allow(unused_imports)]\nuse wai_bindgen_wasmer::{anyhow, wasmer};\n");
         self.sizes.fill(iface);
     }
 

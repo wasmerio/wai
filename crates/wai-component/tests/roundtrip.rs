@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
 use pretty_assertions::assert_eq;
 use std::fs;
-use wit_component::{decode_interface_component, InterfaceEncoder, InterfacePrinter};
-use wit_parser::Interface;
+use wai_component::{decode_interface_component, InterfaceEncoder, InterfacePrinter};
+use wai_parser::Interface;
 
 /// Tests the the roundtrip encoding of individual interface files.
 ///

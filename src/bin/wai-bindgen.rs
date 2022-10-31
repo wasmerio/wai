@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
 use std::path::PathBuf;
 use structopt::StructOpt;
-use wit_bindgen_gen_core::{wit_parser, Files, Generator};
-use wit_parser::Interface;
+use wai_bindgen_gen_core::{wai_parser, Files, Generator};
+use wai_parser::Interface;
 
 #[derive(Debug, StructOpt)]
 struct Opt {

@@ -9,7 +9,7 @@ use crate::{
 use anyhow::{bail, Context, Result};
 use clap::Parser;
 use std::path::{Path, PathBuf};
-use wit_parser::Interface;
+use wai_parser::Interface;
 
 fn parse_named_interface(s: &str) -> Result<Interface> {
     let (name, path) = s

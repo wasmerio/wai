@@ -12,15 +12,15 @@ use std::convert::TryFrom;
 use std::ops::Range;
 use std::path::PathBuf;
 use std::{collections::HashMap, mem};
-use wasm_encoder::Instruction;
-use wit_bindgen_gen_core::{
-    wit_parser::{
+use wai_bindgen_gen_core::{
+    wai_parser::{
         abi::{self, AbiVariant, WasmSignature, WasmType},
         Docs, Enum, Expected, Flags, Function, Interface, Record, ResourceId, SizeAlign, Tuple,
         Type, TypeId, Union, Variant,
     },
     Direction, Files, Generator,
 };
+use wasm_encoder::Instruction;
 
 #[allow(missing_docs)]
 #[derive(Default, Debug, Clone)]

@@ -8,13 +8,13 @@ use std::{
     hash::{Hash, Hasher},
     ops::{BitOr, BitOrAssign},
 };
-use wasm_encoder::*;
-use wasmparser::{Validator, WasmFeatures};
-use wit_parser::{
+use wai_parser::{
     abi::{AbiVariant, WasmSignature, WasmType},
     Enum, Expected, Flags, Function, FunctionKind, Interface, Record, Tuple, Type, TypeDef,
     TypeDefKind, Union, Variant,
 };
+use wasm_encoder::*;
+use wasmparser::{Validator, WasmFeatures};
 
 const INDIRECT_TABLE_NAME: &str = "$imports";
 

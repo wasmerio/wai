@@ -1,12 +1,12 @@
 [package]
-name = "wit-component"
+name = "wai-component"
 version = "0.1.0"
 authors = ["Peter Huene <peter@huene.dev>"]
 edition = "2021"
 
 [[bin]]
-name = "wit-component"
-path = "src/bin/wit-component.rs"
+name = "wai-component"
+path = "src/bin/wai-component.rs"
 required-features = ["cli"]
 
 [[bin]]
@@ -23,7 +23,7 @@ required-features = ["cli"]
 wasmparser = "0.86.0"
 wasm-encoder = "0.13.0"
 wat = "1.0.44"
-wit-parser = { path = "../parser" }
+wai-parser = { path = "../parser" }
 anyhow = "1.0.55"
 indexmap = "1.8.0"
 clap = { version = "3.1.0", features = ["derive"], optional = true }

@@ -1,5 +1,5 @@
 [package]
-name = "wit-bindgen-gen-core"
+name = "wai-bindgen-gen-core"
 version = "0.1.0"
 authors = ["Alex Crichton <alex@alexcrichton.com>"]
 edition = "2018"
@@ -8,5 +8,5 @@ edition = "2018"
 doctest = false
 
 [dependencies]
-wit-parser = { path = '../parser' }
+wai-parser = { path = '../parser' }
 anyhow = "1"

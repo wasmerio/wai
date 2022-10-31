@@ -1,11 +1,11 @@
 use anyhow::{bail, Context, Result};
 use pretty_assertions::assert_eq;
 use std::{fs, path::Path};
-use wit_component::ComponentEncoder;
-use wit_parser::Interface;
+use wai_component::ComponentEncoder;
+use wai_parser::Interface;
 
 fn read_interface(path: &Path) -> Result<Interface> {
-    wit_parser::Interface::parse_file(&path)
+    wai_parser::Interface::parse_file(&path)
         .with_context(|| format!("failed to parse interface file `{}`", path.display()))
 }
 

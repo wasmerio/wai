@@ -2,10 +2,10 @@ use heck::*;
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fmt::Write;
 use std::mem;
-use wit_bindgen_gen_core::wit_parser::abi::{
+use wai_bindgen_gen_core::wai_parser::abi::{
     AbiVariant, Bindgen, Bitcast, Instruction, LiftLower, WasmType,
 };
-use wit_bindgen_gen_core::{uwrite, uwriteln, wit_parser::*, Direction, Files, Generator, Ns};
+use wai_bindgen_gen_core::{uwrite, uwriteln, wai_parser::*, Direction, Files, Generator, Ns};
 
 #[derive(Default)]
 pub struct C {

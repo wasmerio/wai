@@ -2,7 +2,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use wit_bindgen_gen_core::Generator;
+use wai_bindgen_gen_core::Generator;
 
 test_helpers::runtime_tests!("ts");
 
@@ -17,8 +17,8 @@ fn execute(name: &str, wasm: &Path, ts: &Path, imports: &Path, exports: &Path) {
     // We call `generate_all` with exports from the imports.wit file, and
     // imports from the exports.wit wit file. It's reversed because we're
     // implementing the host side of these APIs.
-    let imports = wit_bindgen_gen_core::wit_parser::Interface::parse_file(imports).unwrap();
-    let exports = wit_bindgen_gen_core::wit_parser::Interface::parse_file(exports).unwrap();
+    let imports = wit_bindgen_gen_core::wai_parser::Interface::parse_file(imports).unwrap();
+    let exports = wit_bindgen_gen_core::wai_parser::Interface::parse_file(exports).unwrap();
     let mut files = Default::default();
     wit_bindgen_gen_js::Opts::default()
         .build()

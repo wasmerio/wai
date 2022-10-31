@@ -2,10 +2,10 @@ use heck::*;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write;
 use std::mem;
-use wit_bindgen_gen_core::wit_parser::abi::{
+use wai_bindgen_gen_core::wai_parser::abi::{
     AbiVariant, Bindgen, Bitcast, Instruction, LiftLower, WasmType,
 };
-use wit_bindgen_gen_core::{wit_parser::*, Direction, Files, Generator};
+use wai_bindgen_gen_core::{wai_parser::*, Direction, Files, Generator};
 
 #[derive(Default)]
 pub struct Js {

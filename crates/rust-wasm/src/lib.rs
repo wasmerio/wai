@@ -4,7 +4,7 @@ use std::mem;
 use std::ops::Deref;
 
 #[cfg(feature = "macros")]
-pub use wit_bindgen_rust_impl::{export, import};
+pub use wai_bindgen_rust_impl::{export, import};
 
 #[cfg(feature = "async")]
 pub use async_trait::async_trait;

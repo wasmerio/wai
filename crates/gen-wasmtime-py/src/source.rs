@@ -1,5 +1,5 @@
 use heck::*;
-use wit_bindgen_gen_core::wit_parser::*;
+use wai_bindgen_gen_core::wai_parser::*;
 
 use crate::dependencies::Dependencies;
 
@@ -130,9 +130,9 @@ impl From<Source> for String {
 ///
 /// You can create a [SourceBuilder] easily using a [Source]
 /// ```
-/// # use wit_bindgen_gen_wasmtime_py::dependencies::Dependencies;
-/// # use wit_bindgen_gen_core::wit_parser::{Interface, Type};
-/// # use wit_bindgen_gen_wasmtime_py::source::Source;
+/// # use wai_bindgen_gen_wasmtime_py::dependencies::Dependencies;
+/// # use wai_bindgen_gen_core::wai_parser::{Interface, Type};
+/// # use wai_bindgen_gen_wasmtime_py::source::Source;
 /// # let mut deps = Dependencies::default();
 /// # let mut interface = Interface::default();
 /// # let iface = &interface;
@@ -335,11 +335,11 @@ impl<'s, 'd, 'i> SourceBuilder<'s, 'd, 'i> {
     /// @dataclass
     /// class Foo0:
     ///     value: int
-    ///  
+    ///
     /// @dataclass
     /// class Foo1:
     ///     value: int
-    ///  
+    ///
     /// Foo = Union[Foo0, Foo1]
     /// ```
     pub fn print_union_wrapped(&mut self, name: &str, union: &Union, docs: &Docs) {

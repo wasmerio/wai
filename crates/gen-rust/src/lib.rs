@@ -2,8 +2,8 @@ use heck::*;
 use std::collections::HashMap;
 use std::fmt::{self, Write};
 use std::iter::zip;
-use wit_bindgen_gen_core::wit_parser::abi::{Bitcast, LiftLower, WasmType};
-use wit_bindgen_gen_core::{wit_parser::*, TypeInfo, Types};
+use wai_bindgen_gen_core::wai_parser::abi::{Bitcast, LiftLower, WasmType};
+use wai_bindgen_gen_core::{wai_parser::*, TypeInfo, Types};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum TypeMode {

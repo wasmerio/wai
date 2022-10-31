@@ -4,8 +4,8 @@
 
 use anyhow::{bail, Result};
 use std::str::FromStr;
+use wai_parser::Interface;
 use wasm_encoder::CanonicalOption;
-use wit_parser::Interface;
 
 #[cfg(feature = "cli")]
 pub mod cli;

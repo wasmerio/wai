@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
 use pretty_assertions::assert_eq;
 use std::fs;
-use wit_component::InterfaceEncoder;
-use wit_parser::Interface;
+use wai_component::InterfaceEncoder;
+use wai_parser::Interface;
 
 /// Tests the encoding of individual interface files.
 ///

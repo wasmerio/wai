@@ -1,13 +1,13 @@
 use anyhow::{anyhow, bail, Result};
 use indexmap::{map::Entry, IndexMap, IndexSet};
 use std::borrow::Cow;
+use wai_parser::{
+    abi::{AbiVariant, WasmSignature, WasmType},
+    Interface,
+};
 use wasmparser::{
     types::Types, Encoding, ExternalKind, FuncType, Parser, Payload, TypeRef, ValType,
     ValidPayload, Validator,
-};
-use wit_parser::{
-    abi::{AbiVariant, WasmSignature, WasmType},
-    Interface,
 };
 
 fn is_wasi(name: &str) -> bool {

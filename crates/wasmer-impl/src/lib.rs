@@ -4,8 +4,8 @@ use proc_macro::TokenStream;
 use syn::parse::{Error, Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
 use syn::{token, Token};
-use wit_bindgen_gen_core::{wit_parser::Interface, Direction, Files, Generator};
-use wit_bindgen_gen_wasmer::Async;
+use wai_bindgen_gen_core::{wai_parser::Interface, Direction, Files, Generator};
+use wai_bindgen_gen_wasmer::Async;
 
 /// Generate code to support consuming the given interfaces, importaing them
 /// from wasm modules.

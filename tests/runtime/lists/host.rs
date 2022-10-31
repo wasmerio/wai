@@ -3,7 +3,7 @@ use anyhow::Result;
 wit_bindgen_wasmtime::export!("../../tests/runtime/lists/imports.wit");
 
 use imports::*;
-use wit_bindgen_wasmtime::Le;
+use wai_bindgen_wasmtime::Le;
 
 #[derive(Default)]
 pub struct MyImports;

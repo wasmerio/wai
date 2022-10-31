@@ -3,7 +3,7 @@ use anyhow::Result;
 wit_bindgen_wasmer::export!("../../tests/runtime/lists/imports.wit");
 
 use imports::*;
-use wit_bindgen_wasmer::Le;
+use wai_bindgen_wasmer::Le;
 
 #[derive(Clone)]
 pub struct MyImports;
@@ -137,19 +137,9 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         &mut store,
-        |store, imports| {
-            imports::add_to_imports(
-                store,
-                imports,
-                MyImports,
-            )
-        },
+        |store, imports| imports::add_to_imports(store, imports, MyImports),
         |store, module, imports| {
-            Exports::instantiate(
-                &mut store.as_store_mut().as_store_mut(),
-                &module,
-                imports,
-            )
+            Exports::instantiate(&mut store.as_store_mut().as_store_mut(), &module, imports)
         },
     )?;
 

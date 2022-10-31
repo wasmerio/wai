@@ -4,7 +4,7 @@ wit_bindgen_rust::export!("../../tests/runtime/handles/exports.wit");
 use exports::*;
 use std::cell::RefCell;
 use std::sync::atomic::{AtomicU32, Ordering::SeqCst};
-use wit_bindgen_rust::Handle;
+use wai_bindgen_rust::Handle;
 
 struct Exports;
 
