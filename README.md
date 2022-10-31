@@ -12,7 +12,7 @@
   </strong>
 
   <p>
-    <a href="https://github.com/bytecodealliance/wit-bindgen/actions?query=workflow%3ACI"><img src="https://github.com/bytecodealliance/wit-bindgen/workflows/CI/badge.svg" alt="build status" /></a>
+    <a href="https://github.com/wasmerio/wit-bindgen/actions?query=workflow%3ACI"><img src="https://github.com/wasmerio/wit-bindgen/workflows/CI/badge.svg" alt="build status" /></a>
     <img src="https://img.shields.io/badge/rustc-stable+-green.svg" alt="supported rustc stable" />
   </p>
 </div>
@@ -48,7 +48,7 @@ This project is based on the [interface types
 proposal](https://github.com/webassembly/interface-types) and the [canonical
 ABI](https://github.com/WebAssembly/interface-types/pull/132), both of which are
 at the time of this writing a work in progress. This repository will be
-following upstream changes. The purpose of `wit-bindgen` is to provide a
+following upstream changes. The purpose of `wai-bindgen` is to provide a
 forwards-compatible toolchain and story for interface types and a canonical ABI.
 Generated language bindings all use the canonical ABI for communication,
 enabling WebAssembly modules to be written in any language with support and for
@@ -69,13 +69,13 @@ At this time a CLI tool is provided mostly for debugging and exploratory
 purposes. It can be installed with:
 
 ```
-cargo install --git https://github.com/bytecodealliance/wit-bindgen wit-bindgen-cli
+cargo install --git https://github.com/wasmerio/wit-bindgen wai-bindgen-cli
 ```
 
 This tool is not necessarily intended to be integrated into toolchains. For
 example usage in Rust would more likely be done through procedural macros and
 Cargo dependencies. Usage in a Web application would probably use a version of
-`wit-bindgen` compiled to WebAssembly and published to NPM.
+`wai-bindgen` compiled to WebAssembly and published to NPM.
 
 For now, though, you can explore what bindings look like in each language
 through the CLI. Again if you'd like to depend on this if you wouldn't mind
@@ -90,12 +90,12 @@ which uses interface types. This means that these languages support
 
 * `rust-wasm` - this is for Rust compiled to WebAssembly, typically using either
   the `wasm32-wasi` or `wasm32-unknown-unknown` targets depending on your use
-  case. In this mode you'd probably depend on the `wit-bindgen-rust` crate
+  case. In this mode you'd probably depend on the `wai-bindgen-rust` crate
   (located at `crates/rust-wasm`) and use the `import!` and `export!` macros to
   generate code.
 
 * `c` - this is for C compiled to WebAssembly, using either of the targets above
-  for Rust as well. With C the `wit-bindgen` CLI tool will emit a `*.h` and a
+  for Rust as well. With C the `wai-bindgen` CLI tool will emit a `*.h` and a
   `*.c` file to be compiled into the wasm module.
 
 This repository also supports a number of host languages/runtimes which can be
@@ -103,18 +103,18 @@ used to consume WebAssembly modules that use interface types. These modules need
 to follow the canonical ABI for their exports/imports:
 
 * `wasmtime` - this is for Rust users using the `wasmtime` crate. This generator
-  is used through the `wit-bindgen-wasmtime` crate (located at
+  is used through the `wai-bindgen-wasmtime` crate (located at
   `crates/wasmtime`) and, like the compiled-to-wasm Rust support, has an
   `import!` and an `export!` macro for generating code.
 
 * `js` - this is for JavaScript users executing WebAssembly modules. This could
   be in a browsers, Node.js, or Deno. In theory this covers browser use cases
-  like web workers and such as well. In this mode the `wit-bindgen` CLI tool
+  like web workers and such as well. In this mode the `wai-bindgen` CLI tool
   will emit a `*.js` and a `*.d.ts` file describing the interface and providing
   necessary runtime support in JS to implement the canonical ABI. Note that the
-  intended long-term integration of this language is to compile `wit-bindgen`
+  intended long-term integration of this language is to compile `wai-bindgen`
   itself to WebAssembly and publish NPM packages for popular JS build systems to
-  integrate `wit-bindgen` into JS build processes.
+  integrate `wai-bindgen` into JS build processes.
 
 * `wasmtime-py` - this is for Python users using the `wasmtime` PyPI package.
   This uses Wasmtime under the hood but you get to write Python in providing
@@ -122,20 +122,20 @@ to follow the canonical ABI for their exports/imports:
   generates a `*.py` file which is annotated with types for usage in `mypy` or
   other type-checkers.
 
-All generators support the `--import` and `--export` flags in the `wit-bindgen`
+All generators support the `--import` and `--export` flags in the `wai-bindgen`
 CLI tool:
 
 ```
-$ wit-bindgen js --import browser.wit
-$ wit-bindgen rust-wasm --export my-interface.wit
-$ wit-bindgen wasmtime --import host-functions.wit
+$ wai-bindgen js --import browser.wit
+$ wai-bindgen rust-wasm --export my-interface.wit
+$ wai-bindgen wasmtime --import host-functions.wit
 ```
 
 Here "import" means "I want to import and call the functions in this interface"
 and "export" means "I want to define the functions in this interface for others
 to call".
 
-Finally in a sort of "miscellaneous" category the `wit-bindgen` CLI also
+Finally in a sort of "miscellaneous" category the `wai-bindgen` CLI also
 supports:
 
 * `markdown` - generates a `*.md` and a `*.html` file with readable
@@ -152,7 +152,7 @@ and support in this repository mostly exist to make writing generators as easy
 as possible.
 
 Some other languages and runtimes, for example, that don't have support in
-`wit-bindgen` today but are possible in the future (and may get written here
+`wai-bindgen` today but are possible in the future (and may get written here
 too) are:
 
 * `wasmtime-go` - same as for `wasmtime-py` but for Go. Basically for Go users
@@ -178,4 +178,4 @@ Note that this is not an exclusive list, only intended to give you an idea of
 what other bindings could look like. There's a plethora of runtimes and
 languages that compile to WebAssembly, and interface types should be able to
 work with all of them and it's theoretically just some work-hours away from
-having support in `wit-bindgen`.
+having support in `wai-bindgen`.
