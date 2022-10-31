@@ -8,10 +8,10 @@ use data_segments::DataSegments;
 use heck::SnakeCase;
 use lazy_static::lazy_static;
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::ops::Range;
 use std::path::PathBuf;
-use std::{collections::HashMap};
 use wai_bindgen_gen_core::{
     wai_parser::{
         abi::{self, AbiVariant, WasmSignature, WasmType},
@@ -676,8 +676,7 @@ impl<'a> SpiderMonkeyWasm<'a> {
         // module will export each of our generated glue functions for that WIT
         // module.
         let smw_new_module_builder = self.spidermonkey_import("SMW_new_module_builder");
-        let import_fn_name_to_index =
-            std::mem::take(&mut self.import_fn_name_to_index);
+        let import_fn_name_to_index = std::mem::take(&mut self.import_fn_name_to_index);
         for (module, funcs) in &import_fn_name_to_index {
             // Malloc space for the module name.
             self.malloc_static_size(

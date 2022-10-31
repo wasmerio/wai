@@ -218,8 +218,11 @@ impl Generator for RustWasm {
         // Add a `from_bits_preserve` method.
         self.src
             .push_str(&format!("impl {} {{\n", name.to_camel_case()));
-        self.src.push_str("    /// Convert from a raw integer, preserving any unknown bits. See\n");
-        self.src.push_str("    /// <https://github.com/bitflags/bitflags/issues/263#issuecomment-957088321>\n");
+        self.src
+            .push_str("    /// Convert from a raw integer, preserving any unknown bits. See\n");
+        self.src.push_str(
+            "    /// <https://github.com/bitflags/bitflags/issues/263#issuecomment-957088321>\n",
+        );
         self.src.push_str(&format!(
             "    pub fn from_bits_preserve(bits: {repr}) -> Self {{\n",
         ));
@@ -359,10 +362,7 @@ impl Generator for RustWasm {
                 ns = self.opts.symbol_namespace,
                 panic_not_wasm = panic,
             ));
-            let trait_ = self
-                .traits
-                .entry(iface.name.to_camel_case())
-                .or_default();
+            let trait_ = self.traits.entry(iface.name.to_camel_case()).or_default();
             trait_.methods.push(format!(
                 "
                     /// An optional callback invoked when a handle is finalized
@@ -615,16 +615,12 @@ impl Generator for RustWasm {
         self.print_signature(iface, func, TypeMode::Owned, &sig);
         self.src.push_str(";");
         self.in_trait = false;
-        let trait_ = self
-            .traits
-            .entry(iface.name.to_camel_case())
-            .or_default();
+        let trait_ = self.traits.entry(iface.name.to_camel_case()).or_default();
         let dst = match &func.kind {
             FunctionKind::Freestanding => &mut trait_.methods,
-            FunctionKind::Static { resource, .. } | FunctionKind::Method { resource, .. } => trait_
-                .resource_methods
-                .entry(*resource)
-                .or_default(),
+            FunctionKind::Static { resource, .. } | FunctionKind::Method { resource, .. } => {
+                trait_.resource_methods.entry(*resource).or_default()
+            }
         };
         dst.push(mem::replace(&mut self.src, prev).into());
     }

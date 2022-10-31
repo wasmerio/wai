@@ -663,10 +663,9 @@ impl Generator for Js {
             FunctionKind::Freestanding | FunctionKind::Static { .. } => {
                 &mut imports.freestanding_funcs
             }
-            FunctionKind::Method { resource, .. } => imports
-                .resource_funcs
-                .entry(*resource)
-                .or_default(),
+            FunctionKind::Method { resource, .. } => {
+                imports.resource_funcs.entry(*resource).or_default()
+            }
         };
         dst.push((func.name.to_string(), src));
     }

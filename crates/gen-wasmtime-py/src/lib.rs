@@ -457,10 +457,9 @@ impl Generator for WasmtimePy {
             FunctionKind::Freestanding | FunctionKind::Static { .. } => {
                 &mut imports.freestanding_funcs
             }
-            FunctionKind::Method { resource, .. } => imports
-                .resource_funcs
-                .entry(*resource)
-                .or_default(),
+            FunctionKind::Method { resource, .. } => {
+                imports.resource_funcs.entry(*resource).or_default()
+            }
         };
         dst.push(import);
     }
@@ -545,10 +544,7 @@ impl Generator for WasmtimePy {
         let dst = match &func.kind {
             FunctionKind::Freestanding => &mut exports.freestanding_funcs,
             FunctionKind::Static { resource, .. } | FunctionKind::Method { resource, .. } => {
-                exports
-                    .resource_funcs
-                    .entry(*resource)
-                    .or_default()
+                exports.resource_funcs.entry(*resource).or_default()
             }
         };
         dst.push(func_body);

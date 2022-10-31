@@ -1205,7 +1205,8 @@ impl Generator for Wasmer {
             if !self.opts.async_.is_none() {
                 unimplemented!();
             }
-            self.push_str("
+            self.push_str(
+                "
                     /// Instantiates the provided `module` using the specified
                     /// parameters, wrapping up the result in a structure that
                     /// translates between wasm and the host.
@@ -1224,7 +1225,8 @@ impl Generator for Wasmer {
                         let env = Self::add_to_imports(&mut store, imports);
                         let instance = wasmer::Instance::new(
                             &mut store, module, &*imports)?;
-                        ");
+                        ",
+            );
             if !self.exported_resources.is_empty() {
                 self.push_str("{\n");
                 for r in self.exported_resources.iter() {
@@ -1257,10 +1259,12 @@ impl Generator for Wasmer {
                 }
                 self.push_str("}\n");
             }
-            self.push_str("
+            self.push_str(
+                "
                         Ok((Self::new(store, &instance, env)?, instance))
                     }
-                ");
+                ",
+            );
 
             self.push_str(&format!(
                 "
