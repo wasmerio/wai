@@ -19,7 +19,7 @@ fn is_canonical_function(name: &str) -> bool {
 }
 
 pub fn expected_export_name<'a>(interface: Option<&str>, func: &'a str) -> Cow<'a, str> {
-    // TODO: wit-bindgen currently doesn't mangle its export names, so this
+    // TODO: wai-bindgen currently doesn't mangle its export names, so this
     // only works with the default (i.e. `None`) interface.
     match interface {
         Some(interface) => format!("{}#{}", interface, func).into(),

@@ -1,13 +1,12 @@
 [package]
 name = "wai-bindgen-gen-wasmer"
 authors.workspace = true
-edition.metadata = true
+edition.workspace = true
 homepage.workspace = true
 license.workspace = true
 readme.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.metadata = true
 version.workspace = true
 
 [lib]

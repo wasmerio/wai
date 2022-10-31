@@ -25,22 +25,22 @@ fn interface_encoding() -> Result<()> {
         }
 
         let test_case = path.file_stem().unwrap().to_str().unwrap();
-        let wit_path = path.join(test_case).with_extension("wit");
+        let wai_path = path.join(test_case).with_extension("wit");
 
-        let interface = Interface::parse_file(&wit_path)?;
+        let interface = Interface::parse_file(&wai_path)?;
 
         let encoder = InterfaceEncoder::new(&interface).validate(true);
 
         let bytes = encoder.encode().with_context(|| {
             format!(
                 "failed to encode a component from interface `{}` for test case `{}`",
-                wit_path.display(),
+                wai_path.display(),
                 test_case,
             )
         })?;
 
         let output = wasmprinter::print_bytes(&bytes)?;
-        let wat_path = wit_path.with_extension("wat");
+        let wat_path = wai_path.with_extension("wat");
 
         if std::env::var_os("BLESS").is_some() {
             fs::write(&wat_path, output)?;
@@ -49,7 +49,7 @@ fn interface_encoding() -> Result<()> {
                 fs::read_to_string(&wat_path)?.replace("\r\n", "\n"),
                 output,
                 "encoding of wit file `{}` did not match the expected wat file `{}` for test case `{}`",
-                wit_path.display(),
+                wai_path.display(),
                 wat_path.display(),
                 test_case
             );

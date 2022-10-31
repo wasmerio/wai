@@ -19,9 +19,9 @@ fn execute(name: &str, wasm: &Path, py: &Path, imports: &Path, exports: &Path) {
     // We call `generate_all` with exports from the imports.wit file, and
     // imports from the exports.wit wit file. It's reversed because we're
     // implementing the host side of these APIs.
-    let iface = wit_bindgen_gen_core::wai_parser::Interface::parse_file(imports).unwrap();
+    let iface = wai_bindgen_gen_core::wai_parser::Interface::parse_file(imports).unwrap();
     let mut files = Default::default();
-    wit_bindgen_gen_wasmer_py::Opts::default()
+    wai_bindgen_gen_wasmer_py::Opts::default()
         .build()
         .generate_all(&[], &[iface], &mut files);
     for (file, contents) in files.iter() {
@@ -29,9 +29,9 @@ fn execute(name: &str, wasm: &Path, py: &Path, imports: &Path, exports: &Path) {
     }
     fs::write(dir.join("imports").join("__init__.py"), "").unwrap();
 
-    let iface = wit_bindgen_gen_core::wai_parser::Interface::parse_file(exports).unwrap();
+    let iface = wai_bindgen_gen_core::wai_parser::Interface::parse_file(exports).unwrap();
     let mut files = Default::default();
-    wit_bindgen_gen_wasmer_py::Opts::default()
+    wai_bindgen_gen_wasmer_py::Opts::default()
         .build()
         .generate_all(&[iface], &[], &mut files);
     for (file, contents) in files.iter() {

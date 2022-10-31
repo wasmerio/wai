@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-wit_bindgen_wasmer::export!("../../tests/runtime/flavorful/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/flavorful/imports.wit");
 
 use imports::*;
 
@@ -91,7 +91,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("../../tests/runtime/flavorful/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/flavorful/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -102,13 +102,7 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         &mut store,
-        |store, imports| {
-            imports::add_to_imports(
-                store,
-                imports,
-                MyImports,
-            )
-        },
+        |store, imports| imports::add_to_imports(store, imports, MyImports),
         |store, module, imports| {
             exports::Exports::instantiate(
                 &mut store.as_store_mut().as_store_mut(),
@@ -120,26 +114,39 @@ fn run(wasm: &str) -> Result<()> {
 
     exports.test_imports(&mut store)?;
 
-    exports.list_in_record1(&mut store, ListInRecord1 {
-        a: "list_in_record1",
-    })?;
+    exports.list_in_record1(
+        &mut store,
+        ListInRecord1 {
+            a: "list_in_record1",
+        },
+    )?;
     assert_eq!(exports.list_in_record2(&mut store)?.a, "list_in_record2");
 
     assert_eq!(
         exports
-            .list_in_record3(&mut store, ListInRecord3Param {
-                a: "list_in_record3 input"
-            })?
+            .list_in_record3(
+                &mut store,
+                ListInRecord3Param {
+                    a: "list_in_record3 input"
+                }
+            )?
             .a,
         "list_in_record3 output"
     );
 
     assert_eq!(
-        exports.list_in_record4(&mut store, ListInAliasParam { a: "input4" })?.a,
+        exports
+            .list_in_record4(&mut store, ListInAliasParam { a: "input4" })?
+            .a,
         "result4"
     );
 
-    exports.list_in_variant1(&mut store, Some("foo"), Err("bar"), ListInVariant1V3::String("baz"))?;
+    exports.list_in_variant1(
+        &mut store,
+        Some("foo"),
+        Err("bar"),
+        ListInVariant1V3::String("baz"),
+    )?;
     assert_eq!(
         exports.list_in_variant2(&mut store)?,
         Some("list_in_variant2".to_string())

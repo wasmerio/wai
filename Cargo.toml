@@ -1,16 +1,3 @@
-[package]
-name = "wai-bindgen-cli"
-description = "A language bindings generator for wit."
-authors.metadata = true
-edition.metadata = true
-homepage.workspace = true
-license.workspace = true
-readme.workspace = true
-repository.workspace = true
-rust-version.workspace = true
-version.metadata = true
-version.workspace = true
-
 [workspace]
 members = [
   "crates/test-rust-wasm",
@@ -20,7 +7,10 @@ members = [
 resolver = "2"
 
 [workspace.package]
-authors = ["Alex Crichton <alex@alexcrichton.com>"]
+authors = [
+  "Alex Crichton <alex@alexcrichton.com>",
+  "Wasmer Engineering Team <engineering@wasmer.io>",
+]
 edition = "2021"
 homepage = "https://wasmer.io/"
 license = "APACHE-2.0"
@@ -29,44 +19,3 @@ repository = "https://github.com/wasmerio/wit-bindgen"
 # required by [workspace.package]
 rust-version = "1.64"
 version = "0.1.1"
-
-[[bin]]
-name = "wai-bindgen"
-test = false
-
-[dependencies]
-anyhow = "1.0"
-structopt = { version = "0.3", default-features = false }
-wai-bindgen-gen-core = { path = 'crates/gen-core' }
-wai-bindgen-gen-rust-wasm = { path = 'crates/gen-rust-wasm', features = [
-  'structopt',
-] }
-wai-bindgen-gen-wasmtime = { path = 'crates/gen-wasmtime', features = [
-  'structopt',
-] }
-wai-bindgen-gen-wasmtime-py = { path = 'crates/gen-wasmtime-py', features = [
-  'structopt',
-] }
-wai-bindgen-gen-js = { path = 'crates/gen-js', features = ['structopt'] }
-wai-bindgen-gen-c = { path = 'crates/gen-c', features = ['structopt'] }
-wai-bindgen-gen-markdown = { path = 'crates/gen-markdown', features = [
-  'structopt',
-] }
-wai-bindgen-gen-spidermonkey = { path = 'crates/gen-spidermonkey', features = [
-  'structopt',
-] }
-wai-bindgen-gen-wasmer = { path = 'crates/gen-wasmer', features = [
-  'structopt',
-] }
-wai-bindgen-gen-wasmer-py = { path = 'crates/gen-wasmer-py', features = [
-  'structopt',
-] }
-
-# Compiling `spidermonkey.wasm` takes way too long without this.
-[profile.dev.package.cranelift-codegen]
-debug-assertions = false
-opt-level = 2
-
-[package.metadata.wapm]
-namespace = "wasmer"
-abi = "wasi"

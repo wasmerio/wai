@@ -1112,7 +1112,7 @@ impl EncodingState {
                         RequiredOptions::None
                     });
 
-                // TODO: support the post-return option somehow (not yet supported in wit-bindgen)
+                // TODO: support the post-return option somehow (not yet supported in wai-bindgen)
                 let func_index = self.lift_func(
                     &mut functions,
                     core_func_index,

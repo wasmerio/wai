@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-wit_bindgen_wasmer::export!("../../tests/runtime/records/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/records/imports.wit");
 
 use imports::*;
 
@@ -49,7 +49,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("../../tests/runtime/records/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/records/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -60,13 +60,7 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         &mut store,
-        |store, imports| {
-            imports::add_to_imports(
-                store,
-                imports,
-                MyImports,
-            )
-        },
+        |store, imports| imports::add_to_imports(store, imports, MyImports),
         |store, module, imports| {
             exports::Exports::instantiate(
                 &mut store.as_store_mut().as_store_mut(),
@@ -80,26 +74,44 @@ fn run(wasm: &str) -> Result<()> {
     assert_eq!(exports.multiple_results(&mut store)?, (100, 200));
     assert_eq!(exports.swap_tuple(&mut store, (1u8, 2u32))?, (2u32, 1u8));
     assert_eq!(exports.roundtrip_flags1(&mut store, F1::A)?, F1::A);
-    assert_eq!(exports.roundtrip_flags1(&mut store, F1::empty())?, F1::empty());
+    assert_eq!(
+        exports.roundtrip_flags1(&mut store, F1::empty())?,
+        F1::empty()
+    );
     assert_eq!(exports.roundtrip_flags1(&mut store, F1::B)?, F1::B);
-    assert_eq!(exports.roundtrip_flags1(&mut store, F1::A | F1::B)?, F1::A | F1::B);
+    assert_eq!(
+        exports.roundtrip_flags1(&mut store, F1::A | F1::B)?,
+        F1::A | F1::B
+    );
 
     assert_eq!(exports.roundtrip_flags2(&mut store, F2::C)?, F2::C);
-    assert_eq!(exports.roundtrip_flags2(&mut store, F2::empty())?, F2::empty());
+    assert_eq!(
+        exports.roundtrip_flags2(&mut store, F2::empty())?,
+        F2::empty()
+    );
     assert_eq!(exports.roundtrip_flags2(&mut store, F2::D)?, F2::D);
-    assert_eq!(exports.roundtrip_flags2(&mut store, F2::C | F2::E)?, F2::C | F2::E);
+    assert_eq!(
+        exports.roundtrip_flags2(&mut store, F2::C | F2::E)?,
+        F2::C | F2::E
+    );
 
-    let r = exports.roundtrip_record1(&mut store, R1 {
-        a: 8,
-        b: F1::empty(),
-    })?;
+    let r = exports.roundtrip_record1(
+        &mut store,
+        R1 {
+            a: 8,
+            b: F1::empty(),
+        },
+    )?;
     assert_eq!(r.a, 8);
     assert_eq!(r.b, F1::empty());
 
-    let r = exports.roundtrip_record1(&mut store, R1 {
-        a: 0,
-        b: F1::A | F1::B,
-    })?;
+    let r = exports.roundtrip_record1(
+        &mut store,
+        R1 {
+            a: 0,
+            b: F1::A | F1::B,
+        },
+    )?;
     assert_eq!(r.a, 0);
     assert_eq!(r.b, F1::A | F1::B);
 

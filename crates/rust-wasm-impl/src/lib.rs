@@ -42,7 +42,7 @@ fn run(input: TokenStream, dir: Direction) -> TokenStream {
 }
 
 struct Opts {
-    opts: wit_bindgen_gen_rust_wasm::Opts,
+    opts: wai_bindgen_gen_rust_wasm::Opts,
     interfaces: Vec<Interface>,
     files: Vec<String>,
 }
@@ -56,7 +56,7 @@ mod kw {
 
 impl Parse for Opts {
     fn parse(input: ParseStream<'_>) -> Result<Opts> {
-        let mut opts = wit_bindgen_gen_rust_wasm::Opts::default();
+        let mut opts = wai_bindgen_gen_rust_wasm::Opts::default();
         let call_site = proc_macro2::Span::call_site();
         let mut files = Vec::new();
         let interfaces = if input.peek(token::Brace) {

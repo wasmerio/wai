@@ -4,8 +4,8 @@ use wai_bindgen_gen_core::wai_parser::Interface;
 use wai_bindgen_gen_core::Generator;
 use wai_bindgen_rust::Handle;
 
-wit_bindgen_rust::export!("demo.wit");
-wit_bindgen_rust::import!("browser.wit");
+wai_bindgen_rust::export!("demo.wit");
+wai_bindgen_rust::import!("browser.wit");
 
 struct Demo;
 
@@ -13,15 +13,15 @@ impl demo::Demo for Demo {}
 
 #[derive(Default)]
 pub struct Config {
-    js: RefCell<wit_bindgen_gen_js::Opts>,
-    c: RefCell<wit_bindgen_gen_c::Opts>,
-    rust: RefCell<wit_bindgen_gen_rust_wasm::Opts>,
-    wasmtime: RefCell<wit_bindgen_gen_wasmtime::Opts>,
-    wasmtime_py: RefCell<wit_bindgen_gen_wasmtime_py::Opts>,
-    markdown: RefCell<wit_bindgen_gen_markdown::Opts>,
-    spidermonkey: RefCell<wit_bindgen_gen_spidermonkey::Opts>,
-    wasmer: RefCell<wit_bindgen_gen_wasmer::Opts>,
-    wasmer_py: RefCell<wit_bindgen_gen_wasmer_py::Opts>,
+    js: RefCell<wai_bindgen_gen_js::Opts>,
+    c: RefCell<wai_bindgen_gen_c::Opts>,
+    rust: RefCell<wai_bindgen_gen_rust_wasm::Opts>,
+    wasmtime: RefCell<wai_bindgen_gen_wasmtime::Opts>,
+    wasmtime_py: RefCell<wai_bindgen_gen_wasmtime_py::Opts>,
+    markdown: RefCell<wai_bindgen_gen_markdown::Opts>,
+    spidermonkey: RefCell<wai_bindgen_gen_spidermonkey::Opts>,
+    wasmer: RefCell<wai_bindgen_gen_wasmer::Opts>,
+    wasmer_py: RefCell<wai_bindgen_gen_wasmer_py::Opts>,
 }
 
 impl demo::Config for Config {

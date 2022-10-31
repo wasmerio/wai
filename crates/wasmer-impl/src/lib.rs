@@ -54,7 +54,7 @@ fn run(input: TokenStream, dir: Direction) -> TokenStream {
 }
 
 struct Opts {
-    opts: wit_bindgen_gen_wasmer::Opts,
+    opts: wai_bindgen_gen_wasmer::Opts,
     interfaces: Vec<Interface>,
     files: Vec<String>,
 }
@@ -68,7 +68,7 @@ mod kw {
 impl Parse for Opts {
     fn parse(input: ParseStream<'_>) -> Result<Opts> {
         let call_site = proc_macro2::Span::call_site();
-        let mut opts = wit_bindgen_gen_wasmer::Opts::default();
+        let mut opts = wai_bindgen_gen_wasmer::Opts::default();
         let mut files = Vec::new();
         opts.tracing = cfg!(feature = "tracing");
 
@@ -115,7 +115,7 @@ impl Parse for Opts {
 
 enum ConfigField {
     Interfaces(Vec<Interface>),
-    Async(wit_bindgen_gen_wasmer::Async),
+    Async(wai_bindgen_gen_wasmer::Async),
     CustomError(bool),
 }
 
@@ -149,7 +149,7 @@ impl Parse for ConfigField {
         } else if l.peek(token::Async) {
             if !cfg!(feature = "async") {
                 return Err(
-                    input.error("async support not enabled in the `wit-bindgen-wasmer` crate")
+                    input.error("async support not enabled in the `wai-bindgen-wasmer` crate")
                 );
             }
             input.parse::<token::Async>()?;

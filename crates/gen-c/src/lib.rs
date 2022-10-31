@@ -31,7 +31,7 @@ pub struct C {
 
     // Type definitions for the given `TypeId`. This is printed topologically
     // at the end.
-    types: HashMap<TypeId, wit_bindgen_gen_core::Source>,
+    types: HashMap<TypeId, wai_bindgen_gen_core::Source>,
 
     needs_string: bool,
 }
@@ -1349,10 +1349,10 @@ struct FunctionBindgen<'a> {
     gen: &'a mut C,
     locals: Ns,
     // tmp: usize,
-    src: wit_bindgen_gen_core::Source,
+    src: wai_bindgen_gen_core::Source,
     sig: CSig,
     func_to_call: &'a str,
-    block_storage: Vec<wit_bindgen_gen_core::Source>,
+    block_storage: Vec<wai_bindgen_gen_core::Source>,
     blocks: Vec<(String, Vec<String>)>,
     payloads: Vec<String>,
     params: Vec<String>,
@@ -2218,8 +2218,8 @@ impl Bindgen for FunctionBindgen<'_> {
 
 #[derive(Default)]
 struct Source {
-    h: wit_bindgen_gen_core::Source,
-    c: wit_bindgen_gen_core::Source,
+    h: wai_bindgen_gen_core::Source,
+    c: wai_bindgen_gen_core::Source,
 }
 
 impl Source {

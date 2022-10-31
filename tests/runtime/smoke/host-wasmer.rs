@@ -4,7 +4,7 @@ use std::sync::{
     Arc,
 };
 
-wit_bindgen_wasmer::export!("../../tests/runtime/smoke/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/smoke/imports.wit");
 
 #[derive(Clone)]
 pub struct MyImports {
@@ -18,7 +18,7 @@ impl imports::Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("../../tests/runtime/smoke/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/smoke/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use wasmer::AsStoreMut as _;
@@ -30,19 +30,9 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         &mut store,
-        |store, imports| {
-            imports::add_to_imports(
-                store,
-                imports,
-                MyImports { hit: hit.clone() },
-            )
-        },
+        |store, imports| imports::add_to_imports(store, imports, MyImports { hit: hit.clone() }),
         |store, module, imports| {
-            exports::Exports::instantiate(
-                &mut store.as_store_mut().as_store_mut(),
-                module,
-                imports,
-            )
+            exports::Exports::instantiate(&mut store.as_store_mut().as_store_mut(), module, imports)
         },
     )?;
 

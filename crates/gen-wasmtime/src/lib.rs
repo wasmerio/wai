@@ -336,7 +336,7 @@ impl Generator for Wasmtime {
         if self.modes_of(iface, id).len() > 0
             && record.fields.iter().all(|f| iface.all_bits_valid(&f.ty))
         {
-            self.src.push_str("impl wit_bindgen_wasmtime::Endian for ");
+            self.src.push_str("impl wai_bindgen_wasmtime::Endian for ");
             self.src.push_str(&name.to_camel_case());
             self.src.push_str(" {\n");
 
@@ -368,7 +368,7 @@ impl Generator for Wasmtime {
             // byte representations are valid (guarded by the `all_bits_valid`
             // predicate).
             self.src
-                .push_str("unsafe impl wit_bindgen_wasmtime::AllBytesValid for ");
+                .push_str("unsafe impl wai_bindgen_wasmtime::AllBytesValid for ");
             self.src.push_str(&name.to_camel_case());
             self.src.push_str(" {}\n");
         }
@@ -394,7 +394,7 @@ impl Generator for Wasmtime {
         docs: &Docs,
     ) {
         self.src
-            .push_str("wit_bindgen_wasmtime::bitflags::bitflags! {\n");
+            .push_str("wai_bindgen_wasmtime::bitflags::bitflags! {\n");
         self.rustdoc(docs);
         let repr = RustFlagsRepr::new(flags);
         self.src
@@ -496,7 +496,7 @@ impl Generator for Wasmtime {
         self.rustdoc(&iface.resources[ty].docs);
         self.src.push_str("#[derive(Debug)]\n");
         self.src.push_str(&format!(
-            "pub struct {}(wit_bindgen_wasmtime::rt::ResourceIndex);\n",
+            "pub struct {}(wai_bindgen_wasmtime::rt::ResourceIndex);\n",
             tyname
         ));
     }
@@ -612,9 +612,9 @@ impl Generator for Wasmtime {
         if self.opts.tracing {
             self.src.push_str(&format!(
                 "
-                    let span = wit_bindgen_wasmtime::tracing::span!(
-                        wit_bindgen_wasmtime::tracing::Level::TRACE,
-                        \"wit-bindgen abi\",
+                    let span = wai_bindgen_wasmtime::tracing::span!(
+                        wai_bindgen_wasmtime::tracing::Level::TRACE,
+                        \"wai-bindgen abi\",
                         module = \"{}\",
                         function = \"{}\",
                     );
@@ -646,7 +646,7 @@ impl Generator for Wasmtime {
         if needs_borrow_checker {
             self.src.push_str(
                 "let (mem, data) = memory.data_and_store_mut(&mut caller);
-                let mut _bc = wit_bindgen_wasmtime::BorrowChecker::new(mem);
+                let mut _bc = wai_bindgen_wasmtime::BorrowChecker::new(mem);
                 let host = get(data);\n",
             );
         } else {
@@ -796,7 +796,7 @@ impl Generator for Wasmtime {
             let module_camel = module.to_camel_case();
             let is_async = !self.opts.async_.is_none();
             if is_async {
-                self.src.push_str("#[wit_bindgen_wasmtime::async_trait]\n");
+                self.src.push_str("#[wai_bindgen_wasmtime::async_trait]\n");
             }
             self.src.push_str("pub trait ");
             self.src.push_str(&module_camel);
@@ -855,7 +855,7 @@ impl Generator for Wasmtime {
                 for handle in self.all_needed_handles.iter() {
                     self.src.push_str("pub(crate) ");
                     self.src.push_str(&handle.to_snake_case());
-                    self.src.push_str("_table: wit_bindgen_wasmtime::Table<T::");
+                    self.src.push_str("_table: wai_bindgen_wasmtime::Table<T::");
                     self.src.push_str(&handle.to_camel_case());
                     self.src.push_str(">,\n");
                 }
@@ -954,8 +954,8 @@ impl Generator for Wasmtime {
             for r in self.exported_resources.iter() {
                 self.src.push_str(&format!(
                     "
-                        index_slab{}: wit_bindgen_wasmtime::rt::IndexSlab,
-                        resource_slab{0}: wit_bindgen_wasmtime::rt::ResourceSlab,
+                        index_slab{}: wai_bindgen_wasmtime::rt::IndexSlab,
+                        resource_slab{0}: wai_bindgen_wasmtime::rt::ResourceSlab,
                         dtor{0}: Option<wasmtime::TypedFunc<i32, ()>>,
                     ",
                     r.index()
@@ -1360,7 +1360,7 @@ impl FunctionBindgen<'_> {
         let mem = self.memory_src();
         self.gen.needs_raw_mem = true;
         self.push_str(&format!(
-            "{}.store({} + {}, wit_bindgen_wasmtime::rt::{}({}){})?;\n",
+            "{}.store({} + {}, wai_bindgen_wasmtime::rt::{}({}){})?;\n",
             mem, operands[1], offset, method, operands[0], extra
         ));
     }
@@ -1464,7 +1464,7 @@ impl Bindgen for FunctionBindgen<'_> {
 
             Instruction::I64FromU64 | Instruction::I64FromS64 => {
                 let s = operands.pop().unwrap();
-                results.push(format!("wit_bindgen_wasmtime::rt::as_i64({})", s));
+                results.push(format!("wai_bindgen_wasmtime::rt::as_i64({})", s));
             }
             Instruction::I32FromChar
             | Instruction::I32FromU8
@@ -1474,7 +1474,7 @@ impl Bindgen for FunctionBindgen<'_> {
             | Instruction::I32FromU32
             | Instruction::I32FromS32 => {
                 let s = operands.pop().unwrap();
-                results.push(format!("wit_bindgen_wasmtime::rt::as_i32({})", s));
+                results.push(format!("wai_bindgen_wasmtime::rt::as_i32({})", s));
             }
 
             Instruction::F32FromFloat32
@@ -1506,7 +1506,7 @@ impl Bindgen for FunctionBindgen<'_> {
             }
 
             Instruction::Bitcasts { casts } => {
-                wit_bindgen_gen_rust::bitcast(casts, operands, results)
+                wai_bindgen_gen_rust::bitcast(casts, operands, results)
             }
 
             Instruction::UnitLower => {
@@ -2058,11 +2058,11 @@ impl Bindgen for FunctionBindgen<'_> {
                     self.push_str(&format!("let param{} = {};\n", i, operand));
                 }
                 if self.gen.opts.tracing && func.params.len() > 0 {
-                    self.push_str("wit_bindgen_wasmtime::tracing::event!(\n");
-                    self.push_str("wit_bindgen_wasmtime::tracing::Level::TRACE,\n");
+                    self.push_str("wai_bindgen_wasmtime::tracing::event!(\n");
+                    self.push_str("wai_bindgen_wasmtime::tracing::Level::TRACE,\n");
                     for (i, (name, _ty)) in func.params.iter().enumerate() {
                         self.push_str(&format!(
-                            "{} = wit_bindgen_wasmtime::tracing::field::debug(&param{}),\n",
+                            "{} = wai_bindgen_wasmtime::tracing::field::debug(&param{}),\n",
                             to_rust_ident(name),
                             i
                         ));
@@ -2113,10 +2113,10 @@ impl Bindgen for FunctionBindgen<'_> {
                 match &func.result {
                     Type::Unit => {}
                     _ if self.gen.opts.tracing => {
-                        self.push_str("wit_bindgen_wasmtime::tracing::event!(\n");
-                        self.push_str("wit_bindgen_wasmtime::tracing::Level::TRACE,\n");
+                        self.push_str("wai_bindgen_wasmtime::tracing::event!(\n");
+                        self.push_str("wai_bindgen_wasmtime::tracing::Level::TRACE,\n");
                         self.push_str(&format!(
-                            "{} = wit_bindgen_wasmtime::tracing::field::debug(&{0}),\n",
+                            "{} = wai_bindgen_wasmtime::tracing::field::debug(&{0}),\n",
                             results[0],
                         ));
                         self.push_str(");\n");

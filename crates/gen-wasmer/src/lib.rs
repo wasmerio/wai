@@ -344,7 +344,7 @@ impl Generator for Wasmer {
         if self.modes_of(iface, id).len() > 0
             && record.fields.iter().all(|f| iface.all_bits_valid(&f.ty))
         {
-            self.src.push_str("impl wit_bindgen_wasmer::Endian for ");
+            self.src.push_str("impl wai_bindgen_wasmer::Endian for ");
             self.src.push_str(&name.to_camel_case());
             self.src.push_str(" {\n");
 
@@ -376,7 +376,7 @@ impl Generator for Wasmer {
             // byte representations are valid (guarded by the `all_bits_valid`
             // predicate).
             self.src
-                .push_str("unsafe impl wit_bindgen_wasmer::AllBytesValid for ");
+                .push_str("unsafe impl wai_bindgen_wasmer::AllBytesValid for ");
             self.src.push_str(&name.to_camel_case());
             self.src.push_str(" {}\n");
         }
@@ -402,7 +402,7 @@ impl Generator for Wasmer {
         docs: &Docs,
     ) {
         self.src
-            .push_str("wit_bindgen_wasmer::bitflags::bitflags! {\n");
+            .push_str("wai_bindgen_wasmer::bitflags::bitflags! {\n");
         self.rustdoc(docs);
         let repr = RustFlagsRepr::new(flags);
         self.src
@@ -504,7 +504,7 @@ impl Generator for Wasmer {
         self.rustdoc(&iface.resources[ty].docs);
         self.src.push_str("#[derive(Debug)]\n");
         self.src.push_str(&format!(
-            "pub struct {}(wit_bindgen_wasmer::rt::ResourceIndex);\n",
+            "pub struct {}(wai_bindgen_wasmer::rt::ResourceIndex);\n",
             tyname
         ));
     }
@@ -633,9 +633,9 @@ impl Generator for Wasmer {
         if self.opts.tracing {
             self.src.push_str(&format!(
                 "
-                    let span = wit_bindgen_wasmer::tracing::span!(
-                        wit_bindgen_wasmer::tracing::Level::TRACE,
-                        \"wit-bindgen abi\",
+                    let span = wai_bindgen_wasmer::tracing::span!(
+                        wai_bindgen_wasmer::tracing::Level::TRACE,
+                        \"wai-bindgen abi\",
                         module = \"{}\",
                         function = \"{}\",
                     );
@@ -671,7 +671,7 @@ impl Generator for Wasmer {
             // of WasmPtr/WasmCell.
             self.src.push_str(
                 "let _memory_view = _memory.view(&store);
-                let mut _bc = wit_bindgen_wasmer::BorrowChecker::new(unsafe {
+                let mut _bc = wai_bindgen_wasmer::BorrowChecker::new(unsafe {
                         _memory_view.data_unchecked_mut()
                  });\n",
             );
@@ -830,7 +830,7 @@ impl Generator for Wasmer {
             let module_camel = module.to_camel_case();
             let is_async = !self.opts.async_.is_none();
             if is_async {
-                self.src.push_str("#[wit_bindgen_wasmer::async_trait]\n");
+                self.src.push_str("#[wai_bindgen_wasmer::async_trait]\n");
             }
             self.src.push_str("pub trait ");
             self.src.push_str(&module_camel);
@@ -886,7 +886,7 @@ impl Generator for Wasmer {
                 for handle in self.all_needed_handles.iter() {
                     self.src.push_str("pub(crate) ");
                     self.src.push_str(&handle.to_snake_case());
-                    self.src.push_str("_table: wit_bindgen_wasmer::Table<T::");
+                    self.src.push_str("_table: wai_bindgen_wasmer::Table<T::");
                     self.src.push_str(&handle.to_camel_case());
                     self.src.push_str(">,\n");
                 }
@@ -1086,8 +1086,8 @@ impl Generator for Wasmer {
             for r in self.exported_resources.iter() {
                 self.src.push_str(&format!(
                     "
-                        index_slab{idx}: wit_bindgen_wasmer::rt::IndexSlab,
-                        resource_slab{idx}: wit_bindgen_wasmer::rt::ResourceSlab,
+                        index_slab{idx}: wai_bindgen_wasmer::rt::IndexSlab,
+                        resource_slab{idx}: wai_bindgen_wasmer::rt::ResourceSlab,
                         dtor{idx}: OnceCell<wasmer::TypedFunction<i32, ()>>,
                     ",
                     idx = r.index(),
@@ -1488,7 +1488,7 @@ impl FunctionBindgen<'_> {
         let mem = self.memory_src();
         self.gen.needs_raw_mem = true;
         self.push_str(&format!(
-            "{}.store({} + {}, wit_bindgen_wasmer::rt::{}({}){})?;\n",
+            "{}.store({} + {}, wai_bindgen_wasmer::rt::{}({}){})?;\n",
             mem, operands[1], offset, method, operands[0], extra
         ));
     }
@@ -1592,7 +1592,7 @@ impl Bindgen for FunctionBindgen<'_> {
 
             Instruction::I64FromU64 | Instruction::I64FromS64 => {
                 let s = operands.pop().unwrap();
-                results.push(format!("wit_bindgen_wasmer::rt::as_i64({})", s));
+                results.push(format!("wai_bindgen_wasmer::rt::as_i64({})", s));
             }
             Instruction::I32FromChar
             | Instruction::I32FromU8
@@ -1602,7 +1602,7 @@ impl Bindgen for FunctionBindgen<'_> {
             | Instruction::I32FromU32
             | Instruction::I32FromS32 => {
                 let s = operands.pop().unwrap();
-                results.push(format!("wit_bindgen_wasmer::rt::as_i32({})", s));
+                results.push(format!("wai_bindgen_wasmer::rt::as_i32({})", s));
             }
 
             Instruction::F32FromFloat32
@@ -1634,7 +1634,7 @@ impl Bindgen for FunctionBindgen<'_> {
             }
 
             Instruction::Bitcasts { casts } => {
-                wit_bindgen_gen_rust::bitcast(casts, operands, results)
+                wai_bindgen_gen_rust::bitcast(casts, operands, results)
             }
 
             Instruction::UnitLower => {
@@ -2213,11 +2213,11 @@ impl Bindgen for FunctionBindgen<'_> {
                     self.push_str(&format!("let param{} = {};\n", i, operand));
                 }
                 if self.gen.opts.tracing && func.params.len() > 0 {
-                    self.push_str("wit_bindgen_wasmer::tracing::event!(\n");
-                    self.push_str("wit_bindgen_wasmer::tracing::Level::TRACE,\n");
+                    self.push_str("wai_bindgen_wasmer::tracing::event!(\n");
+                    self.push_str("wai_bindgen_wasmer::tracing::Level::TRACE,\n");
                     for (i, (name, _ty)) in func.params.iter().enumerate() {
                         self.push_str(&format!(
-                            "{} = wit_bindgen_wasmer::tracing::field::debug(&param{}),\n",
+                            "{} = wai_bindgen_wasmer::tracing::field::debug(&param{}),\n",
                             to_rust_ident(name),
                             i
                         ));
@@ -2272,10 +2272,10 @@ impl Bindgen for FunctionBindgen<'_> {
                 match &func.result {
                     Type::Unit => {}
                     _ if self.gen.opts.tracing => {
-                        self.push_str("wit_bindgen_wasmer::tracing::event!(\n");
-                        self.push_str("wit_bindgen_wasmer::tracing::Level::TRACE,\n");
+                        self.push_str("wai_bindgen_wasmer::tracing::event!(\n");
+                        self.push_str("wai_bindgen_wasmer::tracing::Level::TRACE,\n");
                         self.push_str(&format!(
-                            "{} = wit_bindgen_wasmer::tracing::field::debug(&{0}),\n",
+                            "{} = wai_bindgen_wasmer::tracing::field::debug(&{0}),\n",
                             results[0],
                         ));
                         self.push_str(");\n");

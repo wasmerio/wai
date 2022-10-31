@@ -281,14 +281,14 @@ impl Function {
 fn unwrap_md(contents: &str) -> String {
     let mut wit = String::new();
     let mut last_pos = 0;
-    let mut in_wit_code_block = false;
+    let mut in_wai_code_block = false;
     Parser::new_ext(contents, Options::empty())
         .into_offset_iter()
         .for_each(|(event, range)| match (event, range) {
             (Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(CowStr::Borrowed("wit")))), _) => {
-                in_wit_code_block = true;
+                in_wai_code_block = true;
             }
-            (Event::Text(text), range) if in_wit_code_block => {
+            (Event::Text(text), range) if in_wai_code_block => {
                 // Ensure that offsets are correct by inserting newlines to
                 // cover the Markdown content outside of wit code blocks.
                 for _ in contents[last_pos..range.start].lines() {
@@ -298,7 +298,7 @@ fn unwrap_md(contents: &str) -> String {
                 last_pos = range.end;
             }
             (Event::End(Tag::CodeBlock(CodeBlockKind::Fenced(CowStr::Borrowed("wit")))), _) => {
-                in_wit_code_block = false;
+                in_wai_code_block = false;
             }
             _ => {}
         });
@@ -517,9 +517,9 @@ fn load_fs(root: &Path, name: &str) -> Result<(PathBuf, String)> {
 
         // If no such file was found, attempt to read a ".wit.md" file.
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
-            let wit_md = wit.with_extension("wit.md");
-            match fs::read_to_string(&wit_md) {
-                Ok(contents) => Ok((wit_md, contents)),
+            let wai_md = wit.with_extension("wit.md");
+            match fs::read_to_string(&wai_md) {
+                Ok(contents) => Ok((wai_md, contents)),
                 Err(_err) => Err(err.into()),
             }
         }

@@ -1,4 +1,4 @@
-# Testing wit-bindgen - `codegen
+# Testing wit-bindgen - `codegen`
 
 Any tests placed into the `tests/codegen` directory should be raw `*.wit`
 files. These files will be executed in all code generators by default most

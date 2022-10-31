@@ -25,9 +25,9 @@ fn roundtrip_interfaces() -> Result<()> {
         }
 
         let test_case = path.file_stem().unwrap().to_str().unwrap();
-        let wit_path = path.join(test_case).with_extension("wit");
+        let wai_path = path.join(test_case).with_extension("wit");
 
-        let interface = Interface::parse_file(&wit_path).context("failed to parse `wit` file")?;
+        let interface = Interface::parse_file(&wai_path).context("failed to parse `wit` file")?;
 
         let encoder = InterfaceEncoder::new(&interface).validate(true);
 
@@ -47,13 +47,13 @@ fn roundtrip_interfaces() -> Result<()> {
             .context("failed to print interface")?;
 
         if std::env::var_os("BLESS").is_some() {
-            fs::write(&wit_path, output)?;
+            fs::write(&wai_path, output)?;
         } else {
             assert_eq!(
-                fs::read_to_string(&wit_path)?.replace("\r\n", "\n"),
+                fs::read_to_string(&wai_path)?.replace("\r\n", "\n"),
                 output,
                 "encoding of wit file `{}` did not match the the decoded interface for test case `{}`",
-                wit_path.display(),
+                wai_path.display(),
                 test_case,
             );
         }

@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-wit_bindgen_wasmer::export!("../../tests/runtime/variants/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/variants/imports.wit");
 
 use imports::*;
 
@@ -51,7 +51,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("../../tests/runtime/variants/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/variants/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -62,13 +62,7 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         &mut store,
-        |store, imports| {
-            imports::add_to_imports(
-                store,
-                imports,
-                MyImports,
-            )
-        },
+        |store, imports| imports::add_to_imports(store, imports, MyImports),
         |store, module, imports| {
             exports::Exports::instantiate(
                 &mut store.as_store_mut().as_store_mut(),
@@ -93,8 +87,10 @@ fn run(wasm: &str) -> Result<()> {
     assert_eq!(exports.invert_bool(&mut store, true)?, false);
     assert_eq!(exports.invert_bool(&mut store, false)?, true);
 
-    let (a1, a2, a3, a4, a5, a6) =
-        exports.variant_casts(&mut store, (C1::A(1), C2::A(2), C3::A(3), C4::A(4), C5::A(5), C6::A(6.0)))?;
+    let (a1, a2, a3, a4, a5, a6) = exports.variant_casts(
+        &mut store,
+        (C1::A(1), C2::A(2), C3::A(3), C4::A(4), C5::A(5), C6::A(6.0)),
+    )?;
     assert!(matches!(a1, C1::A(1)));
     assert!(matches!(a2, C2::A(2)));
     assert!(matches!(a3, C3::A(3)));
@@ -102,14 +98,17 @@ fn run(wasm: &str) -> Result<()> {
     assert!(matches!(a5, C5::A(5)));
     assert!(matches!(a6, C6::A(b) if b == 6.0));
 
-    let (a1, a2, a3, a4, a5, a6) = exports.variant_casts(&mut store, (
-        C1::B(1),
-        C2::B(2.0),
-        C3::B(3.0),
-        C4::B(4.0),
-        C5::B(5.0),
-        C6::B(6.0),
-    ))?;
+    let (a1, a2, a3, a4, a5, a6) = exports.variant_casts(
+        &mut store,
+        (
+            C1::B(1),
+            C2::B(2.0),
+            C3::B(3.0),
+            C4::B(4.0),
+            C5::B(5.0),
+            C6::B(6.0),
+        ),
+    )?;
     assert!(matches!(a1, C1::B(1)));
     assert!(matches!(a2, C2::B(b) if b == 2.0));
     assert!(matches!(a3, C3::B(b) if b == 3.0));
@@ -117,7 +116,8 @@ fn run(wasm: &str) -> Result<()> {
     assert!(matches!(a5, C5::B(b) if b == 5.0));
     assert!(matches!(a6, C6::B(b) if b == 6.0));
 
-    let (a1, a2, a3, a4) = exports.variant_zeros(&mut store, (Z1::A(1), Z2::A(2), Z3::A(3.0), Z4::A(4.0)))?;
+    let (a1, a2, a3, a4) =
+        exports.variant_zeros(&mut store, (Z1::A(1), Z2::A(2), Z3::A(3.0), Z4::A(4.0)))?;
     assert!(matches!(a1, Z1::A(1)));
     assert!(matches!(a2, Z2::A(2)));
     assert!(matches!(a3, Z3::A(b) if b == 3.0));

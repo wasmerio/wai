@@ -1,4 +1,4 @@
-wit_bindgen_wasmer::export!("../../tests/runtime/handles/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/handles/imports.wit");
 
 use anyhow::Result;
 use imports::*;
@@ -87,7 +87,7 @@ impl Imports for MyImports {
     fn odd_name_frob_the_odd(&mut self, _: &()) {}
 }
 
-wit_bindgen_wasmer::import!("../../tests/runtime/handles/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/handles/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -98,13 +98,7 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         &mut store,
-        |store, imports| {
-            imports::add_to_imports(
-                store,
-                imports,
-                MyImports::default(),
-            )
-        },
+        |store, imports| imports::add_to_imports(store, imports, MyImports::default()),
         |store, module, imports| {
             exports::Exports::instantiate(
                 &mut store.as_store_mut().as_store_mut(),

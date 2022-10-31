@@ -1166,7 +1166,7 @@ struct FunctionBindgen<'a> {
     gen: &'a mut Js,
     tmp: usize,
     src: Source,
-    block_storage: Vec<wit_bindgen_gen_core::Source>,
+    block_storage: Vec<wai_bindgen_gen_core::Source>,
     blocks: Vec<(String, Vec<String>)>,
     in_import: bool,
     needs_memory: bool,
@@ -2608,8 +2608,8 @@ pub fn to_js_ident(name: &str) -> &str {
 
 #[derive(Default)]
 struct Source {
-    js: wit_bindgen_gen_core::Source,
-    ts: wit_bindgen_gen_core::Source,
+    js: wai_bindgen_gen_core::Source,
+    ts: wai_bindgen_gen_core::Source,
 }
 
 impl Source {

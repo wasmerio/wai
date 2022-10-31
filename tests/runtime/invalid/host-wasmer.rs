@@ -1,4 +1,4 @@
-wit_bindgen_wasmer::export!("../../tests/runtime/invalid/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/invalid/imports.wit");
 
 use anyhow::Result;
 use imports::*;
@@ -36,7 +36,7 @@ impl Imports for MyImports {
     }
 }
 
-wit_bindgen_wasmer::import!("../../tests/runtime/invalid/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/invalid/exports.wit");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;
@@ -47,31 +47,45 @@ fn run(wasm: &str) -> Result<()> {
     let exports = crate::instantiate(
         wasm,
         &mut store,
-        |store, imports| {
-            imports::add_to_imports(
-                store,
-                imports,
-                MyImports,
-            )
-        },
+        |store, imports| imports::add_to_imports(store, imports, MyImports),
         |store, module, imports| {
-            Exports::instantiate(
-                &mut store.as_store_mut().as_store_mut(),
-                &module,
-                imports,
-            )
+            Exports::instantiate(&mut store.as_store_mut().as_store_mut(), &module, imports)
         },
     )?;
 
-    assert_err(exports.invalid_bool(&mut store), "invalid discriminant for `bool`")?;
-    assert_err(exports.invalid_u8(&mut store), "out-of-bounds integer conversion")?;
-    assert_err(exports.invalid_s8(&mut store), "out-of-bounds integer conversion")?;
-    assert_err(exports.invalid_u16(&mut store), "out-of-bounds integer conversion")?;
-    assert_err(exports.invalid_s16(&mut store), "out-of-bounds integer conversion")?;
-    assert_err(exports.invalid_char(&mut store), "char value out of valid range")?;
-    assert_err(exports.invalid_enum(&mut store), "invalid discriminant for `E`")?;
+    assert_err(
+        exports.invalid_bool(&mut store),
+        "invalid discriminant for `bool`",
+    )?;
+    assert_err(
+        exports.invalid_u8(&mut store),
+        "out-of-bounds integer conversion",
+    )?;
+    assert_err(
+        exports.invalid_s8(&mut store),
+        "out-of-bounds integer conversion",
+    )?;
+    assert_err(
+        exports.invalid_u16(&mut store),
+        "out-of-bounds integer conversion",
+    )?;
+    assert_err(
+        exports.invalid_s16(&mut store),
+        "out-of-bounds integer conversion",
+    )?;
+    assert_err(
+        exports.invalid_char(&mut store),
+        "char value out of valid range",
+    )?;
+    assert_err(
+        exports.invalid_enum(&mut store),
+        "invalid discriminant for `E`",
+    )?;
     assert_err(exports.invalid_handle(&mut store), "invalid handle index")?;
-    assert_err(exports.invalid_handle_close(&mut store), "invalid handle index")?;
+    assert_err(
+        exports.invalid_handle_close(&mut store),
+        "invalid handle index",
+    )?;
     return Ok(());
 
     fn assert_err(result: Result<(), RuntimeError>, err: &str) -> Result<()> {
