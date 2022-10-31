@@ -1,0 +1,4 @@
+consolidate-commits = true
+sign-commit = true
+sign-tag = true
+tag-name = "v{{version}}"
