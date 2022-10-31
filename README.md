@@ -1,11 +1,15 @@
 <div align="center">
-  <h1><code>wit-bindgen</code></h1>
+  <h1><code>WebAssembly Interfaces</code></h1>
 
   <p>
     <strong>A language bindings generator for <code>wit</code></strong>
   </p>
 
-  <strong>A <a href="https://bytecodealliance.org/">Bytecode Alliance</a> project</strong>
+  <strong>
+    A <a href="https://wasmer.io/">Wasmer</a> project building on
+    <a href="https://github.com/bytecodealliance/wit-bindgen">wit-bindgen</a>
+    by the <a href="https://bytecodealliance.org/">Bytecode Alliance</a>
+  </strong>
 
   <p>
     <a href="https://github.com/bytecodealliance/wit-bindgen/actions?query=workflow%3ACI"><img src="https://github.com/bytecodealliance/wit-bindgen/workflows/CI/badge.svg" alt="build status" /></a>
@@ -31,7 +35,7 @@ be used in cases such as:
   WASI. This project will generate Rust bindings to import WASI APIs that are
   described with `*.wit`.
 
-* Your runtime (say, Wasmtime) wants to then provide WASI functionality to guest
+* Your runtime (say, Wasmer) wants to then provide WASI functionality to guest
   programs. This project will generate a Rust `trait` for you to implement for
   the WASI interface.
 
@@ -53,7 +57,7 @@ WebAssembly modules to be consumed in any environment with language support.
 ## Demo
 
 [View generated bindings
-online!](https://bytecodealliance.github.io/wit-bindgen/)
+online!](https://wasmerio.github.io/wit-bindgen/)
 
 If you're curious to poke around and see what generated bindings look like for a
 given input `*.wit`, you can explore the generated code online to get an idea
