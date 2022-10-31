@@ -1,9 +1,5 @@
 [workspace]
-members = [
-  "crates/test-rust-wasm",
-  "crates/wai-bindgen-demo",
-  "crates/wai-component",
-]
+members = ["crates/*"]
 resolver = "2"
 
 [workspace.package]
@@ -19,3 +15,8 @@ repository = "https://github.com/wasmerio/wit-bindgen"
 # required by [workspace.package]
 rust-version = "1.64"
 version = "0.1.1"
+
+# Compiling `spidermonkey.wasm` takes way too long without this.
+[profile.dev.package.cranelift-codegen]
+debug-assertions = false
+opt-level = 2

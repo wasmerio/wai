@@ -2081,6 +2081,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
+name = "wai-bindgen-cli"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "structopt",
+ "wai-bindgen-gen-c",
+ "wai-bindgen-gen-core",
+ "wai-bindgen-gen-js",
+ "wai-bindgen-gen-markdown",
+ "wai-bindgen-gen-rust-wasm",
+ "wai-bindgen-gen-spidermonkey",
+ "wai-bindgen-gen-wasmer",
+ "wai-bindgen-gen-wasmer-py",
+ "wai-bindgen-gen-wasmtime",
+ "wai-bindgen-gen-wasmtime-py",
+]
+
+[[package]]
 name = "wai-bindgen-demo"
 version = "0.1.0"
 dependencies = [

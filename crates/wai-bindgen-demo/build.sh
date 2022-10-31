@@ -8,7 +8,7 @@ mkdir static
 cargo build -p wai-bindgen-demo --target wasm32-unknown-unknown --release
 cp target/wasm32-unknown-unknown/release/wai_bindgen_demo.wasm static/demo.wasm
 
-cargo run js \
+cargo run --bin wai-bindgen -- js \
   --export crates/wai-bindgen-demo/browser.wit \
   --import crates/wai-bindgen-demo/demo.wit \
   --out-dir static
