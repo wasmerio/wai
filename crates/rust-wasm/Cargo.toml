@@ -1,8 +1,14 @@
 [package]
 name = "wai-bindgen-rust"
-version = "0.1.0"
-authors = ["Alex Crichton <alex@alexcrichton.com>"]
-edition = "2018"
+authors.workspace = true
+edition.metadata = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.metadata = true
+version.workspace = true
 
 [dependencies]
 wai-bindgen-rust-impl = { path = "../rust-wasm-impl", optional = true }

@@ -1,8 +1,13 @@
 [package]
 name = "wai-component"
-version = "0.1.0"
 authors = ["Peter Huene <peter@huene.dev>"]
-edition = "2021"
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [[bin]]
 name = "wai-component"

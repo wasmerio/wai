@@ -1,7 +1,14 @@
 [package]
 name = "wai-bindgen-gen-markdown"
-version = "0.1.0"
-edition = "2018"
+authors.metadata = true
+edition.metadata = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.metadata = true
+version.workspace = true
 
 [lib]
 doctest = false

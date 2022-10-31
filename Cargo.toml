@@ -1,9 +1,15 @@
 [package]
 name = "wai-bindgen-cli"
-version = "0.1.1"
-authors = ["Alex Crichton <alex@alexcrichton.com>"]
-edition = "2018"
 description = "A language bindings generator for wit."
+authors.metadata = true
+edition.metadata = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.metadata = true
+version.workspace = true
 
 [workspace]
 members = [
@@ -12,6 +18,17 @@ members = [
   "crates/wai-component",
 ]
 resolver = "2"
+
+[workspace.package]
+authors = ["Alex Crichton <alex@alexcrichton.com>"]
+edition = "2021"
+homepage = "https://wasmer.io/"
+license = "APACHE-2.0"
+readme = "README.md"
+repository = "https://github.com/wasmerio/wit-bindgen"
+# required by [workspace.package]
+rust-version = "1.64"
+version = "0.1.1"
 
 [[bin]]
 name = "wai-bindgen"
