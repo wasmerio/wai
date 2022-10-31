@@ -9,7 +9,7 @@ authors = [
 ]
 edition = "2021"
 homepage = "https://wasmer.io/"
-license = "APACHE-2.0"
+license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/wasmerio/wit-bindgen"
 # required by [workspace.package]
