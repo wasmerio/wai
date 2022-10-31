@@ -6,7 +6,7 @@ rm -rf static
 mkdir static
 
 cargo build -p wai-bindgen-demo --target wasm32-unknown-unknown --release
-cp target/wasm32-unknown-unknown/release/wit_bindgen_demo.wasm static/demo.wasm
+cp target/wasm32-unknown-unknown/release/wai_bindgen_demo.wasm static/demo.wasm
 
 cargo run js \
   --export crates/wai-bindgen-demo/browser.wit \

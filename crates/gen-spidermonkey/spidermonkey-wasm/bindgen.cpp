@@ -1,6 +1,6 @@
 /*!
  * This module implements the intrinsics used by code emitted in the
- * `wit_bindgen_gen_spidermonkey::Bindgen` trait implementation.
+ * `wai_bindgen_gen_spidermonkey::Bindgen` trait implementation.
  */
 
 #include <assert.h>
