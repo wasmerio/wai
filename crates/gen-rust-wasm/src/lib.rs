@@ -218,18 +218,14 @@ impl Generator for RustWasm {
         // Add a `from_bits_preserve` method.
         self.src
             .push_str(&format!("impl {} {{\n", name.to_camel_case()));
-        self.src.push_str(&format!(
-            "    /// Convert from a raw integer, preserving any unknown bits. See\n"
-        ));
-        self.src.push_str(&format!(
-            "    /// <https://github.com/bitflags/bitflags/issues/263#issuecomment-957088321>\n"
-        ));
+        self.src.push_str("    /// Convert from a raw integer, preserving any unknown bits. See\n");
+        self.src.push_str("    /// <https://github.com/bitflags/bitflags/issues/263#issuecomment-957088321>\n");
         self.src.push_str(&format!(
             "    pub fn from_bits_preserve(bits: {repr}) -> Self {{\n",
         ));
-        self.src.push_str(&format!("        Self {{ bits }}\n"));
-        self.src.push_str(&format!("    }}\n"));
-        self.src.push_str(&format!("}}\n"));
+        self.src.push_str("        Self { bits }\n");
+        self.src.push_str("    }\n");
+        self.src.push_str("}\n");
     }
 
     fn type_variant(
@@ -366,7 +362,7 @@ impl Generator for RustWasm {
             let trait_ = self
                 .traits
                 .entry(iface.name.to_camel_case())
-                .or_insert(Trait::default());
+                .or_default();
             trait_.methods.push(format!(
                 "
                     /// An optional callback invoked when a handle is finalized
@@ -622,13 +618,13 @@ impl Generator for RustWasm {
         let trait_ = self
             .traits
             .entry(iface.name.to_camel_case())
-            .or_insert(Trait::default());
+            .or_default();
         let dst = match &func.kind {
             FunctionKind::Freestanding => &mut trait_.methods,
             FunctionKind::Static { resource, .. } | FunctionKind::Method { resource, .. } => trait_
                 .resource_methods
                 .entry(*resource)
-                .or_insert(Vec::new()),
+                .or_default(),
         };
         dst.push(mem::replace(&mut self.src, prev).into());
     }
@@ -662,10 +658,10 @@ impl Generator for RustWasm {
                 src.push_str("#[wai_bindgen_rust::async_trait(?Send)]\n");
             }
             src.push_str("pub trait ");
-            src.push_str(&name);
+            src.push_str(name);
             src.push_str(" {\n");
             for f in trait_.methods.iter() {
-                src.push_str(&f);
+                src.push_str(f);
                 src.push_str("\n");
             }
             src.push_str("}\n");
@@ -679,7 +675,7 @@ impl Generator for RustWasm {
                     iface.resources[*id].name.to_camel_case()
                 ));
                 for f in methods {
-                    src.push_str(&f);
+                    src.push_str(f);
                     src.push_str("\n");
                 }
                 src.push_str("}\n");
@@ -829,7 +825,7 @@ impl Bindgen for FunctionBindgen<'_> {
     }
 
     fn finish_block(&mut self, operands: &mut Vec<String>) {
-        if self.cleanup.len() > 0 {
+        if !self.cleanup.is_empty() {
             self.needs_cleanup_list = true;
             self.push_str("cleanup_list.extend_from_slice(&[");
             for (ptr, layout) in mem::take(&mut self.cleanup) {
@@ -1085,13 +1081,13 @@ impl Bindgen for FunctionBindgen<'_> {
                 if variant.cases.iter().all(|c| c.ty == Type::Unit) && unchecked =>
             {
                 self.blocks.drain(self.blocks.len() - variant.cases.len()..);
-                let mut result = format!("core::mem::transmute::<_, ");
+                let mut result = "core::mem::transmute::<_, ".to_string();
                 result.push_str(&name.to_camel_case());
                 result.push_str(">(");
                 result.push_str(&operands[0]);
                 result.push_str(" as ");
                 result.push_str(int_repr(variant.tag()));
-                result.push_str(")");
+                result.push(')');
                 results.push(result);
             }
 
@@ -1120,7 +1116,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 if !unchecked {
                     result.push_str("_ => panic!(\"invalid enum discriminant\"),\n");
                 }
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
             }
 
@@ -1174,7 +1170,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 if !unchecked {
                     result.push_str("_ => panic!(\"invalid union discriminant\"),\n");
                 }
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
             }
 
@@ -1254,25 +1250,25 @@ impl Bindgen for FunctionBindgen<'_> {
                     let case = case.name.to_camel_case();
                     result.push_str(&format!("{name}::{case} => {i},\n"));
                 }
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
             }
 
             // In unchecked mode when this type is a named enum then we know we
             // defined the type so we can transmute directly into it.
             Instruction::EnumLift { enum_, name, .. } if unchecked => {
-                let mut result = format!("core::mem::transmute::<_, ");
+                let mut result = "core::mem::transmute::<_, ".to_string();
                 result.push_str(&name.to_camel_case());
                 result.push_str(">(");
                 result.push_str(&operands[0]);
                 result.push_str(" as ");
                 result.push_str(int_repr(enum_.tag()));
-                result.push_str(")");
+                result.push(')');
                 results.push(result);
             }
 
             Instruction::EnumLift { enum_, name, .. } => {
-                let mut result = format!("match ");
+                let mut result = "match ".to_string();
                 result.push_str(&operands[0]);
                 result.push_str(" {\n");
                 let name = name.to_camel_case();
@@ -1281,7 +1277,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     result.push_str(&format!("{i} => {name}::{case},\n"));
                 }
                 result.push_str("_ => panic!(\"invalid enum discriminant\"),\n");
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
             }
 
@@ -1453,7 +1449,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 let func = self.declare_import(iface, name, &sig.params, &sig.results);
 
                 // ... then call the function with all our operands
-                if sig.results.len() > 0 {
+                if !sig.results.is_empty() {
                     self.push_str("let ret = ");
                     results.push("ret".to_string());
                 }

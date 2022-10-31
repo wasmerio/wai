@@ -50,7 +50,7 @@ fn run(input: TokenStream, dir: Direction) -> TokenStream {
         );
     }
 
-    return contents;
+    contents
 }
 
 struct Opts {

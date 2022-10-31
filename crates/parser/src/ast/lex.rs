@@ -437,7 +437,7 @@ fn is_keylike_continue(ch: char) -> bool {
 
 pub fn validate_id(start: usize, id: &str) -> Result<(), Error> {
     // Ids must be in stream-safe NFC.
-    if !unicode_normalization::is_nfc_stream_safe(&id) {
+    if !unicode_normalization::is_nfc_stream_safe(id) {
         return Err(Error::IdNotSSNFC(start));
     }
 
@@ -447,7 +447,7 @@ pub fn validate_id(start: usize, id: &str) -> Result<(), Error> {
     }
 
     // Ids consist of parts separated by '-'s.
-    for part in id.split("-") {
+    for part in id.split('-') {
         // Parts must be non-empty and start with a non-combining XID start.
         match part.chars().next() {
             None => return Err(Error::IdPartEmpty(start)),

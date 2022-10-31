@@ -234,7 +234,7 @@ impl Js {
     fn docs(&mut self, docs: &Docs) {
         match &docs.contents {
             Some(docs) => self.docs_raw(docs),
-            None => return,
+            None => (),
         }
     }
 
@@ -267,7 +267,7 @@ impl Js {
                 self.src.ts(&iface.name.to_mixed_case());
                 self.src.ts(": ");
                 self.src.ts(&iface.name.to_camel_case());
-                if func.params.len() > 0 {
+                if !func.params.is_empty() {
                     self.src.ts(", ");
                 }
                 0
@@ -658,7 +658,7 @@ impl Generator for Js {
         let imports = self
             .guest_imports
             .entry(iface.name.to_string())
-            .or_insert(Imports::default());
+            .or_default();
         let dst = match &func.kind {
             FunctionKind::Freestanding | FunctionKind::Static { .. } => {
                 &mut imports.freestanding_funcs
@@ -666,7 +666,7 @@ impl Generator for Js {
             FunctionKind::Method { resource, .. } => imports
                 .resource_funcs
                 .entry(*resource)
-                .or_insert(Vec::new()),
+                .or_default(),
         };
         dst.push((func.name.to_string(), src));
     }
@@ -765,7 +765,7 @@ impl Generator for Js {
                 exports
                     .resource_funcs
                     .entry(*resource)
-                    .or_insert(Vec::new())
+                    .or_default()
                     .push(func_body);
             }
         }
@@ -803,7 +803,7 @@ impl Generator for Js {
             for (name, src) in funcs
                 .freestanding_funcs
                 .iter()
-                .chain(funcs.resource_funcs.values().flat_map(|v| v))
+                .chain(funcs.resource_funcs.values().flatten())
             {
                 self.src.js(&format!(
                     "imports[\"{}\"][\"{}\"] = {};\n",
@@ -817,7 +817,7 @@ impl Generator for Js {
                 self.src.ts(&src.ts);
             }
 
-            if self.imported_resources.len() > 0 {
+            if !self.imported_resources.is_empty() {
                 self.src
                     .js("if (!(\"canonical_abi\" in imports)) imports[\"canonical_abi\"] = {};\n");
             }
@@ -885,7 +885,7 @@ impl Generator for Js {
                 */
                 constructor();
             ");
-            if self.exported_resources.len() > 0 {
+            if !self.exported_resources.is_empty() {
                 self.src.js("constructor() {\n");
                 let slab = self.intrinsic(Intrinsic::Slab);
                 for r in self.exported_resources.iter() {
@@ -915,7 +915,7 @@ impl Generator for Js {
             ");
             self.src.js("addToImports(imports) {\n");
             let any_async = iface.functions.iter().any(|f| f.is_async);
-            if self.exported_resources.len() > 0 || any_async {
+            if !self.exported_resources.is_empty() || any_async {
                 self.src
                     .js("if (!(\"canonical_abi\" in imports)) imports[\"canonical_abi\"] = {};\n");
             }
@@ -955,8 +955,7 @@ impl Generator for Js {
             }
             self.src.js("}\n");
 
-            self.src.ts(&format!(
-                "
+            self.src.ts("
                    /**
                     * Initializes this object with the provided WebAssembly
                     * module/instance.
@@ -991,8 +990,7 @@ impl Generator for Js {
                         module: WebAssembly.Module | BufferSource | Promise<Response> | Response | WebAssembly.Instance,
                         imports?: any,
                     ): Promise<void>;
-                ",
-            ));
+                ");
             self.src.js("
                 async instantiate(module, imports) {
                     imports = imports || {};
@@ -1124,7 +1122,7 @@ impl Generator for Js {
             );
         }
 
-        if self.intrinsics.len() > 0 {
+        if !self.intrinsics.is_empty() {
             self.src.js("import { ");
             for (i, (intrinsic, name)) in mem::take(&mut self.intrinsics).into_iter().enumerate() {
                 if i > 0 {
@@ -1497,7 +1495,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 for (field, op) in record.fields.iter().zip(operands) {
                     result.push_str(&format!("{}: {},\n", field.name.to_mixed_case(), op));
                 }
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
             }
 
@@ -2158,7 +2156,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 self.bind_results(sig.results.len(), results);
                 self.src.js(&self.src_object);
                 self.src.js("._exports['");
-                self.src.js(&name);
+                self.src.js(name);
                 self.src.js("'](");
                 self.src.js(&operands.join(", "));
                 self.src.js(");\n");
@@ -2183,7 +2181,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     promises = promises
                 ));
 
-                if wasm_results.len() > 0 {
+                if !wasm_results.is_empty() {
                     self.src.js("[");
                     let operands = &["val".to_string()];
                     let mut results = Vec::new();
@@ -2212,7 +2210,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 self.src.js("(promise_ctx, _prev => {\n");
                 self.src.js(&self.src_object);
                 self.src.js("._exports['");
-                self.src.js(&name);
+                self.src.js(name);
                 self.src.js("'](");
                 for op in operands {
                     self.src.js(op);

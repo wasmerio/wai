@@ -153,7 +153,7 @@ impl Runner<'_> {
         fn normalize(test: &Path, s: &str) -> String {
             s.replace(
                 &test.display().to_string(),
-                &test.display().to_string().replace("\\", "/"),
+                &test.display().to_string().replace('\\', "/"),
             )
             .replace("\\parse-fail\\", "/parse-fail/")
             .replace("\r\n", "\n")
@@ -235,7 +235,7 @@ fn to_json(i: &Interface) -> String {
         .iter()
         .map(|(_, r)| Resource {
             name: r.name.clone(),
-            supertype: r.supertype.as_ref().map(|supertype| supertype.clone()),
+            supertype: r.supertype.as_ref().cloned(),
             foreign_module: r.foreign_module.clone(),
         })
         .collect::<Vec<_>>();
@@ -288,7 +288,7 @@ fn to_json(i: &Interface) -> String {
                     .collect(),
             },
             TypeDefKind::Tuple(t) => Type::Tuple {
-                types: t.types.iter().map(|ty| translate_type(ty)).collect(),
+                types: t.types.iter().map(translate_type).collect(),
             },
             TypeDefKind::Flags(r) => Type::Flags {
                 flags: r.flags.iter().map(|f| f.name.clone()).collect(),
@@ -323,20 +323,20 @@ fn to_json(i: &Interface) -> String {
     fn translate_type(ty: &wai_parser::Type) -> String {
         use wai_parser::Type;
         match ty {
-            Type::Unit => format!("unit"),
-            Type::Bool => format!("bool"),
-            Type::U8 => format!("u8"),
-            Type::U16 => format!("u16"),
-            Type::U32 => format!("u32"),
-            Type::U64 => format!("u64"),
-            Type::S8 => format!("s8"),
-            Type::S16 => format!("s16"),
-            Type::S32 => format!("s32"),
-            Type::S64 => format!("s64"),
-            Type::Float32 => format!("float32"),
-            Type::Float64 => format!("float64"),
-            Type::Char => format!("char"),
-            Type::String => format!("string"),
+            Type::Unit => "unit".to_string(),
+            Type::Bool => "bool".to_string(),
+            Type::U8 => "u8".to_string(),
+            Type::U16 => "u16".to_string(),
+            Type::U32 => "u32".to_string(),
+            Type::U64 => "u64".to_string(),
+            Type::S8 => "s8".to_string(),
+            Type::S16 => "s16".to_string(),
+            Type::S32 => "s32".to_string(),
+            Type::S64 => "s64".to_string(),
+            Type::Float32 => "float32".to_string(),
+            Type::Float64 => "float64".to_string(),
+            Type::Char => "char".to_string(),
+            Type::String => "string".to_string(),
             Type::Handle(resource) => format!("handle-{}", resource.index()),
             Type::Id(id) => format!("type-{}", id.index()),
         }

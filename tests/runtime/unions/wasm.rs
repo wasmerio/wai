@@ -89,11 +89,11 @@ impl exports::Exports for Exports {
         // All-Floats
         assert!(matches!(
             add_one_float(AllFloats::F32(0.0)),
-            AllFloats::F32(1.0)
+            AllFloats::F32(x) if x == 1.0
         ));
         assert!(matches!(
             add_one_float(AllFloats::F64(0.0)),
-            AllFloats::F64(1.0)
+            AllFloats::F64(x) if x == 1.0
         ));
 
         // All-Text
@@ -101,10 +101,10 @@ impl exports::Exports for Exports {
             replace_first_char(AllTextParam::Char('a'), 'z'),
             AllTextResult::Char('z')
         ));
-        let rhs = "zbc".to_string();
+        let _rhs = "zbc".to_string();
         assert!(matches!(
             replace_first_char(AllTextParam::String("abc"), 'z'),
-            AllTextResult::String(rhs)
+            AllTextResult::String(_rhs)
         ));
 
         // All-Integers
@@ -147,7 +147,7 @@ impl exports::Exports for Exports {
         // Distinguishable
         assert!(matches!(
             add_one_distinguishable_num(DistinguishableNum::F64(0.0)),
-            DistinguishableNum::F64(1.0)
+            DistinguishableNum::F64(x) if x == 1.0
         ));
         assert!(matches!(
             add_one_distinguishable_num(DistinguishableNum::I64(0)),
@@ -190,7 +190,7 @@ impl exports::Exports for Exports {
 
     fn replace_first_char(text: AllText, letter: char) -> AllText {
         match text {
-            AllText::Char(c) => AllText::Char(letter),
+            AllText::Char(_c) => AllText::Char(letter),
             AllText::String(s) => AllText::String(format!("{}{}", letter, &s[1..])),
         }
     }

@@ -75,7 +75,7 @@ impl demo::Config for Config {
                 let contents = if contents.starts_with(b"\0asm") {
                     wasmprinter::print_bytes(contents).unwrap()
                 } else {
-                    String::from_utf8_lossy(&contents).into()
+                    String::from_utf8_lossy(contents).into()
                 };
                 (name.to_string(), contents)
             })

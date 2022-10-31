@@ -341,7 +341,7 @@ impl Generator for Wasmer {
         // If this record might be used as a slice type in various places then
         // we synthesize an `Endian` implementation for it so `&[Le<ThisType>]`
         // is usable.
-        if self.modes_of(iface, id).len() > 0
+        if !self.modes_of(iface, id).is_empty()
             && record.fields.iter().all(|f| iface.all_bits_valid(&f.ty))
         {
             self.src.push_str("impl wai_bindgen_wasmer::Endian for ");
@@ -592,8 +592,8 @@ impl Generator for Wasmer {
         // Generate the closure that's passed to a `Linker`, the final piece of
         // codegen here.
         let result_ty = match &sig.results[..] {
-            &[] => format!("()"),
-            &[ty] => format!("{}", wasm_type(ty)),
+            &[] => "()".to_string(),
+            &[ty] => wasm_type(ty).to_string(),
             tys => format!(
                 "({})",
                 tys.iter()
@@ -679,7 +679,7 @@ impl Generator for Wasmer {
 
         self.src.push_str("let data_mut = store.data_mut();\n");
 
-        if self.all_needed_handles.len() > 0 {
+        if !self.all_needed_handles.is_empty() {
             self.src
                 .push_str("let tables = data_mut.tables.borrow_mut();\n");
         }
@@ -694,7 +694,7 @@ impl Generator for Wasmer {
 
         self.guest_imports
             .entry(iface.name.to_string())
-            .or_insert(Vec::new())
+            .or_default()
             .push(Import {
                 is_async,
                 name: func.name.to_string(),
@@ -729,7 +729,7 @@ impl Generator for Wasmer {
         let params = func
             .params
             .iter()
-            .map(|(name, _)| to_rust_ident(name).to_string())
+            .map(|(name, _)| to_rust_ident(name))
             .collect();
         let mut f = FunctionBindgen::new(self, params);
         iface.call(
@@ -795,23 +795,23 @@ impl Generator for Wasmer {
         if sig.params.len() == 1 {
             cvt.push_str(wasm_type(sig.params[0]));
         } else {
-            cvt.push_str("(");
+            cvt.push('(');
             for param in sig.params.iter() {
                 cvt.push_str(wasm_type(*param));
-                cvt.push_str(",");
+                cvt.push(',');
             }
-            cvt.push_str(")");
+            cvt.push(')');
         }
         cvt.push_str(", ");
         if sig.results.len() == 1 {
             cvt.push_str(wasm_type(sig.results[0]));
         } else {
-            cvt.push_str("(");
+            cvt.push('(');
             for result in sig.results.iter() {
                 cvt.push_str(wasm_type(*result));
-                cvt.push_str(",");
+                cvt.push(',');
             }
-            cvt.push_str(")");
+            cvt.push(')');
         }
         exports.fields.insert(
             format!("func_{}", to_rust_ident(&func.name)),
@@ -836,7 +836,7 @@ impl Generator for Wasmer {
             self.src.push_str(&module_camel);
             self.src.push_str(": Sized + Send + Sync + 'static");
             self.src.push_str("{\n");
-            if self.all_needed_handles.len() > 0 {
+            if !self.all_needed_handles.is_empty() {
                 for handle in self.all_needed_handles.iter() {
                     self.src.push_str("type ");
                     self.src.push_str(&handle.to_camel_case());
@@ -877,7 +877,7 @@ impl Generator for Wasmer {
             }
             self.src.push_str("}\n");
 
-            if self.all_needed_handles.len() > 0 {
+            if !self.all_needed_handles.is_empty() {
                 self.src.push_str("\npub struct ");
                 self.src.push_str(&module_camel);
                 self.src.push_str("Tables<T: ");
@@ -968,7 +968,7 @@ impl Generator for Wasmer {
 
             self.push_str("let env = EnvWrapper {\n");
             self.push_str("data,\n");
-            if self.all_needed_handles.len() > 0 {
+            if !self.all_needed_handles.is_empty() {
                 self.push_str("tables: std::rc::Rc::default(),\n");
             }
             if self.needs_lazy_initialized {
@@ -1109,7 +1109,7 @@ impl Generator for Wasmer {
             self.push_str("}\n");
             self.push_str(&format!("impl {} {{\n", name));
 
-            if self.exported_resources.len() == 0 {
+            if self.exported_resources.is_empty() {
                 self.push_str("#[allow(unused_variables)]\n");
             }
             self.push_str(&format!(
@@ -1205,8 +1205,7 @@ impl Generator for Wasmer {
             if !self.opts.async_.is_none() {
                 unimplemented!();
             }
-            self.push_str(&format!(
-                "
+            self.push_str("
                     /// Instantiates the provided `module` using the specified
                     /// parameters, wrapping up the result in a structure that
                     /// translates between wasm and the host.
@@ -1221,12 +1220,11 @@ impl Generator for Wasmer {
                         mut store: impl wasmer::AsStoreMut,
                         module: &wasmer::Module,
                         imports: &mut wasmer::Imports,
-                    ) -> anyhow::Result<(Self, wasmer::Instance)> {{
+                    ) -> anyhow::Result<(Self, wasmer::Instance)> {
                         let env = Self::add_to_imports(&mut store, imports);
                         let instance = wasmer::Instance::new(
                             &mut store, module, &*imports)?;
-                        "
-            ));
+                        ");
             if !self.exported_resources.is_empty() {
                 self.push_str("{\n");
                 for r in self.exported_resources.iter() {
@@ -1259,12 +1257,10 @@ impl Generator for Wasmer {
                 }
                 self.push_str("}\n");
             }
-            self.push_str(&format!(
-                "
+            self.push_str("
                         Ok((Self::new(store, &instance, env)?, instance))
-                    }}
-                ",
-            ));
+                    }
+                ");
 
             self.push_str(&format!(
                 "
@@ -1286,9 +1282,9 @@ impl Generator for Wasmer {
             //assert!(!self.needs_get_func);
             for (name, (_, get)) in exports.fields.iter() {
                 self.push_str("let ");
-                self.push_str(&name);
+                self.push_str(name);
                 self.push_str("= ");
-                self.push_str(&get);
+                self.push_str(get);
                 self.push_str(";\n");
             }
             self.push_str("Ok(");
@@ -1445,7 +1441,7 @@ impl FunctionBindgen<'_> {
                 // Before calls we use `_bc` which is a borrow checker used for
                 // getting long-lasting borrows into memory.
                 self.needs_borrow_checker = true;
-                return format!("_bc");
+                return "_bc".to_string();
             }
 
             if !self.caller_memory_available {
@@ -1456,11 +1452,11 @@ impl FunctionBindgen<'_> {
                     "let caller_memory = unsafe { _memory_view.data_unchecked_mut() };\n",
                 );
             }
-            format!("caller_memory")
+            "caller_memory".to_string()
         } else {
             self.needs_memory = true;
             self.push_str("let _memory_view = _memory.view(&store);\n");
-            format!("unsafe {{ _memory_view.data_unchecked_mut() }}")
+            "unsafe { _memory_view.data_unchecked_mut() }".to_string()
         }
     }
 
@@ -1802,7 +1798,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     result.push_str(&format!("{i} => {name}::{case}{block},\n"));
                 }
                 result.push_str(&format!("_ => return Err(invalid_variant(\"{name}\")),\n"));
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
                 self.gen.needs_invalid_variant = true;
             }
@@ -1850,7 +1846,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     result.push_str(&format!("{i} => {name}::{case_name}({block}),\n"));
                 }
                 result.push_str(&format!("_ => return Err(invalid_variant(\"{name}\")),\n"));
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
             }
 
@@ -1928,7 +1924,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     result.push_str(&format!("{i} => {name}::{case},\n"));
                 }
                 result.push_str(&format!("_ => return Err(invalid_variant(\"{name}\")),\n"));
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
                 self.gen.needs_invalid_variant = true;
             }
@@ -2166,7 +2162,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 name,
                 sig,
             } => {
-                if sig.results.len() > 0 {
+                if !sig.results.is_empty() {
                     let tmp = self.tmp();
                     if sig.results.len() == 1 {
                         self.push_str("let ");
@@ -2212,7 +2208,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 for (i, operand) in operands.iter().enumerate() {
                     self.push_str(&format!("let param{} = {};\n", i, operand));
                 }
-                if self.gen.opts.tracing && func.params.len() > 0 {
+                if self.gen.opts.tracing && !func.params.is_empty() {
                     self.push_str("wai_bindgen_wasmer::tracing::event!(\n");
                     self.push_str("wai_bindgen_wasmer::tracing::Level::TRACE,\n");
                     for (i, (name, _ty)) in func.params.iter().enumerate() {
@@ -2229,7 +2225,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 for i in 0..operands.len() {
                     call.push_str(&format!("param{}, ", i));
                 }
-                call.push_str(")");
+                call.push(')');
                 if self.gen.opts.async_.includes(&func.name) {
                     call.push_str(".await");
                 }
@@ -2263,7 +2259,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 }
                 self.push_str(";\n");
 
-                if self.gen.all_needed_handles.len() > 0 {
+                if !self.gen.all_needed_handles.is_empty() {
                     self.push_str("drop(tables);\n");
                 }
 
@@ -2286,7 +2282,7 @@ impl Bindgen for FunctionBindgen<'_> {
 
             Instruction::Return { amt, .. } => {
                 let result = match amt {
-                    0 => format!("Ok(())\n"),
+                    0 => "Ok(())\n".to_string(),
                     1 => format!("Ok({})\n", operands[0]),
                     _ => format!("Ok(({}))\n", operands.join(", ")),
                 };
@@ -2370,7 +2366,7 @@ impl NeededFunction {
 }
 
 fn sorted_iter<K: Ord, V>(map: &HashMap<K, V>) -> impl Iterator<Item = (&K, &V)> {
-    let mut list = map.into_iter().collect::<Vec<_>>();
+    let mut list = map.iter().collect::<Vec<_>>();
     list.sort_by_key(|p| p.0);
     list.into_iter()
 }

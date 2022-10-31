@@ -36,7 +36,7 @@ impl Source {
                 };
                 line.get(trim..).unwrap_or("")
             });
-            if i != lines.len() - 1 || src.ends_with("\n") {
+            if i != lines.len() - 1 || src.ends_with('\n') {
                 self.newline();
             }
         }
@@ -101,9 +101,9 @@ impl Source {
 
     /// Go to the next line and apply any indent.
     pub fn newline(&mut self) {
-        self.s.push_str("\n");
+        self.s.push('\n');
         for _ in 0..self.indent {
-            self.s.push_str(" ");
+            self.s.push(' ');
         }
     }
 }
@@ -396,13 +396,13 @@ impl<'s, 'd, 'i> SourceBuilder<'s, 'd, 'i> {
 impl<'s, 'd, 'i> std::ops::Deref for SourceBuilder<'s, 'd, 'i> {
     type Target = Source;
     fn deref(&self) -> &Source {
-        &self.source
+        self.source
     }
 }
 
 impl<'s, 'd, 'i> std::ops::DerefMut for SourceBuilder<'s, 'd, 'i> {
     fn deref_mut(&mut self) -> &mut Source {
-        &mut self.source
+        self.source
     }
 }
 

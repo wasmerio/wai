@@ -1088,7 +1088,7 @@ impl EncodingState {
             let mut interface_exports = Vec::new();
             for func in &export.functions {
                 let name =
-                    expected_export_name((!is_default).then(|| export.name.as_str()), &func.name);
+                    expected_export_name((!is_default).then_some(export.name.as_str()), &func.name);
 
                 let core_func_index = self.alias_core_item(
                     &mut aliases,

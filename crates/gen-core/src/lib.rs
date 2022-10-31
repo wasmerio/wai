@@ -139,8 +139,8 @@ pub trait Generator {
 
         for f in iface.functions.iter() {
             match dir {
-                Direction::Import => self.import(iface, &f),
-                Direction::Export => self.export(iface, &f),
+                Direction::Import => self.import(iface, f),
+                Direction::Export => self.export(iface, f),
             }
         }
 
@@ -263,7 +263,7 @@ impl Types {
             }
         }
         self.type_info.insert(ty, info);
-        return info;
+        info
     }
 
     pub fn type_info(&mut self, iface: &Interface, ty: &Type) -> TypeInfo {
@@ -369,7 +369,7 @@ impl Source {
         let lines = src.lines().collect::<Vec<_>>();
         for (i, line) in lines.iter().enumerate() {
             let trimmed = line.trim();
-            if trimmed.starts_with("}") && self.s.ends_with("  ") {
+            if trimmed.starts_with('}') && self.s.ends_with("  ") {
                 self.s.pop();
                 self.s.pop();
             }
@@ -384,7 +384,7 @@ impl Source {
             if trimmed.starts_with('}') {
                 self.indent -= 1;
             }
-            if i != lines.len() - 1 || src.ends_with("\n") {
+            if i != lines.len() - 1 || src.ends_with('\n') {
                 self.newline();
             }
         }
@@ -399,7 +399,7 @@ impl Source {
     }
 
     fn newline(&mut self) {
-        self.s.push_str("\n");
+        self.s.push('\n');
         for _ in 0..self.indent {
             self.s.push_str("  ");
         }

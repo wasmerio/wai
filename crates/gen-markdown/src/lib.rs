@@ -407,7 +407,7 @@ impl Generator for Markdown {
         self.src.push_str("\n\n");
         self.docs(&func.docs);
 
-        if func.params.len() > 0 {
+        if !func.params.is_empty() {
             self.src.push_str("##### Params\n\n");
             for (name, ty) in func.params.iter() {
                 self.src.push_str(&format!(

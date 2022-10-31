@@ -333,7 +333,7 @@ impl Generator for Wasmtime {
         // If this record might be used as a slice type in various places then
         // we synthesize an `Endian` implementation for it so `&[Le<ThisType>]`
         // is usable.
-        if self.modes_of(iface, id).len() > 0
+        if !self.modes_of(iface, id).is_empty()
             && record.fields.iter().all(|f| iface.all_bits_valid(&f.ty))
         {
             self.src.push_str("impl wai_bindgen_wasmtime::Endian for ");
@@ -653,7 +653,7 @@ impl Generator for Wasmtime {
             self.src.push_str("let host = get(caller.data_mut());\n");
         }
 
-        if self.all_needed_handles.len() > 0 {
+        if !self.all_needed_handles.is_empty() {
             self.src.push_str("let (host, _tables) = host;\n");
         }
 
@@ -667,7 +667,7 @@ impl Generator for Wasmtime {
 
         self.guest_imports
             .entry(iface.name.to_string())
-            .or_insert(Vec::new())
+            .or_default()
             .push(Import {
                 is_async,
                 num_wasm_params: sig.params.len(),
@@ -699,7 +699,7 @@ impl Generator for Wasmtime {
         let params = func
             .params
             .iter()
-            .map(|(name, _)| to_rust_ident(name).to_string())
+            .map(|(name, _)| to_rust_ident(name))
             .collect();
         let mut f = FunctionBindgen::new(self, params);
         iface.call(
@@ -771,14 +771,14 @@ impl Generator for Wasmtime {
         let mut cvt = "(".to_string();
         for param in sig.params.iter() {
             cvt.push_str(wasm_type(*param));
-            cvt.push_str(",");
+            cvt.push(',');
         }
         cvt.push_str("), (");
         for result in sig.results.iter() {
             cvt.push_str(wasm_type(*result));
-            cvt.push_str(",");
+            cvt.push(',');
         }
-        cvt.push_str(")");
+        cvt.push(')');
         exports.fields.insert(
             to_rust_ident(&func.name),
             (
@@ -805,7 +805,7 @@ impl Generator for Wasmtime {
                 self.src.push_str(" + Send");
             }
             self.src.push_str("{\n");
-            if self.all_needed_handles.len() > 0 {
+            if !self.all_needed_handles.is_empty() {
                 for handle in self.all_needed_handles.iter() {
                     self.src.push_str("type ");
                     self.src.push_str(&handle.to_camel_case());
@@ -846,7 +846,7 @@ impl Generator for Wasmtime {
             }
             self.src.push_str("}\n");
 
-            if self.all_needed_handles.len() > 0 {
+            if !self.all_needed_handles.is_empty() {
                 self.src.push_str("\npub struct ");
                 self.src.push_str(&module_camel);
                 self.src.push_str("Tables<T: ");
@@ -984,7 +984,7 @@ impl Generator for Wasmtime {
             };
             self.push_str(&format!("impl<T{}> {}<T> {{\n", bound, name));
 
-            if self.exported_resources.len() == 0 {
+            if self.exported_resources.is_empty() {
                 self.push_str("#[allow(unused_variables)]\n");
             }
             self.push_str(&format!(
@@ -1129,9 +1129,9 @@ impl Generator for Wasmtime {
             assert!(!self.needs_get_func);
             for (name, (_, get)) in exports.fields.iter() {
                 self.push_str("let ");
-                self.push_str(&name);
+                self.push_str(name);
                 self.push_str("= ");
-                self.push_str(&get);
+                self.push_str(get);
                 self.push_str(";\n");
             }
             for r in self.exported_resources.iter() {
@@ -1306,7 +1306,7 @@ impl FunctionBindgen<'_> {
                 // Before calls we use `_bc` which is a borrow checker used for
                 // getting long-lasting borrows into memory.
                 self.needs_borrow_checker = true;
-                return format!("_bc");
+                return "_bc".to_string();
             }
 
             if !self.caller_memory_available {
@@ -1315,7 +1315,7 @@ impl FunctionBindgen<'_> {
                 // get separate borrows of `caller_memory` and `_tables` if we
                 // might need handle tables later. If we don't end up using
                 // `_tables` that's ok, it'll almost always be optimized away.
-                if self.gen.all_needed_handles.len() > 0 {
+                if !self.gen.all_needed_handles.is_empty() {
                     self.push_str(
                         "let (caller_memory, data) = memory.data_and_store_mut(&mut caller);\n",
                     );
@@ -1324,10 +1324,10 @@ impl FunctionBindgen<'_> {
                     self.push_str("let caller_memory = memory.data_mut(&mut caller);\n");
                 }
             }
-            format!("caller_memory")
+            "caller_memory".to_string()
         } else {
             self.needs_memory = true;
-            format!("memory.data_mut(&mut caller)")
+            "memory.data_mut(&mut caller)".to_string()
         }
     }
 
@@ -1663,7 +1663,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     result.push_str(&format!("{i} => {name}::{case}{block},\n"));
                 }
                 result.push_str(&format!("_ => return Err(invalid_variant(\"{name}\")),\n"));
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
                 self.gen.needs_invalid_variant = true;
             }
@@ -1711,7 +1711,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     result.push_str(&format!("{i} => {name}::{case_name}({block}),\n"));
                 }
                 result.push_str(&format!("_ => return Err(invalid_variant(\"{name}\")),\n"));
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
             }
 
@@ -1789,7 +1789,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     result.push_str(&format!("{i} => {name}::{case},\n"));
                 }
                 result.push_str(&format!("_ => return Err(invalid_variant(\"{name}\")),\n"));
-                result.push_str("}");
+                result.push('}');
                 results.push(result);
                 self.gen.needs_invalid_variant = true;
             }
@@ -2018,7 +2018,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 name,
                 sig,
             } => {
-                if sig.results.len() > 0 {
+                if !sig.results.is_empty() {
                     let tmp = self.tmp();
                     self.push_str("let (");
                     for i in 0..sig.results.len() {
@@ -2057,7 +2057,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 for (i, operand) in operands.iter().enumerate() {
                     self.push_str(&format!("let param{} = {};\n", i, operand));
                 }
-                if self.gen.opts.tracing && func.params.len() > 0 {
+                if self.gen.opts.tracing && !func.params.is_empty() {
                     self.push_str("wai_bindgen_wasmtime::tracing::event!(\n");
                     self.push_str("wai_bindgen_wasmtime::tracing::Level::TRACE,\n");
                     for (i, (name, _ty)) in func.params.iter().enumerate() {
@@ -2074,7 +2074,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 for i in 0..operands.len() {
                     call.push_str(&format!("param{}, ", i));
                 }
-                call.push_str(")");
+                call.push(')');
                 if self.gen.opts.async_.includes(&func.name) {
                     call.push_str(".await");
                 }
@@ -2127,7 +2127,7 @@ impl Bindgen for FunctionBindgen<'_> {
 
             Instruction::Return { amt, .. } => {
                 let result = match amt {
-                    0 => format!("Ok(())\n"),
+                    0 => "Ok(())\n".to_string(),
                     1 => format!("Ok({})\n", operands[0]),
                     _ => format!("Ok(({}))\n", operands.join(", ")),
                 };
@@ -2211,7 +2211,7 @@ impl NeededFunction {
 }
 
 fn sorted_iter<K: Ord, V>(map: &HashMap<K, V>) -> impl Iterator<Item = (&K, &V)> {
-    let mut list = map.into_iter().collect::<Vec<_>>();
+    let mut list = map.iter().collect::<Vec<_>>();
     list.sort_by_key(|p| p.0);
     list.into_iter()
 }

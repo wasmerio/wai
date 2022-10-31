@@ -313,7 +313,7 @@ impl Generator for WasmtimePy {
             // should probably apply this to all generated Python
             // identifiers.
             let mut name = case.name.to_shouty_snake_case();
-            if name.chars().next().unwrap().is_digit(10) {
+            if name.chars().next().unwrap().is_ascii_digit() {
                 name = format!("_{}", name);
             }
             builder.push_str(&format!("{} = {}\n", name, i));
@@ -452,7 +452,7 @@ impl Generator for WasmtimePy {
         let imports = self
             .guest_imports
             .entry(iface.name.to_string())
-            .or_insert(Imports::default());
+            .or_default();
         let dst = match &func.kind {
             FunctionKind::Freestanding | FunctionKind::Static { .. } => {
                 &mut imports.freestanding_funcs
@@ -460,7 +460,7 @@ impl Generator for WasmtimePy {
             FunctionKind::Method { resource, .. } => imports
                 .resource_funcs
                 .entry(*resource)
-                .or_insert(Vec::new()),
+                .or_default(),
         };
         dst.push(import);
     }
@@ -548,7 +548,7 @@ impl Generator for WasmtimePy {
                 exports
                     .resource_funcs
                     .entry(*resource)
-                    .or_insert(Vec::new())
+                    .or_default()
             }
         };
         dst.push(func_body);
@@ -696,7 +696,7 @@ impl Generator for WasmtimePy {
             for func in funcs
                 .freestanding_funcs
                 .iter()
-                .chain(funcs.resource_funcs.values().flat_map(|v| v))
+                .chain(funcs.resource_funcs.values().flatten())
             {
                 self.src.push_str(&format!("ty = {}\n", func.wasm_ty));
                 self.src.push_str(&func.src);
@@ -834,7 +834,7 @@ impl Generator for WasmtimePy {
             self.src.dedent();
 
             for func in exports.freestanding_funcs.iter() {
-                self.src.push_str(&func);
+                self.src.push_str(func);
             }
 
             self.src.dedent();
@@ -1320,7 +1320,7 @@ impl Bindgen for FunctionBindgen<'_> {
                             builder.push_str(&format!("{name}{i}"));
                         }
                     }
-                    builder.push_str(&format!("):\n"));
+                    builder.push_str("):\n");
                     builder.indent();
                     match union_representation {
                         // Uses the value directly
@@ -1490,9 +1490,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 builder.dedent();
                 builder.push_str("else:\n");
                 builder.indent();
-                builder.push_str(&format!(
-                    "raise TypeError(\"invalid variant specified for expected\")\n",
-                ));
+                builder.push_str("raise TypeError(\"invalid variant specified for expected\")\n");
                 builder.dedent();
             }
 
@@ -1724,7 +1722,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 name,
                 sig,
             } => {
-                if sig.results.len() > 0 {
+                if !sig.results.is_empty() {
                     for i in 0..sig.results.len() {
                         if i > 0 {
                             builder.push_str(", ");
@@ -1739,7 +1737,7 @@ impl Bindgen for FunctionBindgen<'_> {
                 builder.push_str("._");
                 builder.push_str(&name.to_snake_case());
                 builder.push_str("(caller");
-                if operands.len() > 0 {
+                if !operands.is_empty() {
                     builder.push_str(", ");
                 }
                 builder.push_str(&operands.join(", "));

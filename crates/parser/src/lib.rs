@@ -292,7 +292,7 @@ fn unwrap_md(contents: &str) -> String {
                 // Ensure that offsets are correct by inserting newlines to
                 // cover the Markdown content outside of wit code blocks.
                 for _ in contents[last_pos..range.start].lines() {
-                    wit.push_str("\n");
+                    wit.push('\n');
                 }
                 wit.push_str(&text);
                 last_pos = range.end;
@@ -315,7 +315,7 @@ impl Interface {
     pub fn parse_file(path: impl AsRef<Path>) -> Result<Interface> {
         let path = path.as_ref();
         let parent = path.parent().unwrap();
-        let contents = std::fs::read_to_string(&path)
+        let contents = std::fs::read_to_string(path)
             .with_context(|| format!("failed to read: {}", path.display()))?;
         Interface::parse_with(path, &contents, |path| load_fs(parent, path))
     }
@@ -347,7 +347,7 @@ impl Interface {
             .to_str()
             .context("wit filename must be valid unicode")?
             // TODO: replace with `file_prefix` if/when that gets stabilized.
-            .split(".")
+            .split('.')
             .next()
             .unwrap();
         let mut contents = contents;
@@ -524,6 +524,6 @@ fn load_fs(root: &Path, name: &str) -> Result<(PathBuf, String)> {
             }
         }
 
-        Err(err) => return Err(err.into()),
+        Err(err) => Err(err.into()),
     }
 }

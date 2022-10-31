@@ -5,7 +5,7 @@ use wai_component::ComponentEncoder;
 use wai_parser::Interface;
 
 fn read_interface(path: &Path) -> Result<Interface> {
-    wai_parser::Interface::parse_file(&path)
+    wai_parser::Interface::parse_file(path)
         .with_context(|| format!("failed to parse interface file `{}`", path.display()))
 }
 
@@ -107,10 +107,10 @@ fn component_encoding() -> Result<()> {
         };
 
         if std::env::var_os("BLESS").is_some() {
-            fs::write(&baseline_path, output)?;
+            fs::write(baseline_path, output)?;
         } else {
             assert_eq!(
-                fs::read_to_string(&baseline_path)?.replace("\r\n", "\n"),
+                fs::read_to_string(baseline_path)?.replace("\r\n", "\n"),
                 output,
                 "failed baseline comparison for test case `{}` ({})",
                 test_case,

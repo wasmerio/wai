@@ -11,7 +11,7 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::ops::Range;
 use std::path::PathBuf;
-use std::{collections::HashMap, mem};
+use std::{collections::HashMap};
 use wai_bindgen_gen_core::{
     wai_parser::{
         abi::{self, AbiVariant, WasmSignature, WasmType},
@@ -430,7 +430,7 @@ impl<'a> SpiderMonkeyWasm<'a> {
     }
 
     fn intern_type(&mut self, wasm_sig: WasmSignature) -> u32 {
-        if let Some(idx) = self.wasm_sig_to_index.get(&&wasm_sig) {
+        if let Some(idx) = self.wasm_sig_to_index.get(&wasm_sig) {
             return *idx;
         }
 
@@ -604,7 +604,7 @@ impl<'a> SpiderMonkeyWasm<'a> {
             + u32::try_from(SMW_EXPORTS.len()).unwrap()
             + funcs.len();
         self.function_names
-            .push((wizer_init_index, format!("wizer.initialize")));
+            .push((wizer_init_index, "wizer.initialize".to_string()));
 
         let ty_index = self.intern_type(WasmSignature {
             params: vec![],
@@ -677,7 +677,7 @@ impl<'a> SpiderMonkeyWasm<'a> {
         // module.
         let smw_new_module_builder = self.spidermonkey_import("SMW_new_module_builder");
         let import_fn_name_to_index =
-            std::mem::replace(&mut self.import_fn_name_to_index, Default::default());
+            std::mem::take(&mut self.import_fn_name_to_index);
         for (module, funcs) in &import_fn_name_to_index {
             // Malloc space for the module name.
             self.malloc_static_size(
@@ -1510,7 +1510,7 @@ impl abi::Bindgen for Bindgen<'_, '_> {
                 // []
                 self.inst(Instruction::LocalGet(addr));
                 // [i32]
-                self.inst(Instruction::I32Load(sm_mem_arg((*offset as u32).into())));
+                self.inst(Instruction::I32Load(sm_mem_arg(*offset as u32)));
                 // [i32]
                 self.inst(Instruction::LocalSet(local));
                 // []
@@ -1533,7 +1533,7 @@ impl abi::Bindgen for Bindgen<'_, '_> {
                 // [i32]
                 self.inst(Instruction::LocalGet(val));
                 // [i32 i32]
-                self.inst(Instruction::I32Store(sm_mem_arg((*offset as u32).into())));
+                self.inst(Instruction::I32Store(sm_mem_arg(*offset as u32)));
                 // []
             }
             abi::Instruction::I32Store8 { offset: _ } => todo!(),
@@ -2019,7 +2019,7 @@ impl abi::Bindgen for Bindgen<'_, '_> {
 
                 results.extend(locals.into_iter().map(Operand::Wasm));
 
-                for (ptr, len, alignment) in mem::replace(&mut self.to_free, vec![]) {
+                for (ptr, len, alignment) in std::mem::take(&mut self.to_free) {
                     // []
                     self.inst(Instruction::LocalGet(ptr));
                     // [i32]
