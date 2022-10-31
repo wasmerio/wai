@@ -1,5 +1,6 @@
 [package]
 name = "wai-bindgen-gen-core"
+description = "Core abstractions for wai-bindgen"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true

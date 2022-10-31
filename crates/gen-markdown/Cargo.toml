@@ -1,5 +1,6 @@
 [package]
 name = "wai-bindgen-gen-markdown"
+description = "Generate Markdown API docs for a WAI interface"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true

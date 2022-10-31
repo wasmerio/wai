@@ -1,5 +1,6 @@
 [package]
 name = "wai-parser"
+description = "Parser for WIT syntax"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true

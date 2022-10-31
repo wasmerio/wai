@@ -1,6 +1,7 @@
 [package]
 name = "wai-bindgen-gen-spidermonkey"
 authors = ["Nick Fitzgerald <fitzgen@gmail.com>"]
+publish = false
 edition.workspace = true
 homepage.workspace = true
 license.workspace = true

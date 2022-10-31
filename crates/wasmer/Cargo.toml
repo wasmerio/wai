@@ -1,5 +1,6 @@
 [package]
 name = "wai-bindgen-wasmer"
+description = "Generate WAI glue for a Rust Wasmer host"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true

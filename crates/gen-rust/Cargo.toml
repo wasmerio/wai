@@ -1,5 +1,6 @@
 [package]
 name = "wai-bindgen-gen-rust"
+description = "Abstractions for generating Rust glue code for WAI"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true

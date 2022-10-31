@@ -1,5 +1,6 @@
 [package]
 name = "wai-bindgen-gen-wasmtime-py"
+description = "Generate WAI glue code for a Python Wasmtime host"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true

@@ -1,5 +1,6 @@
 [package]
 name = "wai-bindgen-rust-impl"
+description = "Generate WAI glue for a Rust guest"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true

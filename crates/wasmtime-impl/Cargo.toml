@@ -1,5 +1,6 @@
 [package]
 name = "wai-bindgen-wasmtime-impl"
+description = "Generate WAI glue for a Rust Wasmtime host"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
