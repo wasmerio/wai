@@ -5,16 +5,16 @@ set -ex
 rm -rf static
 mkdir static
 
-cargo build -p wit-bindgen-demo --target wasm32-unknown-unknown --release
+cargo build -p wai-bindgen-demo --target wasm32-unknown-unknown --release
 cp target/wasm32-unknown-unknown/release/wit_bindgen_demo.wasm static/demo.wasm
 
 cargo run js \
-  --export crates/wit-bindgen-demo/browser.wit \
-  --import crates/wit-bindgen-demo/demo.wit \
+  --export crates/wai-bindgen-demo/browser.wit \
+  --import crates/wai-bindgen-demo/demo.wit \
   --out-dir static
 
-cp crates/wit-bindgen-demo/{index.html,main.ts} static/
-(cd crates/wit-bindgen-demo && npx tsc ../../static/main.ts --target es6)
+cp crates/wai-bindgen-demo/{index.html,main.ts} static/
+(cd crates/wai-bindgen-demo && npx tsc ../../static/main.ts --target es6)
 
 if [ ! -d ace ]; then
   mkdir ace
