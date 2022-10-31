@@ -26,11 +26,5 @@ test-helpers = { path = "../test-helpers", features = [
     "wai-bindgen-gen-wasmer",
 ] }
 wai-bindgen-wasmer = { path = "../wasmer", features = ["tracing"] }
-
-[dev-dependencies.wasmer]
-git = "https://github.com/wasmerio/wasmer.git"
-branch = "master"
-
-[dev-dependencies.wasmer-wasi]
-git = "https://github.com/wasmerio/wasmer.git"
-branch = "master"
+wasmer = "3.0.0-rc.1"
+wasmer-wasi = "3.0.0-rc.1"

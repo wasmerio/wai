@@ -12,16 +12,13 @@ version.workspace = true
 
 [dependencies]
 anyhow = "1.0"
+async-trait = { version = "0.1.50", optional = true }
 bitflags = "1.2"
 once_cell = "1.13"
 thiserror = "1.0"
-wai-bindgen-wasmer-impl = { path = "../wasmer-impl", version = "0.2.0-rc.1" }
 tracing-lib = { version = "0.1.26", optional = true, package = "tracing" }
-async-trait = { version = "0.1.50", optional = true }
-
-[dependencies.wasmer]
-git = "https://github.com/wasmerio/wasmer.git"
-branch = "master"
+wai-bindgen-wasmer-impl = { path = "../wasmer-impl", version = "0.2.0-rc.1" }
+wasmer = "3.0.0-rc.1"
 
 [features]
 # Enables generated code to emit events via the `tracing` crate whenever wasm is
