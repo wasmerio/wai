@@ -1,0 +1,47 @@
+name: Releases
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  RUST_BACKTRACE: 1
+
+jobs:
+  publish-to-wapm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: "1.64.0" # Required for [workspace.package]
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Install WebAssembly targets
+        run: rustup target add wasm32-unknown-unknown wasm32-wasi
+      - name: Setup Wasmer
+        uses: wasmerio/setup-wasmer@v1
+      - name: Install cargo-wapm
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-wapm --verbose --debug
+      - name: Login to wapm.dev
+        run: |
+          wapm config set registry.url https://registry.wapm.dev
+          wapm login ${{ secrets.WAPM_DEV_TOKEN }}
+      - name: Publish to wapm.dev
+        run: cargo wapm --workspace
+      - name: Login to wapm.io
+        run: |
+          wapm config set registry.url https://registry.wapm.io
+          wapm login ${{ secrets.WAPM_PROD_TOKEN }}
+      - name: Publish to wapm.io
+        run: cargo wapm --workspace
+        # Note: wapm.io currently times out even on success
+        # See https://github.com/wasmerio/wapm.io-backend/issues/199 for more
+        continue-on-error: true
