@@ -11,7 +11,7 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0-rc.1" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0" }
 heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
