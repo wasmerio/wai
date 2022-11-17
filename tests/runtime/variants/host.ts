@@ -1,6 +1,5 @@
 import { addImportsToImports, Imports, MyErrno } from "./imports.js";
 import { Exports } from "./exports.js";
-import * as exports from "./exports.js";
 import { getWasm, addWasiToImports } from "./helpers.js";
 // @ts-ignore
 import * as assert from 'assert';
@@ -105,4 +104,4 @@ async function run() {
   wasm.variantTypedefs(null, false, { tag: 'err', val: undefined });
 }
 
-await run()
+run();

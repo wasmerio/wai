@@ -103,4 +103,4 @@ async function run() {
 
 async function some_helper() {}
 
-await run()
+run();

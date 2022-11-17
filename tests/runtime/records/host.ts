@@ -1,6 +1,6 @@
 import { addImportsToImports, Imports } from "./imports.js";
 import { Exports } from "./exports.js";
-import * as exports from "./exports.js";
+import * as exports_ from "./exports.js";
 import { getWasm, addWasiToImports } from "./helpers.js";
 // @ts-ignore
 import * as assert from 'assert';
@@ -29,14 +29,14 @@ async function run() {
   wasm.testImports();
   assert.deepEqual(wasm.multipleResults(), [100, 200]);
   assert.deepStrictEqual(wasm.swapTuple([1, 2]), [2, 1]);
-  assert.deepEqual(wasm.roundtripFlags1(exports.F1_A), exports.F1_A);
+  assert.deepEqual(wasm.roundtripFlags1(exports_.F1_A), exports_.F1_A);
   assert.deepEqual(wasm.roundtripFlags1(0), 0);
-  assert.deepEqual(wasm.roundtripFlags1(exports.F1_A | exports.F1_B), exports.F1_A | exports.F1_B);
+  assert.deepEqual(wasm.roundtripFlags1(exports_.F1_A | exports_.F1_B), exports_.F1_A | exports_.F1_B);
 
-  assert.deepEqual(wasm.roundtripFlags2(exports.F2_C), exports.F2_C);
+  assert.deepEqual(wasm.roundtripFlags2(exports_.F2_C), exports_.F2_C);
   assert.deepEqual(wasm.roundtripFlags2(0), 0);
-  assert.deepEqual(wasm.roundtripFlags2(exports.F2_D), exports.F2_D);
-  assert.deepEqual(wasm.roundtripFlags2(exports.F2_C | exports.F2_E), exports.F2_C | exports.F2_E);
+  assert.deepEqual(wasm.roundtripFlags2(exports_.F2_D), exports_.F2_D);
+  assert.deepEqual(wasm.roundtripFlags2(exports_.F2_C | exports_.F2_E), exports_.F2_C | exports_.F2_E);
 
   {
     const { a, b } = wasm.roundtripRecord1({ a: 8, b: 0 });
@@ -45,13 +45,13 @@ async function run() {
   }
 
   {
-    const { a, b } = wasm.roundtripRecord1({ a: 0, b: exports.F1_A | exports.F1_B });
+    const { a, b } = wasm.roundtripRecord1({ a: 0, b: exports_.F1_A | exports_.F1_B });
     assert.deepEqual(a, 0);
-    assert.deepEqual(b, exports.F1_A | exports.F1_B);
+    assert.deepEqual(b, exports_.F1_A | exports_.F1_B);
   }
 
   assert.deepStrictEqual(wasm.tuple0([]), []);
   assert.deepStrictEqual(wasm.tuple1([1]), [1]);
 }
 
-await run()
+run();

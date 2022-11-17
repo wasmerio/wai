@@ -1,6 +1,6 @@
 import { addImportsToImports, Imports } from "./imports.js";
 import { Exports } from "./exports.js";
-import * as exports from "./exports.js";
+import * as exports_ from "./exports.js";
 import { getWasm, addWasiToImports } from "./helpers.js";
 // @ts-ignore
 import * as assert from 'assert';
@@ -66,12 +66,12 @@ async function run() {
   wasm.testImports();
 
   // Param/result of a handle works in a simple fashion
-  const s: exports.WasmState = wasm.wasmStateCreate();
+  const s: exports_.WasmState = wasm.wasmStateCreate();
   assert.strictEqual(wasm.wasmStateGetVal(s), 100);
 
   // Deterministic destruction is possible
   assert.strictEqual(wasm.wasmState2SawClose(), false);
-  const s2: exports.WasmState2 = wasm.wasmState2Create();
+  const s2: exports_.WasmState2 = wasm.wasmState2Create();
   assert.strictEqual(wasm.wasmState2SawClose(), false);
   s2.drop();
   assert.strictEqual(wasm.wasmState2SawClose(), true);
@@ -116,7 +116,7 @@ async function run() {
 
   s.drop();
 
-  const md = exports.Markdown.create(wasm);
+  const md = exports_.Markdown.create(wasm);
   if (md) {
     md.append("red is the best color");
     assert.strictEqual(md.render(), "green is the best color");
@@ -124,4 +124,4 @@ async function run() {
   }
 }
 
-await run()
+run();

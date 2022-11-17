@@ -94,7 +94,7 @@ impl Intrinsic {
             Intrinsic::I64ToF64 => "i64ToF64",
             Intrinsic::Utf8Decoder => "UTF8_DECODER",
             Intrinsic::Utf8Encode => "utf8_encode",
-            Intrinsic::Utf8EncodedLen => "UTF8_ENCODED_LEN",
+            Intrinsic::Utf8EncodedLen => "utf8_encoded_len",
             Intrinsic::Slab => "Slab",
             Intrinsic::Promises => "PROMISES",
             Intrinsic::WithCurrentPromise => "with_current_promise",
@@ -411,14 +411,12 @@ impl Generator for Js {
         let name = name.to_shouty_snake_case();
         for (i, flag) in flags.flags.iter().enumerate() {
             let flag = flag.name.to_shouty_snake_case();
-            self.src.js(&format!(
-                "export const {name}_{flag} = {}{suffix};\n",
-                1u128 << i,
-            ));
-            self.src.ts(&format!(
-                "export const {name}_{flag} = {}{suffix};\n",
-                1u128 << i,
-            ));
+            let ident = format!("{name}_{flag}");
+            self.src
+                .js(&format!("const {ident} = {}{suffix};\n", 1u128 << i));
+            self.src
+                .ts(&format!("export const {ident} = {}{suffix};\n", 1u128 << i));
+            self.src.export(ident);
         }
     }
 
@@ -773,9 +771,9 @@ impl Generator for Js {
     fn finish_one(&mut self, iface: &Interface, files: &mut Files) {
         for (module, funcs) in mem::take(&mut self.guest_imports) {
             // TODO: `module.exports` vs `export function`
+            let function_name = format!("add{}ToImports", module.to_camel_case());
             self.src.js(&format!(
-                "export function add{}ToImports(imports, obj{}) {{\n",
-                module.to_camel_case(),
+                "function {function_name}(imports, obj{}) {{\n",
                 if self.needs_get_export {
                     ", get_export"
                 } else {
@@ -791,6 +789,7 @@ impl Generator for Js {
                     ""
                 },
             ));
+            self.src.export(function_name);
             self.src.js(&format!(
                 "if (!(\"{0}\" in imports)) imports[\"{0}\"] = {{}};\n",
                 module,
@@ -862,7 +861,8 @@ impl Generator for Js {
         for (module, exports) in mem::take(&mut self.guest_exports) {
             let module = module.to_camel_case();
             self.src.ts(&format!("export class {} {{\n", module));
-            self.src.js(&format!("export class {} {{\n", module));
+            self.src.js(&format!("class {} {{\n", module));
+            self.src.export(module);
 
             self.src.ts("
                /**
@@ -1034,9 +1034,10 @@ impl Generator for Js {
             self.src.js("}\n");
 
             for &ty in self.exported_resources.iter() {
+                let class_name = iface.resources[ty].name.to_camel_case();
                 self.src.js(&format!(
                     "
-                        export class {} {{
+                        class {class_name} {{
                             constructor(wasm_val, obj) {{
                                 this._wasm_val = wasm_val;
                                 this._obj = obj;
@@ -1062,13 +1063,12 @@ impl Generator for Js {
                                 dtor(wasm_val);
                             }}
                     ",
-                    iface.resources[ty].name.to_camel_case(),
                     iface.resources[ty].name,
                     idx = ty.index(),
                 ));
                 self.src.ts(&format!(
                     "
-                        export class {} {{
+                        export class {class_name} {{
                             // Creates a new strong reference count as a new
                             // object.  This is only required if you're also
                             // calling `drop` below and want to manually manage
@@ -1076,7 +1076,7 @@ impl Generator for Js {
                             //
                             // If you don't call `drop`, you don't need to call
                             // this and can simply use the object from JS.
-                            clone(): {0};
+                            clone(): {class_name};
 
                             // Explicitly indicate that this JS object will no
                             // longer be used. If the internal reference count
@@ -1094,8 +1094,8 @@ impl Generator for Js {
                             // strong reference count.
                             drop(): void;
                     ",
-                    iface.resources[ty].name.to_camel_case(),
                 ));
+                self.src.export(class_name);
 
                 if let Some(funcs) = exports.resource_funcs.get(&ty) {
                     for func in funcs {
@@ -1122,7 +1122,7 @@ impl Generator for Js {
         }
 
         if !self.intrinsics.is_empty() {
-            self.src.js("import { ");
+            self.src.js("const { ");
             for (i, (intrinsic, name)) in mem::take(&mut self.intrinsics).into_iter().enumerate() {
                 if i > 0 {
                     self.src.js(", ");
@@ -1134,13 +1134,22 @@ impl Generator for Js {
                 }
                 self.all_intrinsics.insert(intrinsic);
             }
-            self.src.js(" } from './intrinsics.js';\n");
+            self.src.js(" } = require('./intrinsics.js');\n");
         }
 
         self.src.js(&imports.js);
         self.src.ts(&imports.ts);
         self.src.js(&exports.js);
         self.src.ts(&exports.ts);
+
+        let mut exported_items = Vec::new();
+        exported_items.extend(exports.exported_items);
+        exported_items.extend(imports.exported_items);
+
+        self.src.js(&format!(
+            "\nmodule.exports = {{ {} }};\n",
+            exported_items.join(", ")
+        ));
 
         let src = mem::take(&mut self.src);
         let name = iface.name.to_kebab_case();
@@ -2048,8 +2057,7 @@ impl Bindgen for FunctionBindgen<'_> {
                     tmp, encode, operands[0],
                 ));
                 let encoded_len = self.gen.intrinsic(Intrinsic::Utf8EncodedLen);
-                self.src
-                    .js(&format!("const len{} = {};\n", tmp, encoded_len));
+                self.src.js(&format!("const len{tmp} = {encoded_len}();\n"));
                 results.push(format!("ptr{}", tmp));
                 results.push(format!("len{}", tmp));
             }
@@ -2374,19 +2382,25 @@ impl Js {
         for i in mem::take(&mut self.all_intrinsics) {
             self.print_intrinsic(i);
         }
+
+        self.src.js(&format!(
+            "\nmodule.exports = {{ {} }};\n",
+            self.src.exported_items.join(", ")
+        ));
     }
 
     fn print_intrinsic(&mut self, i: Intrinsic) {
+        self.src.export(i.name());
         match i {
             Intrinsic::ClampGuest => self.src.js("
-                export function clamp_guest(i, min, max) {
+                function clamp_guest(i, min, max) {
                     if (i < min || i > max) \
                         throw new RangeError(`must be between ${min} and ${max}`);
                     return i;
                 }
             "),
             Intrinsic::ClampHost => self.src.js("
-                export function clamp_host(i, min, max) {
+                function clamp_host(i, min, max) {
                     if (!Number.isInteger(i)) \
                         throw new TypeError(`must be an integer`);
                     if (i < min || i > max) \
@@ -2398,7 +2412,7 @@ impl Js {
             Intrinsic::DataView => self.src.js("
                 let DATA_VIEW = new DataView(new ArrayBuffer());
 
-                export function data_view(mem) {
+                function data_view(mem) {
                     if (DATA_VIEW.buffer !== mem.buffer) \
                         DATA_VIEW = new DataView(mem.buffer);
                     return DATA_VIEW;
@@ -2406,7 +2420,7 @@ impl Js {
             "),
 
             Intrinsic::ClampHost64 => self.src.js("
-                export function clamp_host64(i, min, max) {
+                function clamp_host64(i, min, max) {
                     if (typeof i !== 'bigint') \
                         throw new TypeError(`must be a bigint`);
                     if (i < min || i > max) \
@@ -2416,7 +2430,7 @@ impl Js {
             "),
 
             Intrinsic::ValidateGuestChar => self.src.js("
-                export function validate_guest_char(i) {
+                function validate_guest_char(i) {
                     if ((i > 0x10ffff) || (i >= 0xd800 && i <= 0xdfff)) \
                         throw new RangeError(`not a valid char`);
                     return String.fromCodePoint(i);
@@ -2427,7 +2441,7 @@ impl Js {
             // but it probably doesn't do the right thing for unicode or invalid
             // utf16 strings either.
             Intrinsic::ValidateHostChar => self.src.js("
-                export function validate_host_char(s) {
+                function validate_host_char(s) {
                     if (typeof s !== 'string') \
                         throw new TypeError(`must be a string`);
                     return s.codePointAt(0);
@@ -2435,7 +2449,7 @@ impl Js {
             "),
 
             Intrinsic::ValidateFlags => self.src.js("
-                export function validate_flags(flags, mask) {
+                function validate_flags(flags, mask) {
                     if (!Number.isInteger(flags)) \
                         throw new TypeError('flags were not an integer');
                     if ((flags & ~mask) != 0)
@@ -2445,7 +2459,7 @@ impl Js {
             "),
 
             Intrinsic::ValidateFlags64 => self.src.js("
-                export function validate_flags64(flags, mask) {
+                function validate_flags64(flags, mask) {
                     if (typeof flags !== 'bigint')
                         throw new TypeError('flags were not a bigint');
                     if ((flags & ~mask) != 0n)
@@ -2455,7 +2469,7 @@ impl Js {
             "),
 
             Intrinsic::ToString => self.src.js("
-                export function to_string(val) {
+                function to_string(val) {
                     if (typeof val === 'symbol') {
                         throw new TypeError('symbols cannot be converted to strings');
                     } else {
@@ -2469,25 +2483,25 @@ impl Js {
             "),
 
             Intrinsic::I32ToF32 => self.src.js("
-                export function i32ToF32(i) {
+                function i32ToF32(i) {
                     I32_TO_F32_I[0] = i;
                     return I32_TO_F32_F[0];
                 }
             "),
             Intrinsic::F32ToI32 => self.src.js("
-                export function f32ToI32(f) {
+                function f32ToI32(f) {
                     I32_TO_F32_F[0] = f;
                     return I32_TO_F32_I[0];
                 }
             "),
             Intrinsic::I64ToF64 => self.src.js("
-                export function i64ToF64(i) {
+                function i64ToF64(i) {
                     I64_TO_F64_I[0] = i;
                     return I64_TO_F64_F[0];
                 }
             "),
             Intrinsic::F64ToI64 => self.src.js("
-                export function f64ToI64(f) {
+                function f64ToI64(f) {
                     I64_TO_F64_F[0] = f;
                     return I64_TO_F64_I[0];
                 }
@@ -2495,14 +2509,20 @@ impl Js {
 
             Intrinsic::Utf8Decoder => self
                 .src
-                .js("export const UTF8_DECODER = new TextDecoder('utf-8');\n"),
+                .js("const UTF8_DECODER = new TextDecoder('utf-8');\n"),
 
-            Intrinsic::Utf8EncodedLen => self.src.js("export let UTF8_ENCODED_LEN = 0;\n"),
+            Intrinsic::Utf8EncodedLen => self.src.js("
+                let UTF8_ENCODED_LEN = 0;
+
+                function utf8_encoded_len() {
+                    return UTF8_ENCODED_LEN;
+                }
+            "),
 
             Intrinsic::Utf8Encode => self.src.js("
                 const UTF8_ENCODER = new TextEncoder('utf-8');
 
-                export function utf8_encode(s, realloc, memory) {
+                function utf8_encode(s, realloc, memory) {
                     if (typeof s !== 'string') \
                         throw new TypeError('expected a string');
 
@@ -2532,7 +2552,7 @@ impl Js {
             "),
 
             Intrinsic::Slab => self.src.js("
-                export class Slab {
+                class Slab {
                     constructor() {
                         this.list = [];
                         this.head = 0;
@@ -2573,10 +2593,10 @@ impl Js {
                 }
             "),
 
-            Intrinsic::Promises => self.src.js("export const PROMISES = new Slab();\n"),
+            Intrinsic::Promises => self.src.js("const PROMISES = new Slab();\n"),
             Intrinsic::WithCurrentPromise => self.src.js("
                 let CUR_PROMISE = null;
-                export function with_current_promise(val, closure) {
+                function with_current_promise(val, closure) {
                     const prev = CUR_PROMISE;
                     CUR_PROMISE = val;
                     try {
@@ -2587,7 +2607,7 @@ impl Js {
                 }
             "),
             Intrinsic::ThrowInvalidBool => self.src.js("
-                export function throw_invalid_bool() {
+                function throw_invalid_bool() {
                     throw new RangeError(\"invalid variant discriminant for bool\");
                 }
             "),
@@ -2599,6 +2619,8 @@ pub fn to_js_ident(name: &str) -> &str {
     match name {
         "in" => "in_",
         "import" => "import_",
+        "export" => "export_",
+        "module" => "module_",
         s => s,
     }
 }
@@ -2607,6 +2629,7 @@ pub fn to_js_ident(name: &str) -> &str {
 struct Source {
     js: wai_bindgen_gen_core::Source,
     ts: wai_bindgen_gen_core::Source,
+    exported_items: Vec<String>,
 }
 
 impl Source {
@@ -2615,6 +2638,9 @@ impl Source {
     }
     fn ts(&mut self, s: &str) {
         self.ts.push_str(s);
+    }
+    fn export(&mut self, name: impl Into<String>) {
+        self.exported_items.push(name.into());
     }
 }
 

@@ -44,7 +44,7 @@ fn execute(name: &str, wasm: &Path, ts: &Path, imports: &Path, exports: &Path) {
                 {{
                     "files": ["host.ts"],
                     "compilerOptions": {{
-                        "module": "esnext",
+                        "module": "commonjs",
                         "target": "es2020",
                         "strict": true,
                         "strictNullChecks": true,
@@ -71,7 +71,7 @@ fn execute(name: &str, wasm: &Path, ts: &Path, imports: &Path, exports: &Path) {
         return;
     }
 
-    fs::write(dir.join("package.json"), "{\"type\":\"module\"}").unwrap();
+    fs::write(dir.join("package.json"), "{\"type\":\"commonjs\"}").unwrap();
     let mut path = Vec::new();
     path.push(env::current_dir().unwrap());
     path.push(dir.clone());

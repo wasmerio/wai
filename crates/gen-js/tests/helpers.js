@@ -1,7 +1,7 @@
-import { readFileSync } from 'fs';
-import { WASI } from 'wasi';
+const { readFileSync } = require('fs');
+const { WASI } = require('wasi');
 
-export function getWasm() {
+function getWasm() {
   return readFileSync(process.argv[2]);
 }
 
@@ -19,8 +19,10 @@ class MyWasi {
   }
 }
 
-export function addWasiToImports(importObj) {
+function addWasiToImports(importObj) {
   const wasi = new WASI();
   importObj.wasi_snapshot_preview1 = wasi.wasiImport;
   return new MyWasi(wasi);
 }
+
+module.exports = { getWasm, addWasiToImports };

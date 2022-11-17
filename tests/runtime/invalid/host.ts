@@ -36,4 +36,4 @@ async function run() {
   assert.throws(() => wasm.invalidHandleClose(), /handle index not valid/);
 }
 
-await run()
+run();

@@ -1,6 +1,5 @@
 import { addImportsToImports, Imports, MyErrno } from "./imports.js";
 import { Exports } from "./exports.js";
-import * as exports from "./exports.js";
 import { getWasm, addWasiToImports } from "./helpers.js";
 // @ts-ignore
 import * as assert from 'assert';
@@ -82,4 +81,4 @@ async function run() {
   assert.deepStrictEqual(r2, ['typedef4']);
 }
 
-await run()
+run();
