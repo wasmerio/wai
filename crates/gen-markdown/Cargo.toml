@@ -18,4 +18,4 @@ test = false
 heck = "0.3"
 pulldown-cmark = { version = "0.8", default-features = false }
 structopt = { version = "0.3", default-features = false, optional = true }
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.0" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.1" }
