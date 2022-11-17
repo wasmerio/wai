@@ -25,4 +25,4 @@ async function run() {
   assert(hit, "import not called");
 }
 
-await run()
+run();

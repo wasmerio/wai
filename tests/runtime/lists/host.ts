@@ -1,6 +1,5 @@
 import { addImportsToImports, Imports, FLAG32_B8, FLAG64_B9 } from "./imports.js";
 import { Exports } from "./exports.js";
-import * as exports from "./exports.js";
 import { getWasm, addWasiToImports } from "./helpers.js";
 // @ts-ignore
 import * as assert from 'assert';
@@ -120,7 +119,7 @@ async function run() {
   assert.deepStrictEqual(Array.from(wasm.listResult()), [1, 2, 3, 4, 5]);
   assert.deepStrictEqual(wasm.listResult2(), "hello!");
   assert.deepStrictEqual(wasm.listResult3(), ["hello,", "world!"]);
-  
+
   const buffer = new ArrayBuffer(8);
   (new Uint8Array(buffer)).set(new Uint8Array([1, 2, 3, 4]), 2);
   // Create a view of the four bytes in the middle of the buffer
@@ -136,4 +135,4 @@ async function run() {
   assert.strictEqual(bytes, wasm.allocatedBytes());
 }
 
-await run()
+run();

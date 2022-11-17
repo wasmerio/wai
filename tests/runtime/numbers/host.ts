@@ -86,4 +86,4 @@ async function run() {
   assertEq(wasm.getScalar(), 4);
 }
 
-await run()
+run();
