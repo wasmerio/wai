@@ -6,7 +6,7 @@ they're structured. This isn't intended to be a formal grammar, although it's
 expected that one day we'll have a formal grammar for `*.wai` files.
 
 If you're curious to give things a spin try out the [online
-demo](https://wasmerio.github.io/wit-bindgen/) of `wai-bindgen` where
+demo](https://wasmerio.github.io/wai/) of `wai-bindgen` where
 you can input `*.wai` on the left and see output of generated bindings for
 languages on the right. If you're looking to start you can try out the
 "markdown" output mode which generates documentation for the input document on
