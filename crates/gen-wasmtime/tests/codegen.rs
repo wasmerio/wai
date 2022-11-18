@@ -7,34 +7,34 @@ fn main() {
 #[rustfmt::skip]
 mod exports {
     test_helpers::codegen_wasmtime_export!(
-        "*.wit"
+        "*.wai"
 
         // TODO: implement async support
-        "!async-functions.wit"
+        "!async-functions.wai"
 
         // If you want to exclude a specific test you can include it here with
         // gitignore glob syntax:
         //
-        // "!wasm.wit"
-        // "!host.wit"
+        // "!wasm.wai"
+        // "!host.wai"
         //
         //
-        // Similarly you can also just remove the `*.wit` glob and list tests
+        // Similarly you can also just remove the `*.wai` glob and list tests
         // individually if you're debugging.
     );
 }
 
 mod imports {
     test_helpers::codegen_wasmtime_import!(
-        "*.wit"
+        "*.wai"
 
         // TODO: implement async support
-        "!async-functions.wit"
+        "!async-functions.wai"
 
         // TODO: these use push/pull buffer which isn't implemented in the test
         // generator just yet
-        "!wasi-next.wit"
-        "!host.wit"
+        "!wasi-next.wai"
+        "!host.wai"
     );
 }
 

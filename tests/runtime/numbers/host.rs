@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-wai_bindgen_wasmtime::export!("../../tests/runtime/numbers/imports.wit");
+wai_bindgen_wasmtime::export!("../../tests/runtime/numbers/imports.wai");
 
 #[derive(Default)]
 pub struct MyImports {
@@ -61,7 +61,7 @@ impl imports::Imports for MyImports {
     }
 }
 
-wai_bindgen_wasmtime::import!("../../tests/runtime/numbers/exports.wit");
+wai_bindgen_wasmtime::import!("../../tests/runtime/numbers/exports.wai");
 
 fn run(wasm: &str) -> Result<()> {
     let (exports, mut store) = crate::instantiate(

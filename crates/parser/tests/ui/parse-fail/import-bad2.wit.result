@@ -1,5 +1,5 @@
 type "foo" defined twice
-     --> tests/ui/parse-fail/import-bad2.wit:3:7
+     --> tests/ui/parse-fail/import-bad2.wai:3:7
       |
     3 | use { foo } from import-me
       |       ^--

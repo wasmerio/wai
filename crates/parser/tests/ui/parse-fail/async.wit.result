@@ -1,5 +1,5 @@
 expected keyword `func`, found eof
-     --> tests/ui/parse-fail/async.wit:3:1
+     --> tests/ui/parse-fail/async.wai:3:1
       |
     3 | 
       | ^

@@ -4,18 +4,18 @@ use std::process::Command;
 mod exports {
     test_helpers::codegen_js_export!(
         // ...
-        "*.wit"
+        "*.wai"
     );
 }
 
 mod imports {
     test_helpers::codegen_js_import!(
-        "*.wit"
+        "*.wai"
 
         // This uses buffers, which we don't support in imports just yet
         // TODO: should support this
-        "!wasi-next.wit"
-        "!host.wit"
+        "!wasi-next.wai"
+        "!host.wai"
     );
 }
 

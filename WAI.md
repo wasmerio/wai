@@ -1,13 +1,13 @@
-# The `*.wit` format
+# The `*.wai` format
 
-This is intended to document the `*.wit` format as it exists today. The goal is
+This is intended to document the `*.wai` format as it exists today. The goal is
 to provide an overview to understand what features `wit` files give you and how
 they're structured. This isn't intended to be a formal grammar, although it's
-expected that one day we'll have a formal grammar for `*.wit` files.
+expected that one day we'll have a formal grammar for `*.wai` files.
 
 If you're curious to give things a spin try out the [online
 demo](https://wasmerio.github.io/wit-bindgen/) of `wai-bindgen` where
-you can input `*.wit` on the left and see output of generated bindings for
+you can input `*.wai` on the left and see output of generated bindings for
 languages on the right. If you're looking to start you can try out the
 "markdown" output mode which generates documentation for the input document on
 the left.
@@ -39,7 +39,7 @@ here.
 
 ### Whitespace
 
-A `whitespace` token in `*.wit` is a space, a newline, a carriage return, or a
+A `whitespace` token in `*.wai` is a space, a newline, a carriage return, or a
 tab character:
 
 ```wit
@@ -48,7 +48,7 @@ whitespace ::= ' ' | '\n' | '\r' | '\t'
 
 ### Comments
 
-A `comment` token in `*.wit` is either a line comment preceded with `//` which
+A `comment` token in `*.wai` is either a line comment preceded with `//` which
 ends at the next newline (`\n`) character or it's a block comment which starts
 with `/*` and ends with `*/`. Note that block comments are allowed to be nested
 and their delimiters must be balanced
@@ -336,7 +336,7 @@ union-cases ::= ty,
 
 ## Item: `func`
 
-Functions can also be defined in a `*.wit` document. Functions have a name,
+Functions can also be defined in a `*.wai` document. Functions have a name,
 parameters, and results. Functions can optionally also be declared as `async`
 functions.
 

@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-wai_bindgen_wasmer::export!("../../tests/runtime/numbers/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/numbers/imports.wai");
 
 #[derive(Default, Clone)]
 pub struct MyImports {
@@ -61,7 +61,7 @@ impl imports::Imports for MyImports {
     }
 }
 
-wai_bindgen_wasmer::import!("../../tests/runtime/numbers/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/numbers/exports.wai");
 
 fn run(wasm: &str) -> Result<()> {
     use wasmer::AsStoreMut as _;

@@ -31,7 +31,7 @@ fn main() {
                 file.to_str().unwrap().to_string(),
             ));
 
-            let dep_file = file.with_extension("d");
+            let dep_file = file.waih_extension("d");
             let deps = fs::read_to_string(&dep_file).expect("failed to read dep file");
             for dep in deps.split_once(':').unwrap().1.split_whitespace() {
                 println!("cargo:rerun-if-changed={}", dep);
@@ -47,14 +47,14 @@ fn main() {
             if !c_impl.exists() {
                 continue;
             }
-            let imports = test_dir.join("imports.wit");
-            let exports = test_dir.join("exports.wit");
+            let imports = test_dir.join("imports.wai");
+            let exports = test_dir.join("exports.wai");
             println!("cargo:rerun-if-changed={}", imports.display());
             println!("cargo:rerun-if-changed={}", exports.display());
             println!("cargo:rerun-if-changed={}", c_impl.display());
 
-            let import = Interface::parse_file(&test_dir.join("imports.wit")).unwrap();
-            let export = Interface::parse_file(&test_dir.join("exports.wit")).unwrap();
+            let import = Interface::parse_file(&test_dir.join("imports.wai")).unwrap();
+            let export = Interface::parse_file(&test_dir.join("exports.wai")).unwrap();
             let mut files = Default::default();
             // TODO: should combine this into one
             wai_bindgen_gen_c::Opts::default()
@@ -124,14 +124,14 @@ fn main() {
             if !js_impl.exists() {
                 continue;
             }
-            let imports = test_dir.join("imports.wit");
-            let exports = test_dir.join("exports.wit");
+            let imports = test_dir.join("imports.wai");
+            let exports = test_dir.join("exports.wai");
             println!("cargo:rerun-if-changed={}", imports.display());
             println!("cargo:rerun-if-changed={}", exports.display());
             println!("cargo:rerun-if-changed={}", js_impl.display());
 
-            let import = Interface::parse_file(&test_dir.join("imports.wit")).unwrap();
-            let export = Interface::parse_file(&test_dir.join("exports.wit")).unwrap();
+            let import = Interface::parse_file(&test_dir.join("imports.wai")).unwrap();
+            let export = Interface::parse_file(&test_dir.join("exports.wai")).unwrap();
             let mut files = Default::default();
             let js = fs::read_to_string(&js_impl).unwrap();
             let mut gen = wai_bindgen_gen_spidermonkey::SpiderMonkeyWasm::new("wasm.js", &js);

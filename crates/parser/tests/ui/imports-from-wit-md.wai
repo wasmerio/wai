@@ -1,4 +1,4 @@
-// This test is like imports.wit, but uses import-me-too, which is a markdown
+// This test is like imports.wai, but uses import-me-too, which is a markdown
 // file instead of a plain wit file.
 
 use { foo } from import-me-too

@@ -75,12 +75,12 @@ struct Common {
     #[structopt(long = "out-dir")]
     out_dir: Option<PathBuf>,
 
-    /// Generate import bindings for the given `*.wit` interface. Can be
+    /// Generate import bindings for the given `*.wai` interface. Can be
     /// specified multiple times.
     #[structopt(long = "import", short)]
     imports: Vec<PathBuf>,
 
-    /// Generate export bindings for the given `*.wit` interface. Can be
+    /// Generate export bindings for the given `*.wai` interface. Can be
     /// specified multiple times.
     #[structopt(long = "export", short)]
     exports: Vec<PathBuf>,
@@ -97,7 +97,7 @@ fn main() -> Result<()> {
         Command::Markdown { opts, common } => (Box::new(opts.build()), common),
         Command::SpiderMonkey { opts, common } => {
             let js_source = std::fs::read_to_string(&opts.js)
-                .with_context(|| format!("failed to read {}", opts.js.display()))?;
+                .waih_context(|| format!("failed to read {}", opts.js.display()))?;
             (Box::new(opts.build(js_source)), common)
         }
         Command::Wasmer { opts, common } => (Box::new(opts.build()), common),
@@ -126,9 +126,9 @@ fn main() -> Result<()> {
         println!("Generating {:?}", dst);
         if let Some(parent) = dst.parent() {
             std::fs::create_dir_all(parent)
-                .with_context(|| format!("failed to create {:?}", parent))?;
+                .waih_context(|| format!("failed to create {:?}", parent))?;
         }
-        std::fs::write(&dst, contents).with_context(|| format!("failed to write {:?}", dst))?;
+        std::fs::write(&dst, contents).waih_context(|| format!("failed to write {:?}", dst))?;
     }
 
     Ok(())

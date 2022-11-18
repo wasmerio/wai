@@ -27,13 +27,13 @@
 [zulip]: https://bytecodealliance.zulipchat.com/
 
 This project is a bindings generator framework for WebAssembly programs and
-embeddings of WebAssembly. This works with `*.wit` files which describe the
+embeddings of WebAssembly. This works with `*.wai` files which describe the
 interface of a module, either imported or exported. For example this project can
 be used in cases such as:
 
 * Your language (say, Rust) is compiled to WebAssembly and you'd like to import
   WASI. This project will generate Rust bindings to import WASI APIs that are
-  described with `*.wit`.
+  described with `*.wai`.
 
 * Your runtime (say, Wasmer) wants to then provide WASI functionality to guest
   programs. This project will generate a Rust `trait` for you to implement for
@@ -42,7 +42,7 @@ be used in cases such as:
 * You're consuming a WebAssembly module (say, in a browser) and you don't want
   to deal with funky ABI details. You'd use this project to generate JS bindings
   which give you a TypeScript interface dealing with native JS types for the
-  WebAssembly module described by `*.wit`.
+  WebAssembly module described by `*.wai`.
 
 This project is based on the [interface types
 proposal](https://github.com/webassembly/interface-types) and the [canonical
@@ -60,7 +60,7 @@ WebAssembly modules to be consumed in any environment with language support.
 online!](https://wasmerio.github.io/wit-bindgen/)
 
 If you're curious to poke around and see what generated bindings look like for a
-given input `*.wit`, you can explore the generated code online to get an idea
+given input `*.wai`, you can explore the generated code online to get an idea
 of what's being generated and what the glue code looks like.
 
 ## Installation
@@ -86,7 +86,7 @@ the CLI tool for your use case.
 
 First here's a list of supported languages for generating a WebAssembly binary
 which uses interface types. This means that these languages support
-`*.wit`-defined imports and exports.
+`*.wai`-defined imports and exports.
 
 * `rust-wasm` - this is for Rust compiled to WebAssembly, typically using either
   the `wasm32-wasi` or `wasm32-unknown-unknown` targets depending on your use
@@ -126,9 +126,9 @@ All generators support the `--import` and `--export` flags in the `wai-bindgen`
 CLI tool:
 
 ```
-$ wai-bindgen js --import browser.wit
-$ wai-bindgen rust-wasm --export my-interface.wit
-$ wai-bindgen wasmtime --import host-functions.wit
+$ wai-bindgen js --import browser.wai
+$ wai-bindgen rust-wasm --export my-interface.wai
+$ wai-bindgen wasmtime --import host-functions.wai
 ```
 
 Here "import" means "I want to import and call the functions in this interface"
@@ -139,7 +139,7 @@ Finally in a sort of "miscellaneous" category the `wai-bindgen` CLI also
 supports:
 
 * `markdown` - generates a `*.md` and a `*.html` file with readable
-  documentation rendered from the comments in the source `*.wit` file.
+  documentation rendered from the comments in the source `*.wai` file.
 
 Note that the list of supported languages here is a snapshot in time and is not
 final. The purpose of the interface-types proposal is to be language agnostic

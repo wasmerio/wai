@@ -1,6 +1,6 @@
 # Title
 
-This file is like import-me.wit, but it's a Markdown file with embedded wit
+This file is like import-me.wai, but it's a Markdown file with embedded wit
 code blocks.
 
 ## `foo`

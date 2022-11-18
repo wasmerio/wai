@@ -8,7 +8,7 @@ use wai_parser::Interface;
 ///
 /// This test looks in the `interfaces/` directory for test cases.
 ///
-/// Each test case is a directory containing a `<testcase>.wit` file
+/// Each test case is a directory containing a `<testcase>.wai` file
 /// and an expected `<testcase>.wat` file.
 ///
 /// The test encodes the wit file, prints the resulting component, and
@@ -25,13 +25,13 @@ fn interface_encoding() -> Result<()> {
         }
 
         let test_case = path.file_stem().unwrap().to_str().unwrap();
-        let wai_path = path.join(test_case).with_extension("wit");
+        let wai_path = path.join(test_case).waih_extension("wit");
 
         let interface = Interface::parse_file(&wai_path)?;
 
         let encoder = InterfaceEncoder::new(&interface).validate(true);
 
-        let bytes = encoder.encode().with_context(|| {
+        let bytes = encoder.encode().waih_context(|| {
             format!(
                 "failed to encode a component from interface `{}` for test case `{}`",
                 wai_path.display(),
@@ -40,7 +40,7 @@ fn interface_encoding() -> Result<()> {
         })?;
 
         let output = wasmprinter::print_bytes(&bytes)?;
-        let wat_path = wai_path.with_extension("wat");
+        let wat_path = wai_path.waih_extension("wat");
 
         if std::env::var_os("BLESS").is_some() {
             fs::write(&wat_path, output)?;

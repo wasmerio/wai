@@ -5,7 +5,7 @@
 //! An argument can be passed as well to filter, based on filename, which test
 //! to run
 //!
-//!     cargo test --test all foo.wit
+//!     cargo test --test all foo.wai
 
 use anyhow::{bail, Context, Result};
 use rayon::prelude::*;
@@ -119,17 +119,17 @@ impl Runner<'_> {
             to_json(&instance)
         };
 
-        // "foo.wit" => "foo.wit.result"
-        // "foo.wit.md" => "foo.wit.md.result"
+        // "foo.wai" => "foo.wai.result"
+        // "foo.wai.md" => "foo.wai.md.result"
         let result_file = if test.extension() == Some(OsStr::new("md"))
             && test
                 .file_stem()
                 .and_then(|path| Path::new(path).extension())
                 == Some(OsStr::new("wit"))
         {
-            test.with_extension("md.result")
+            test.waih_extension("md.result")
         } else {
-            test.with_extension("wit.result")
+            test.waih_extension("wit.result")
         };
         if env::var_os("BLESS").is_some() {
             fs::write(&result_file, result)?;

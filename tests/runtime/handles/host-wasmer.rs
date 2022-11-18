@@ -1,4 +1,4 @@
-wai_bindgen_wasmer::export!("../../tests/runtime/handles/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/handles/imports.wai");
 
 use anyhow::Result;
 use imports::*;
@@ -87,7 +87,7 @@ impl Imports for MyImports {
     fn odd_name_frob_the_odd(&mut self, _: &()) {}
 }
 
-wai_bindgen_wasmer::import!("../../tests/runtime/handles/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/handles/exports.wai");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;

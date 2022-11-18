@@ -4,7 +4,7 @@ use std::sync::{
     Arc,
 };
 
-wai_bindgen_wasmer::export!("../../tests/runtime/smoke/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/smoke/imports.wai");
 
 #[derive(Clone)]
 pub struct MyImports {
@@ -18,7 +18,7 @@ impl imports::Imports for MyImports {
     }
 }
 
-wai_bindgen_wasmer::import!("../../tests/runtime/smoke/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/smoke/exports.wai");
 
 fn run(wasm: &str) -> Result<()> {
     use wasmer::AsStoreMut as _;

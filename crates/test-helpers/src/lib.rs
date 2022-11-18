@@ -558,8 +558,8 @@ pub fn runtime_tests(input: TokenStream) -> TokenStream {
             let name_str = format!("{}_{}", name_str, lang);
             let name = quote::format_ident!("{}", name_str);
             let host_file = entry.join(&host_file).to_str().unwrap().to_string();
-            let import_wit = entry.join("imports.wit").to_str().unwrap().to_string();
-            let export_wit = entry.join("exports.wit").to_str().unwrap().to_string();
+            let import_wit = entry.join("imports.wai").to_str().unwrap().to_string();
+            let export_wit = entry.join("exports.wai").to_str().unwrap().to_string();
             tests.push(quote::quote! {
                 #[test]
                 fn #name() {
@@ -596,8 +596,8 @@ pub fn runtime_tests_wasmer_py(_input: TokenStream) -> TokenStream {
             let name_str = format!("{}_{}", name_str, lang);
             let name = quote::format_ident!("{}", name_str);
             let host_file = entry.join("host-wasmer.py").to_str().unwrap().to_string();
-            let import_wit = entry.join("imports.wit").to_str().unwrap().to_string();
-            let export_wit = entry.join("exports.wit").to_str().unwrap().to_string();
+            let import_wit = entry.join("imports.wai").to_str().unwrap().to_string();
+            let export_wit = entry.join("exports.wai").to_str().unwrap().to_string();
             tests.push(quote::quote! {
                 #[test]
                 fn #name() {

@@ -1,1 +1,1 @@
-file `tests/ui/parse-fail/import-cycle2-v2.wit` recursively imports itself
+file `tests/ui/parse-fail/import-cycle2-v2.wai` recursively imports itself

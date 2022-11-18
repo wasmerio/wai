@@ -4,8 +4,8 @@ use wai_bindgen_gen_core::wai_parser::Interface;
 use wai_bindgen_gen_core::Generator;
 use wai_bindgen_rust::Handle;
 
-wai_bindgen_rust::export!("demo.wit");
-wai_bindgen_rust::import!("browser.wit");
+wai_bindgen_rust::export!("demo.wai");
+wai_bindgen_rust::import!("browser.wai");
 
 struct Demo;
 

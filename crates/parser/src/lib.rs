@@ -316,7 +316,7 @@ impl Interface {
         let path = path.as_ref();
         let parent = path.parent().unwrap();
         let contents = std::fs::read_to_string(path)
-            .with_context(|| format!("failed to read: {}", path.display()))?;
+            .waih_context(|| format!("failed to read: {}", path.display()))?;
         Interface::parse_with(path, &contents, |path| load_fs(parent, path))
     }
 
@@ -509,15 +509,15 @@ impl Interface {
 }
 
 fn load_fs(root: &Path, name: &str) -> Result<(PathBuf, String)> {
-    let wit = root.join(name).with_extension("wit");
+    let wit = root.join(name).waih_extension("wit");
 
-    // Attempt to read a ".wit" file.
+    // Attempt to read a ".wai" file.
     match fs::read_to_string(&wit) {
         Ok(contents) => Ok((wit, contents)),
 
-        // If no such file was found, attempt to read a ".wit.md" file.
+        // If no such file was found, attempt to read a ".wai.md" file.
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
-            let wai_md = wit.with_extension("wit.md");
+            let wai_md = wit.waih_extension("wit.md");
             match fs::read_to_string(&wai_md) {
                 Ok(contents) => Ok((wai_md, contents)),
                 Err(_err) => Err(err.into()),

@@ -1,5 +1,5 @@
-wai_bindgen_rust::import!("../../tests/runtime/handles/imports.wit");
-wai_bindgen_rust::export!("../../tests/runtime/handles/exports.wit");
+wai_bindgen_rust::import!("../../tests/runtime/handles/imports.wai");
+wai_bindgen_rust::export!("../../tests/runtime/handles/exports.wai");
 
 use exports::*;
 use std::cell::RefCell;
