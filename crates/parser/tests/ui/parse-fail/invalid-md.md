@@ -2,6 +2,6 @@
 
 hello
 
-```wit
+```wai
 type foo = bar
 ```

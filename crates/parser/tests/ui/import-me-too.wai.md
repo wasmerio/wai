@@ -1,28 +1,28 @@
 # Title
 
-This file is like import-me.wai, but it's a Markdown file with embedded wit
+This file is like import-me.wai, but it's a Markdown file with embedded wai
 code blocks.
 
 ## `foo`
-```wit
+```wai
 /// This is foo.
 type foo = u32
 ```
 
 ## `x`
-```wit
+```wai
 /// This is x.
 resource x
 ```
 
 ## `handle`
-```wit
+```wai
 /// This is handle.
 type %handle = handle x
 ```
 
 ## `some-record`
-```wit
+```wai
 /// This is some-record.
 type some-record = tuple<u32, u64, float32>
 ```
