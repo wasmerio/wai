@@ -97,7 +97,7 @@ fn main() -> Result<()> {
         Command::Markdown { opts, common } => (Box::new(opts.build()), common),
         Command::SpiderMonkey { opts, common } => {
             let js_source = std::fs::read_to_string(&opts.js)
-                .waih_context(|| format!("failed to read {}", opts.js.display()))?;
+                .with_context(|| format!("failed to read {}", opts.js.display()))?;
             (Box::new(opts.build(js_source)), common)
         }
         Command::Wasmer { opts, common } => (Box::new(opts.build()), common),
@@ -107,12 +107,12 @@ fn main() -> Result<()> {
     let imports = common
         .imports
         .iter()
-        .map(|wit| Interface::parse_file(wit))
+        .map(|wai| Interface::parse_file(wai))
         .collect::<Result<Vec<_>>>()?;
     let exports = common
         .exports
         .iter()
-        .map(|wit| Interface::parse_file(wit))
+        .map(|wai| Interface::parse_file(wai))
         .collect::<Result<Vec<_>>>()?;
 
     let mut files = Files::default();
@@ -126,9 +126,9 @@ fn main() -> Result<()> {
         println!("Generating {:?}", dst);
         if let Some(parent) = dst.parent() {
             std::fs::create_dir_all(parent)
-                .waih_context(|| format!("failed to create {:?}", parent))?;
+                .with_context(|| format!("failed to create {:?}", parent))?;
         }
-        std::fs::write(&dst, contents).waih_context(|| format!("failed to write {:?}", dst))?;
+        std::fs::write(&dst, contents).with_context(|| format!("failed to write {:?}", dst))?;
     }
 
     Ok(())

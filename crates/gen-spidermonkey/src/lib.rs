@@ -268,7 +268,7 @@ lazy_static! {
 /// ## Code Shape
 ///
 /// The output is a single Wasm file that imports and exports the functions
-/// defined in the given WIT files and additionally
+/// defined in the given WAI files and additionally
 ///
 /// * embeds or imports (configurable) a `spidermonkey.wasm` instance, and
 ///
@@ -293,14 +293,14 @@ lazy_static! {
 ///
 /// ### Imports
 ///
-/// By the time an imported WIT function is called, we have the following
+/// By the time an imported WAI function is called, we have the following
 /// layers of code on the stack, listed from older to younger frames:
 ///
 /// * User JS code (inside `spidermonkey.wasm`'s internal JS stack)
 ///
 ///   This is the user's JavaScript code that is running inside of
 ///   `spidermonkey.wasm` and which wants to call an external, imported function
-///   that is described with WIT.
+///   that is described with WAI.
 ///
 /// * Import glue Wasm code (on the Wasm stack)
 ///
@@ -312,18 +312,18 @@ lazy_static! {
 ///
 /// * Imported function (on the Wasm Stack)
 ///
-///   This is the actual Wasm function whose signature is described in WIT and
+///   This is the actual Wasm function whose signature is described in WAI and
 ///   uses the canonical ABI.
 ///
 /// ### Exports
 ///
-/// By the time an exported JS function that implements a WIT signature is
+/// By the time an exported JS function that implements a WAI signature is
 /// called, we have the following frames on the stack, listed form older to
 /// younger frames:
 ///
 /// * External caller (on the Wasm or native stack)
 ///
-///   This is whoever is calling our JS-implemented WIT export, using the
+///   This is whoever is calling our JS-implemented WAI export, using the
 ///   canonical ABI. This might be another Wasm module or it might be some
 ///   native code in the host.
 ///
@@ -336,12 +336,12 @@ lazy_static! {
 ///   function's outgoing results from SpiderMonkey values into the canonical
 ///   ABI representation.
 ///
-/// * JavaScript function implementing the WIT signature (inside
+/// * JavaScript function implementing the WAI signature (inside
 ///   `spidermonkey.wasm`'s internal stack)
 ///
 ///   This is the user-written JavaScript function that is being exported. It
 ///   accepts and returns the JavaScript values that correspond to the interface
-///   types used in the WIT signature.
+///   types used in the WAI signature.
 pub struct SpiderMonkeyWasm<'a> {
     /// The filename to use for the JS.
     js_name: PathBuf,
@@ -672,8 +672,8 @@ impl<'a> SpiderMonkeyWasm<'a> {
         let smw_initialize_engine = self.spidermonkey_import("SMW_initialize_engine");
         wizer_init.instruction(&Instruction::Call(smw_initialize_engine));
 
-        // Define a JS module for each WIT module that is imported. This JS
-        // module will export each of our generated glue functions for that WIT
+        // Define a JS module for each WAI module that is imported. This JS
+        // module will export each of our generated glue functions for that WAI
         // module.
         let smw_new_module_builder = self.spidermonkey_import("SMW_new_module_builder");
         let import_fn_name_to_index = std::mem::take(&mut self.import_fn_name_to_index);
@@ -850,16 +850,16 @@ impl<'a> SpiderMonkeyWasm<'a> {
 // The generated glue module's function index space is laid out as follows:
 //
 // ```text
-// |wit imports...|spidermonkey.wasm imports...|import glue...|export glue...|wizer.initialize|
+// |wai imports...|spidermonkey.wasm imports...|import glue...|export glue...|wizer.initialize|
 // ```
 impl SpiderMonkeyWasm<'_> {
-    /// Get the number of imported WIT functions.
+    /// Get the number of imported WAI functions.
     fn wai_import_functions_len(&self) -> u32 {
         self.num_import_functions
             .expect("must call `preprocess_all` before generating bindings")
     }
 
-    /// Get the function index for the i^th WIT import.
+    /// Get the function index for the i^th WAI import.
     fn wai_import(&self, i: u32) -> u32 {
         i
     }
@@ -876,12 +876,12 @@ impl SpiderMonkeyWasm<'_> {
             .unwrap()
     }
 
-    /// Get the function index where WIT import glue functions start.
+    /// Get the function index where WAI import glue functions start.
     fn wai_import_glue_fns_start(&self) -> u32 {
         self.wai_import_functions_len() + u32::try_from(SMW_EXPORTS.len()).unwrap()
     }
 
-    /// Get the range of indices for our synthesized glue functions for WIT
+    /// Get the range of indices for our synthesized glue functions for WAI
     /// imports.
     fn wai_import_glue_fn_range(&self) -> Range<u32> {
         let start = self.wai_import_glue_fns_start();
@@ -889,7 +889,7 @@ impl SpiderMonkeyWasm<'_> {
         start..end
     }
 
-    /// Get the function index for the i^th synthesized glue function for a WIT
+    /// Get the function index for the i^th synthesized glue function for a WAI
     /// import.
     fn wai_import_glue_fn(&self, i: u32) -> u32 {
         assert!(
@@ -902,7 +902,7 @@ impl SpiderMonkeyWasm<'_> {
         start + i
     }
 
-    /// Get the function index where WIT export glue functions start.
+    /// Get the function index where WAI export glue functions start.
     fn wai_export_start(&self) -> u32 {
         self.wai_import_glue_fns_start() + self.wai_import_functions_len()
     }
@@ -912,7 +912,7 @@ impl SpiderMonkeyWasm<'_> {
             .expect("must call `preprocess_all` before generating bindings")
     }
 
-    /// Get the function index for the i^th WIT export.
+    /// Get the function index for the i^th WAI export.
     fn wai_export(&self, i: u32) -> u32 {
         assert!(i < self.wai_exports_len());
         self.wai_export_start() + i
@@ -1146,7 +1146,7 @@ impl Generator for SpiderMonkeyWasm<'_> {
             wasm_encoder::Export::Function(self.spidermonkey_import("canonical_abi_realloc")),
         );
 
-        // Add the WIT function imports (add their import glue functions) to
+        // Add the WAI function imports (add their import glue functions) to
         // the module.
         //
         // Each of these functions has the Wasm equivalent of this function

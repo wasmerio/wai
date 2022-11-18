@@ -83,7 +83,7 @@ fn find_tests() -> Vec<PathBuf> {
 
             match f.path().extension().and_then(|s| s.to_str()) {
                 Some("md") => {}
-                Some("wit") => {}
+                Some("wai") => {}
                 _ => continue,
             }
             tests.push(f.path());
@@ -125,11 +125,11 @@ impl Runner<'_> {
             && test
                 .file_stem()
                 .and_then(|path| Path::new(path).extension())
-                == Some(OsStr::new("wit"))
+                == Some(OsStr::new("wai"))
         {
-            test.waih_extension("md.result")
+            test.with_extension("md.result")
         } else {
-            test.waih_extension("wit.result")
+            test.with_extension("wai.result")
         };
         if env::var_os("BLESS").is_some() {
             fs::write(&result_file, result)?;

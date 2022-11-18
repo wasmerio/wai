@@ -31,7 +31,7 @@ fn main() {
                 file.to_str().unwrap().to_string(),
             ));
 
-            let dep_file = file.waih_extension("d");
+            let dep_file = file.with_extension("d");
             let deps = fs::read_to_string(&dep_file).expect("failed to read dep file");
             for dep in deps.split_once(':').unwrap().1.split_whitespace() {
                 println!("cargo:rerun-if-changed={}", dep);

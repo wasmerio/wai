@@ -227,7 +227,7 @@ impl<'a> InterfaceDecoder<'a> {
 
     fn add_function(&mut self, func_name: &str, ty: &types::ComponentFuncType) -> Result<()> {
         validate_id(func_name)
-            .waih_context(|| format!("function name `{}` is not a valid identifier", func_name))?;
+            .with_context(|| format!("function name `{}` is not a valid identifier", func_name))?;
 
         let mut params = Vec::new();
         for (name, ty) in ty.params.iter() {
@@ -236,7 +236,7 @@ impl<'a> InterfaceDecoder<'a> {
                 .ok_or_else(|| anyhow!("function `{}` has a parameter without a name", func_name))?
                 .clone();
 
-            validate_id(&name).waih_context(|| {
+            validate_id(&name).with_context(|| {
                 format!(
                     "function `{}` has a parameter `{}` that is not a valid identifier",
                     func_name, name
@@ -271,7 +271,7 @@ impl<'a> InterfaceDecoder<'a> {
                 let name = self.name_map.get(id).map(ToString::to_string);
 
                 if let Some(name) = name.as_deref() {
-                    validate_id(name).waih_context(|| {
+                    validate_id(name).with_context(|| {
                         format!("type name `{}` is not a valid identifier", name)
                     })?;
                 }
@@ -325,7 +325,7 @@ impl<'a> InterfaceDecoder<'a> {
         let mut ty = self.decode_primitive(*ty)?;
         if let Some(name) = name {
             validate_id(&name)
-                .waih_context(|| format!("type name `{}` is not a valid identifier", name))?;
+                .with_context(|| format!("type name `{}` is not a valid identifier", name))?;
 
             ty = Type::Id(self.alloc_type(Some(name), TypeDefKind::Type(ty)));
         }
@@ -363,7 +363,7 @@ impl<'a> InterfaceDecoder<'a> {
         let record = Record {
             fields: fields
                 .map(|(name, ty)| {
-                    validate_id(name).waih_context(|| {
+                    validate_id(name).with_context(|| {
                         format!(
                             "record `{}` has a field `{}` that is not a valid identifier",
                             record_name, name
@@ -396,7 +396,7 @@ impl<'a> InterfaceDecoder<'a> {
         let variant = Variant {
             cases: cases
                 .map(|(name, case)| {
-                    validate_id(name).waih_context(|| {
+                    validate_id(name).with_context(|| {
                         format!(
                             "variant `{}` has a case `{}` that is not a valid identifier",
                             variant_name, name
@@ -444,7 +444,7 @@ impl<'a> InterfaceDecoder<'a> {
         let flags = Flags {
             flags: names
                 .map(|name| {
-                    validate_id(name).waih_context(|| {
+                    validate_id(name).with_context(|| {
                         format!(
                             "flags `{}` has a flag named `{}` that is not a valid identifier",
                             flags_name, name
@@ -473,7 +473,7 @@ impl<'a> InterfaceDecoder<'a> {
         let enum_ = Enum {
             cases: names
                 .map(|name| {
-                    validate_id(name).waih_context(|| {
+                    validate_id(name).with_context(|| {
                         format!(
                             "enum `{}` has a value `{}` that is not a valid identifier",
                             enum_name, name

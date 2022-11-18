@@ -1,7 +1,7 @@
 # The `*.wai` format
 
 This is intended to document the `*.wai` format as it exists today. The goal is
-to provide an overview to understand what features `wit` files give you and how
+to provide an overview to understand what features `wai` files give you and how
 they're structured. This isn't intended to be a formal grammar, although it's
 expected that one day we'll have a formal grammar for `*.wai` files.
 
@@ -14,19 +14,19 @@ the left.
 
 ## Lexical structure
 
-The `wit` format is a curly-braced-based format where whitespace is optional (but
+The `wai` format is a curly-braced-based format where whitespace is optional (but
 recommended). It is intended to be easily human readable and supports features
-like comments, multi-line comments, and custom identifiers. A `wit` document
+like comments, multi-line comments, and custom identifiers. A `wai` document
 is parsed as a unicode string, and when stored in a file is expected to be
 encoded as UTF-8.
 
-Additionally, wit files must not contain any bidirectional override scalar values,
+Additionally, WAI files must not contain any bidirectional override scalar values,
 control codes other than newline, carriage return, and horizontal tab, or
 codepoints that Unicode officially deprecates or strongly discourages.
 
 The current structure of tokens are:
 
-```wit
+```ebnf
 token ::= whitespace
         | comment
         | operator
@@ -42,7 +42,7 @@ here.
 A `whitespace` token in `*.wai` is a space, a newline, a carriage return, or a
 tab character:
 
-```wit
+```ebnf
 whitespace ::= ' ' | '\n' | '\r' | '\t'
 ```
 
@@ -53,39 +53,39 @@ ends at the next newline (`\n`) character or it's a block comment which starts
 with `/*` and ends with `*/`. Note that block comments are allowed to be nested
 and their delimiters must be balanced
 
-```wit
+```ebnf
 comment ::= '//' character-that-isnt-a-newline*
           | '/*' any-unicode-character* '*/'
 ```
 
 There is a special type of comment called `documentation comment`. A
-`doc-comment` is either a line comment preceded with `///` whichends at the next
+`doc-comment` is either a line comment preceded with `///` which ends at the next
 newline (`\n`) character or it's a block comment which starts with `/**` and ends
 with `*/`. Note that block comments are allowed to be nested and their delimiters
 must be balanced
 
-```wit
+```ebnf
 doc-comment ::= '///' character-that-isnt-a-newline*
-          | '/**' any-unicode-character* '*/'
+              | '/**' any-unicode-character* '*/'
 ```
 
 ### Operators
 
-There are some common operators in the lexical structure of `wit` used for
+There are some common operators in the lexical structure of `wai` used for
 various constructs. Note that delimiters such as `{` and `(` must all be
 balanced.
 
-```wit
+```ebnf
 operator ::= '=' | ',' | ':' | ';' | '(' | ')' | '{' | '}' | '<' | '>' | '*' | '->'
 ```
 
 ### Keywords
 
-Certain identifiers are reserved for use in `wit` documents and cannot be used
+Certain identifiers are reserved for use in `wai` documents and cannot be used
 bare as an identifier. These are used to help parse the format, and the list of
 keywords is still in flux at this time but the current set is:
 
-```wit
+```ebnf
 keyword ::= 'use'
           | 'type'
           | 'resource'
@@ -118,16 +118,16 @@ keyword ::= 'use'
 
 ## Top-level items
 
-A `wit` document is a sequence of items specified at the top level. These items
+A `wai` document is a sequence of items specified at the top level. These items
 come one after another and it's recommended to separate them with newlines for
 readability but this isn't required.
 
 ## Item: `use`
 
 A `use` statement enables importing type or resource definitions from other
-wit documents. The structure of a use statement is:
+wai documents. The structure of a use statement is:
 
-```wit
+```wai
 use * from other-file
 use { a, list, of, names } from another-file
 use { name as other-name } from yet-another-file
@@ -135,7 +135,7 @@ use { name as other-name } from yet-another-file
 
 Specifically the structure of this is:
 
-```wit
+```ebnf
 use-item ::= 'use' use-names 'from' id
 
 use-names ::= '*'
@@ -152,24 +152,24 @@ Note: Here `use-names-list?` means at least one `use-name-list` term.
 
 ## Items: type
 
-There are a number of methods of defining types in a `wit` document, and all of
-the types that can be defined in `wit` are intended to map directly to types in
+There are a number of methods of defining types in a `wai` document, and all of
+the types that can be defined in `wai` are intended to map directly to types in
 the [interface types specification](https://github.com/WebAssembly/interface-types).
 
 ### Item: `type` (alias)
 
-A `type` statement declares a new named type in the `wit` document. This name can
+A `type` statement declares a new named type in the `wai` document. This name can
 be later referred to when defining items using this type. This construct is
 similar to a type alias in other languages
 
-```wit
+```wai
 type my-awesome-u32 = u32
 type my-complicated-tuple = tuple<u32, s32, string>
 ```
 
 Specifically the structure of this is:
 
-```wit
+```ebnf
 type-item ::= 'type' id '=' ty
 ```
 
@@ -179,7 +179,7 @@ A `record` statement declares a new named structure with named fields. Records
 are similar to a `struct` in many languages. Instances of a `record` always have
 their fields defined.
 
-```wit
+```wai
 record pair {
     x: u32,
     y: u32,
@@ -194,7 +194,7 @@ record person {
 
 Specifically the structure of this is:
 
-```wit
+```ebnf
 record-item ::= 'record' id '{' record-fields '}'
 
 record-fields ::= record-field
@@ -210,7 +210,7 @@ are booleans. The `flags` type is distinct from `record` in that it typically is
 represented as a bit flags representation in the canonical ABI. For the purposes
 of type-checking, however, it's simply syntactic sugar for a record-of-booleans.
 
-```wit
+```wai
 flags properties {
     lego,
     marvel-superhero,
@@ -228,7 +228,7 @@ flags properties {
 
 Specifically the structure of this is:
 
-```wit
+```ebnf
 flags-items ::= 'flags' id '{' flags-fields '}'
 
 flags-fields ::= id,
@@ -247,7 +247,7 @@ present when values have that particular case's tag.
 
 All `variant` type must have at least one case specified.
 
-```wit
+```wai
 variant filter {
     all,
     none,
@@ -257,7 +257,7 @@ variant filter {
 
 Specifically the structure of this is:
 
-```wit
+```ebnf
 variant-items ::= 'variant' id '{' variant-cases '}'
 
 variant-cases ::= variant-case,
@@ -274,7 +274,7 @@ An `enum` statement defines a new type which is semantically equivalent to a
 however, to possibly have a different representation in the language ABIs or
 have different bindings generated in for languages.
 
-```wit
+```wai
 enum color {
     red,
     green,
@@ -296,7 +296,7 @@ enum color {
 
 Specifically the structure of this is:
 
-```wit
+```ebnf
 enum-items ::= 'enum' id '{' enum-cases '}'
 
 enum-cases ::= id,
@@ -311,7 +311,7 @@ numerical. This is special-cased, however, to possibly have a different
 representation in the language ABIs or have different bindings generated in for
 languages.
 
-```wit
+```wai
 union configuration {
     string,
     list<string>,
@@ -327,7 +327,7 @@ union configuration {
 
 Specifically the structure of this is:
 
-```wit
+```ebnf
 union-items ::= 'union' id '{' union-cases '}'
 
 union-cases ::= ty,
@@ -340,7 +340,7 @@ Functions can also be defined in a `*.wai` document. Functions have a name,
 parameters, and results. Functions can optionally also be declared as `async`
 functions.
 
-```wit
+```wai
 thunk: func()
 fibonacci: func(n: u32) -> u32
 sleep: async func(ms: u64)
@@ -348,7 +348,7 @@ sleep: async func(ms: u64)
 
 Specifically functions have the structure:
 
-```wit
+```ebnf
 func-item ::= id ':' 'async'? 'func' '(' func-args ')' func-ret
 
 func-args ::= func-arg
@@ -372,7 +372,7 @@ Resources can also optionally have functions defined within them which adds an
 implicit "self" argument as the first argument to each function of the same type
 of the including resource, unless the function is flagged as `static`.
 
-```wit
+```wai
 resource file-descriptor
 
 resource request {
@@ -385,7 +385,7 @@ resource request {
 
 Specifically resources have the structure:
 
-```wit
+```ebnf
 resource-item ::= 'resource' id resource-contents
 
 resource-contents ::= nil
@@ -398,12 +398,12 @@ resource-def ::= 'static'? func-item
 
 ## Types
 
-As mentioned previously the intention of `wit` is to allow defining types
+As mentioned previously the intention of `wai` is to allow defining types
 corresponding to the interface types specification. Many of the top-level items
 above are introducing new named types but "anonymous" types are also supported,
 such as built-ins. For example:
 
-```wit
+```wai
 type number = u32
 type fallible-function-result = expected<u32, string>
 type headers = list<string>
@@ -411,7 +411,7 @@ type headers = list<string>
 
 Specifically the following types are available:
 
-```wit
+```ebnf
 ty ::= 'u8' | 'u16' | 'u32' | 'u64'
      | 's8' | 's16' | 's32' | 's64'
      | 'float32' | 'float64'
@@ -449,7 +449,7 @@ first-class type.
 Similarly the `option` and `expected` types are semantically equivalent to the
 variants:
 
-```wit
+```wai
 variant option {
     none,
     some(ty),
@@ -470,22 +470,22 @@ through a `use` statement or they can be defined locally.
 
 ## Identifiers
 
-Identifiers in `wit` can be defined with two different forms. The first is a
+Identifiers in `wai` can be defined with two different forms. The first is a
 lower-case [stream-safe] [NFC] [kebab-case] identifier where each part delimited
 by '-'s starts with a `XID_Start` scalar value with a zero Canonical Combining
 Class:
 
-```wit
+```wai
 foo: func(bar: u32)
 
 red-green-blue: func(r: u32, g: u32, b: u32)
 ```
 
-This form can't name identifiers which have the same name as wit keywords, so
+This form can't name identifiers which have the same name as wai keywords, so
 the second form is the same syntax with the same restrictions as the first, but
 prefixed with '%':
 
-```wit
+```wai
 %foo: func(%bar: u32)
 
 %red-green-blue: func(%r: u32, %g: u32, %b: u32)
@@ -501,18 +501,18 @@ prefixed with '%':
 
 ## Name resolution
 
-A `wit` document is resolved after parsing to ensure that all names resolve
-correctly. For example this is not a valid `wit` document:
+A `wai` document is resolved after parsing to ensure that all names resolve
+correctly. For example this is not a valid `wai` document:
 
-```wit
+```wai
 type foo = bar  // ERROR: name `bar` not defined
 ```
 
 Type references primarily happen through the `id` production of `ty`.
 
-Additionally names in a `wit` document can only be defined once:
+Additionally names in a `wai` document can only be defined once:
 
-```wit
+```wai
 type foo = u32
 type foo = u64  // ERROR: name `foo` already defined
 ```
@@ -520,7 +520,7 @@ type foo = u64  // ERROR: name `foo` already defined
 Names do not need to be defined before they're used (unlike in C or C++),
 it's ok to define a type after it's used:
 
-```wit
+```wai
 type foo = bar
 
 record bar {
@@ -530,7 +530,7 @@ record bar {
 
 Types, however, cannot be recursive:
 
-```wit
+```wai
 type foo = foo  // ERROR: cannot refer to itself
 
 record bar1 {
@@ -542,7 +542,7 @@ record bar2 {
 }
 ```
 
-The intention of `wit` is that it maps down to interface types, so the goal of
+The intention of `wai` is that it maps down to interface types, so the goal of
 name resolution is to effectively create the type section of a wasm module using
 interface types. The restrictions about self-referential types and such come
 from how types can be defined in the interface types section. Additionally

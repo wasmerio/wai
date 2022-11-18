@@ -6,7 +6,7 @@ use wai_parser::Interface;
 
 fn read_interface(path: &Path) -> Result<Interface> {
     wai_parser::Interface::parse_file(path)
-        .waih_context(|| format!("failed to parse interface file `{}`", path.display()))
+        .with_context(|| format!("failed to parse interface file `{}`", path.display()))
 }
 
 fn read_interfaces(dir: &Path, pattern: &str) -> Result<Vec<Interface>> {
@@ -67,7 +67,7 @@ fn component_encoding() -> Result<()> {
         let error_path = path.join("error.txt");
 
         let module = wat::parse_file(&module_path)
-            .waih_context(|| format!("expected file `{}`", module_path.display()))?;
+            .with_context(|| format!("expected file `{}`", module_path.display()))?;
         let interface = interface_path
             .is_file()
             .then(|| read_interface(&interface_path))
@@ -94,9 +94,9 @@ fn component_encoding() -> Result<()> {
         } else {
             (
                 wasmprinter::print_bytes(
-                    &r.waih_context(|| format!("failed to encode for test case `{}`", test_case))?,
+                    &r.with_context(|| format!("failed to encode for test case `{}`", test_case))?,
                 )
-                .waih_context(|| {
+                .with_context(|| {
                     format!(
                         "failed to print component bytes for test case `{}`",
                         test_case

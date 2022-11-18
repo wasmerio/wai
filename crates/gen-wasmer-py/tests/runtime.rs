@@ -17,7 +17,7 @@ fn execute(name: &str, wasm: &Path, py: &Path, imports: &Path, exports: &Path) {
     println!("OUT_DIR = {:?}", dir);
     println!("Generating bindings...");
     // We call `generate_all` with exports from the imports.wai file, and
-    // imports from the exports.wai wit file. It's reversed because we're
+    // imports from the exports.wai file. It's reversed because we're
     // implementing the host side of these APIs.
     let iface = wai_bindgen_gen_core::wai_parser::Interface::parse_file(imports).unwrap();
     let mut files = Default::default();

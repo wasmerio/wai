@@ -18,7 +18,7 @@
 
 ## About
 
-> **Note**: Unfortunately, the maintainers behind wit-bindgen didn’t want to
+> **Note**: Unfortunately, the maintainers behind `wit-bindgen` didn’t want to
 > [add support for Wasmer upstream], so we had to do a hard-fork in order to
 > make things work with [Wasmer].
 
@@ -63,11 +63,11 @@ of what's being generated and what the glue code looks like.
 ## Usage
 
 At this time a CLI tool is provided mostly for debugging and exploratory
-purposes. It can be used easily with wasmer
-
-`browser.wai`
+purposes. It can be used easily with the `wasmer` CLI.
 
 ```wai
+// browser.wai
+
 record person {
   name: string,
   age: u32,
@@ -77,7 +77,7 @@ record person {
 hello: func(who: option<person>) -> string
 ```
 
-```
+```console
 $ wasmer run wasmer/wai-bindgen-cli --dir=. -- js --import browser.wai
 Generating "browser.d.ts"
 Generating "browser.js"
@@ -91,7 +91,7 @@ Cargo dependencies. Usage in a Web application would probably use a version of
 
 For now, though, you can explore what bindings look like in each language
 through the CLI. Again if you'd like to depend on this if you wouldn't mind
-please reach out on [zulip] so we can figure out a better story than relying on
+please reach out on [Slack] so we can figure out a better story than relying on
 the CLI tool for your use case.
 
 ## Supported Languages
@@ -120,7 +120,7 @@ to follow the canonical ABI for their exports/imports:
   `import!` and an `export!` macro for generating code.
 
 * `js` - this is for JavaScript users executing WebAssembly modules. This could
-  be in a browsers, Node.js, or Deno. In theory this covers browser use cases
+  be in a browser, Node.js, or Deno. In theory this covers browser use cases
   like web workers and such as well. In this mode the `wai-bindgen` CLI tool
   will emit a `*.js` and a `*.d.ts` file describing the interface and providing
   necessary runtime support in JS to implement the canonical ABI. Note that the
@@ -137,7 +137,7 @@ to follow the canonical ABI for their exports/imports:
 All generators support the `--import` and `--export` flags in the `wai-bindgen`
 CLI tool:
 
-```
+```console
 $ wasmer run wasmer/wai-bindgen-cli --dir=. -- js --import browser.wai
 $ wasmer run wasmer/wai-bindgen-cli --dir=. -- rust-wasm --export my-interface.wai
 $ wasmer run wasmer/wai-bindgen-cli --dir=. -- wasmer --import host-functions.wai
@@ -174,7 +174,7 @@ too) are:
 
 * `wasmer-ruby` - same as for `wasmer-py` but for Ruby. Basically for Go users
   using the [`wasmer-ruby`
-  package](htps://github.com/wasmerio/wasmer-ruby) who want to work
+  package](https://github.com/wasmerio/wasmer-ruby) who want to work
   with interface types rather than raw pointers/memories/etc.
 
 Note that this is not an exclusive list, only intended to give you an idea of
@@ -182,3 +182,5 @@ what other bindings could look like. There's a plethora of runtimes and
 languages that compile to WebAssembly, and interface types should be able to
 work with all of them and it's theoretically just some work-hours away from
 having support in `wai-bindgen`.
+
+[Slack]: https://slack.wasmer.io/

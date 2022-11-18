@@ -32,7 +32,7 @@ pub struct Opts {
     #[cfg_attr(feature = "structopt", structopt(long))]
     pub rustfmt: bool,
 
-    /// Adds the wit module name into import binding names when enabled.
+    /// Adds the wai module name into import binding names when enabled.
     #[cfg_attr(feature = "structopt", structopt(long))]
     pub multi_module: bool,
 

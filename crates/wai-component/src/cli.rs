@@ -29,7 +29,7 @@ fn parse_interface(name: Option<String>, path: &Path) -> Result<Interface> {
     }
 
     let mut interface = Interface::parse_file(path)
-        .waih_context(|| format!("failed to parse interface file `{}`", path.display()))?;
+        .with_context(|| format!("failed to parse interface file `{}`", path.display()))?;
 
     interface.name = name.unwrap_or_default();
 
@@ -89,7 +89,7 @@ impl WitComponentApp {
         });
 
         let module = wat::parse_file(&self.module)
-            .waih_context(|| format!("failed to parse module `{}`", self.module.display()))?;
+            .with_context(|| format!("failed to parse module `{}`", self.module.display()))?;
 
         let mut encoder = ComponentEncoder::default()
             .module(&module)
@@ -105,7 +105,7 @@ impl WitComponentApp {
             encoder = encoder.encoding(*encoding);
         }
 
-        let bytes = encoder.encode().waih_context(|| {
+        let bytes = encoder.encode().with_context(|| {
             format!(
                 "failed to encode a component from module `{}`",
                 self.module.display()
@@ -113,7 +113,7 @@ impl WitComponentApp {
         })?;
 
         std::fs::write(&output, bytes)
-            .waih_context(|| format!("failed to write output file `{}`", output.display()))?;
+            .with_context(|| format!("failed to write output file `{}`", output.display()))?;
 
         println!("encoded component `{}`", output.display());
 
@@ -149,7 +149,7 @@ impl WitToWasmApp {
 
         let encoder = InterfaceEncoder::new(&interface).validate(true);
 
-        let bytes = encoder.encode().waih_context(|| {
+        let bytes = encoder.encode().with_context(|| {
             format!(
                 "failed to encode a component from interface `{}`",
                 self.interface.display()
@@ -157,7 +157,7 @@ impl WitToWasmApp {
         })?;
 
         std::fs::write(&output, bytes)
-            .waih_context(|| format!("failed to write output file `{}`", output.display()))?;
+            .with_context(|| format!("failed to write output file `{}`", output.display()))?;
 
         println!("encoded interface as component `{}`", output.display());
 
@@ -197,16 +197,16 @@ impl WasmToWitApp {
         }
 
         let bytes = wat::parse_file(&self.component)
-            .waih_context(|| format!("failed to parse component `{}`", self.component.display()))?;
+            .with_context(|| format!("failed to parse component `{}`", self.component.display()))?;
 
-        let interface = decode_interface_component(&bytes).waih_context(|| {
+        let interface = decode_interface_component(&bytes).with_context(|| {
             format!("failed to decode component `{}`", self.component.display())
         })?;
 
         let mut printer = InterfacePrinter::default();
 
         std::fs::write(&output, printer.print(&interface)?)
-            .waih_context(|| format!("failed to write output file `{}`", output.display()))?;
+            .with_context(|| format!("failed to write output file `{}`", output.display()))?;
 
         println!("decoded interface to `{}`", output.display());
 
