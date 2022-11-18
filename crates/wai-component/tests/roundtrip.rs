@@ -8,14 +8,14 @@ use wai_parser::Interface;
 ///
 /// This test looks in the `interfaces/` directory for test cases.
 ///
-/// Each test case is a directory containing a `<testcase>.wit` file.
+/// Each test case is a directory containing a `<testcase>.wai` file.
 ///
-/// The test encodes the wit file, decodes the resulting bytes, and
+/// The test encodes the wai file, decodes the resulting bytes, and
 /// compares the generated interface definition to the original interface
 /// definition.
 ///
 /// Run the test with the environment variable `BLESS` set to update
-/// the wit file based on the decoded output.
+/// the wai file based on the decoded output.
 #[test]
 fn roundtrip_interfaces() -> Result<()> {
     for entry in fs::read_dir("tests/interfaces")? {
@@ -25,9 +25,9 @@ fn roundtrip_interfaces() -> Result<()> {
         }
 
         let test_case = path.file_stem().unwrap().to_str().unwrap();
-        let wai_path = path.join(test_case).with_extension("wit");
+        let wai_path = path.join(test_case).with_extension("wai");
 
-        let interface = Interface::parse_file(&wai_path).context("failed to parse `wit` file")?;
+        let interface = Interface::parse_file(&wai_path).context("failed to parse `wai` file")?;
 
         let encoder = InterfaceEncoder::new(&interface).validate(true);
 
@@ -52,7 +52,7 @@ fn roundtrip_interfaces() -> Result<()> {
             assert_eq!(
                 fs::read_to_string(&wai_path)?.replace("\r\n", "\n"),
                 output,
-                "encoding of wit file `{}` did not match the the decoded interface for test case `{}`",
+                "encoding of wai file `{}` did not match the the decoded interface for test case `{}`",
                 wai_path.display(),
                 test_case,
             );

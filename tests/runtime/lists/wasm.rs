@@ -1,5 +1,5 @@
-wai_bindgen_rust::import!("../../tests/runtime/lists/imports.wit");
-wai_bindgen_rust::export!("../../tests/runtime/lists/exports.wit");
+wai_bindgen_rust::import!("../../tests/runtime/lists/imports.wai");
+wai_bindgen_rust::export!("../../tests/runtime/lists/exports.wai");
 
 use std::alloc::{self, Layout};
 use std::mem;

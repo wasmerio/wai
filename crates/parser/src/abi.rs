@@ -322,7 +322,7 @@ def_instruction! {
         ///   by itself, then it's granting a capability to the callee. This
         ///   means that the wasm module's type is being granted for the first
         ///   time, possibly, so it needs to be an owned value that's consumed.
-        ///   Note that this doesn't actually happen with `*.witx` today due to
+        ///   Note that this doesn't actually happen with `*.waix` today due to
         ///   the lack of handle type imports.
         ///
         /// * When a wasm module export returns a handle defined within the
@@ -334,7 +334,7 @@ def_instruction! {
         ///   the host, its' similar to the host import returning a capability.
         ///   This would be granting the wasm module with the capability so an
         ///   owned version with a fresh handle is passed to the wasm module.
-        ///   Note that this doesn't happen today with `*.witx` due to the lack
+        ///   Note that this doesn't happen today with `*.waix` due to the lack
         ///   of handle type imports.
         ///
         /// Basically this instruction is used for handle->wasm conversions
@@ -1477,7 +1477,7 @@ impl<'a, B: Bindgen> Generator<'a, B> {
                     //
                     // * The handle is defined by the host, and it's passing it
                     //   to a wasm module. This should use an owned conversion.
-                    //   This isn't expressible in today's `*.witx` format.
+                    //   This isn't expressible in today's `*.waix` format.
                     //
                     // * The handle is defined by neither the host or the wasm
                     //   mdoule. This means that the host is passing a

@@ -1,5 +1,5 @@
-wai_bindgen_rust::import!("../../tests/runtime/async_functions/imports.wit");
-wai_bindgen_rust::export!("../../tests/runtime/async_functions/exports.wit");
+wai_bindgen_rust::import!("../../tests/runtime/async_functions/imports.wai");
+wai_bindgen_rust::export!("../../tests/runtime/async_functions/exports.wai");
 
 struct Exports;
 

@@ -10,7 +10,7 @@ mod ast;
 mod sizealign;
 pub use sizealign::*;
 
-/// Checks if the given string is a legal identifier in wit.
+/// Checks if the given string is a legal identifier in WAI.
 pub fn validate_id(s: &str) -> Result<()> {
     ast::validate_id(0, s)?;
     Ok(())
@@ -279,30 +279,30 @@ impl Function {
 }
 
 fn unwrap_md(contents: &str) -> String {
-    let mut wit = String::new();
+    let mut wai = String::new();
     let mut last_pos = 0;
     let mut in_wai_code_block = false;
     Parser::new_ext(contents, Options::empty())
         .into_offset_iter()
         .for_each(|(event, range)| match (event, range) {
-            (Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(CowStr::Borrowed("wit")))), _) => {
+            (Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(CowStr::Borrowed("wai")))), _) => {
                 in_wai_code_block = true;
             }
             (Event::Text(text), range) if in_wai_code_block => {
                 // Ensure that offsets are correct by inserting newlines to
-                // cover the Markdown content outside of wit code blocks.
+                // cover the Markdown content outside of wai code blocks.
                 for _ in contents[last_pos..range.start].lines() {
-                    wit.push('\n');
+                    wai.push('\n');
                 }
-                wit.push_str(&text);
+                wai.push_str(&text);
                 last_pos = range.end;
             }
-            (Event::End(Tag::CodeBlock(CodeBlockKind::Fenced(CowStr::Borrowed("wit")))), _) => {
+            (Event::End(Tag::CodeBlock(CodeBlockKind::Fenced(CowStr::Borrowed("wai")))), _) => {
                 in_wai_code_block = false;
             }
             _ => {}
         });
-    wit
+    wai
 }
 
 impl Interface {
@@ -343,17 +343,17 @@ impl Interface {
     ) -> Result<Interface> {
         let name = filename
             .file_name()
-            .context("wit path must end in a file name")?
+            .context("wai path must end in a file name")?
             .to_str()
-            .context("wit filename must be valid unicode")?
+            .context("wai filename must be valid unicode")?
             // TODO: replace with `file_prefix` if/when that gets stabilized.
             .split('.')
             .next()
             .unwrap();
         let mut contents = contents;
 
-        // If we have a ".md" file, it's a wit file wrapped in a markdown file;
-        // parse the markdown to extract the `wit` code blocks.
+        // If we have a ".md" file, it's a wai file wrapped in a markdown file;
+        // parse the markdown to extract the `wai` code blocks.
         let md_contents;
         if filename.extension().and_then(|s| s.to_str()) == Some("md") {
             md_contents = unwrap_md(contents);
@@ -509,15 +509,15 @@ impl Interface {
 }
 
 fn load_fs(root: &Path, name: &str) -> Result<(PathBuf, String)> {
-    let wit = root.join(name).with_extension("wit");
+    let wai = root.join(name).with_extension("wai");
 
-    // Attempt to read a ".wit" file.
-    match fs::read_to_string(&wit) {
-        Ok(contents) => Ok((wit, contents)),
+    // Attempt to read a ".wai" file.
+    match fs::read_to_string(&wai) {
+        Ok(contents) => Ok((wai, contents)),
 
-        // If no such file was found, attempt to read a ".wit.md" file.
+        // If no such file was found, attempt to read a ".wai.md" file.
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
-            let wai_md = wit.with_extension("wit.md");
+            let wai_md = wai.with_extension("wai.md");
             match fs::read_to_string(&wai_md) {
                 Ok(contents) => Ok((wai_md, contents)),
                 Err(_err) => Err(err.into()),

@@ -1,6 +1,6 @@
 # Testing wai-bindgen - `codegen`
 
-Any tests placed into the `tests/codegen` directory should be raw `*.wit`
+Any tests placed into the `tests/codegen` directory should be raw `*.wai`
 files. These files will be executed in all code generators by default most
 likely, and the purpose of these files is to execute language-specific
 validation for each bindings generator. Basically if there's a bug where

@@ -35,9 +35,9 @@ fn read_interfaces(dir: &Path, pattern: &str) -> Result<Vec<Interface>> {
 ///
 /// * [required] `module.wat` - contains the core module definition to be encoded
 ///   as a component.
-/// * [optional] `default.wit` - represents the component's default interface.
-/// * [optional] `export-<name>.wit` - represents an interface exported by the component.
-/// * [optional] `import-<name>.wit` - represents an interface imported by the component.
+/// * [optional] `default.wai` - represents the component's default interface.
+/// * [optional] `export-<name>.wai` - represents an interface exported by the component.
+/// * [optional] `import-<name>.wai` - represents an interface imported by the component.
 ///
 /// And the output files are one of the following:
 ///
@@ -62,7 +62,7 @@ fn component_encoding() -> Result<()> {
         let test_case = path.file_stem().unwrap().to_str().unwrap();
 
         let module_path = path.join("module.wat");
-        let interface_path = path.join("default.wit");
+        let interface_path = path.join("default.wai");
         let component_path = path.join("component.wat");
         let error_path = path.join("error.txt");
 
@@ -72,8 +72,8 @@ fn component_encoding() -> Result<()> {
             .is_file()
             .then(|| read_interface(&interface_path))
             .transpose()?;
-        let imports = read_interfaces(&path, "import-*.wit")?;
-        let exports = read_interfaces(&path, "export-*.wit")?;
+        let imports = read_interfaces(&path, "import-*.wai")?;
+        let exports = read_interfaces(&path, "export-*.wai")?;
 
         let mut encoder = ComponentEncoder::default()
             .module(&module)

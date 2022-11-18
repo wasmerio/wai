@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-wai_bindgen_wasmer::export!("../../tests/runtime/records/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/records/imports.wai");
 
 use imports::*;
 
@@ -49,7 +49,7 @@ impl Imports for MyImports {
     }
 }
 
-wai_bindgen_wasmer::import!("../../tests/runtime/records/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/records/exports.wai");
 
 fn run(wasm: &str) -> Result<()> {
     use exports::*;

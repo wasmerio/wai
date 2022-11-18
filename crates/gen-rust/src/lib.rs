@@ -724,7 +724,7 @@ pub trait RustGenerator {
     where
         Self: Sized,
     {
-        // TODO: should this perhaps be an attribute in the wit file?
+        // TODO: should this perhaps be an attribute in the wai file?
         let is_error = name.contains("errno");
 
         let name = name.to_camel_case();

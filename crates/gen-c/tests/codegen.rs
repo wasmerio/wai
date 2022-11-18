@@ -5,24 +5,24 @@ use std::process::Command;
 mod imports {
     test_helpers::codegen_c_import!(
         // ...
-        "*.wit"
+        "*.wai"
 
         // TODO: implement async support
-        "!async-functions.wit"
+        "!async-functions.wai"
     );
 }
 
 mod exports {
     test_helpers::codegen_c_export!(
-        "*.wit"
+        "*.wai"
 
         // TODO: implement async support
-        "!async-functions.wit"
+        "!async-functions.wai"
 
         // TODO: these use push/pull buffer in exports which isn't implemented
         // yet
-        "!wasi-next.wit"
-        "!host.wit"
+        "!wasi-next.wai"
+        "!host.wai"
     );
 }
 

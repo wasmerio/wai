@@ -8,10 +8,10 @@ use wai_parser::Interface;
 ///
 /// This test looks in the `interfaces/` directory for test cases.
 ///
-/// Each test case is a directory containing a `<testcase>.wit` file
+/// Each test case is a directory containing a `<testcase>.wai` file
 /// and an expected `<testcase>.wat` file.
 ///
-/// The test encodes the wit file, prints the resulting component, and
+/// The test encodes the wai file, prints the resulting component, and
 /// compares the output to the wat file.
 ///
 /// Run the test with the environment variable `BLESS` set to update
@@ -25,7 +25,7 @@ fn interface_encoding() -> Result<()> {
         }
 
         let test_case = path.file_stem().unwrap().to_str().unwrap();
-        let wai_path = path.join(test_case).with_extension("wit");
+        let wai_path = path.join(test_case).with_extension("wai");
 
         let interface = Interface::parse_file(&wai_path)?;
 
@@ -39,7 +39,7 @@ fn interface_encoding() -> Result<()> {
             )
         })?;
 
-        let output = wasmprinter::print_bytes(&bytes)?;
+        let output = wasmprinter::print_bytes(bytes)?;
         let wat_path = wai_path.with_extension("wat");
 
         if std::env::var_os("BLESS").is_some() {
@@ -48,7 +48,7 @@ fn interface_encoding() -> Result<()> {
             assert_eq!(
                 fs::read_to_string(&wat_path)?.replace("\r\n", "\n"),
                 output,
-                "encoding of wit file `{}` did not match the expected wat file `{}` for test case `{}`",
+                "encoding of wai file `{}` did not match the expected wat file `{}` for test case `{}`",
                 wai_path.display(),
                 wat_path.display(),
                 test_case

@@ -1,5 +1,5 @@
-wai_bindgen_rust::import!("../../tests/runtime/variants/imports.wit");
-wai_bindgen_rust::export!("../../tests/runtime/variants/exports.wit");
+wai_bindgen_rust::import!("../../tests/runtime/variants/imports.wai");
+wai_bindgen_rust::export!("../../tests/runtime/variants/exports.wai");
 
 use exports::*;
 

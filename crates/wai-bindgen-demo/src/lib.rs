@@ -4,8 +4,8 @@ use wai_bindgen_gen_core::wai_parser::Interface;
 use wai_bindgen_gen_core::Generator;
 use wai_bindgen_rust::Handle;
 
-wai_bindgen_rust::export!("demo.wit");
-wai_bindgen_rust::import!("browser.wit");
+wai_bindgen_rust::export!("demo.wai");
+wai_bindgen_rust::import!("browser.wai");
 
 struct Demo;
 
@@ -41,7 +41,7 @@ impl demo::Config for Config {
     fn render(
         &self,
         lang: demo::Lang,
-        wit: String,
+        wai: String,
         import: bool,
     ) -> Result<Vec<(String, String)>, String> {
         let mut gen: Box<dyn Generator> = match lang {
@@ -61,7 +61,7 @@ impl demo::Config for Config {
             demo::Lang::Wasmer => Box::new(self.wasmer.borrow().clone().build()),
             demo::Lang::WasmerPy => Box::new(self.wasmer_py.borrow().clone().build()),
         };
-        let iface = Interface::parse("input", &wit).map_err(|e| format!("{:?}", e))?;
+        let iface = Interface::parse("input", &wai).map_err(|e| format!("{:?}", e))?;
         let mut files = Default::default();
         let (imports, exports) = if import {
             (vec![iface], vec![])

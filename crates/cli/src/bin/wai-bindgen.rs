@@ -75,12 +75,12 @@ struct Common {
     #[structopt(long = "out-dir")]
     out_dir: Option<PathBuf>,
 
-    /// Generate import bindings for the given `*.wit` interface. Can be
+    /// Generate import bindings for the given `*.wai` interface. Can be
     /// specified multiple times.
     #[structopt(long = "import", short)]
     imports: Vec<PathBuf>,
 
-    /// Generate export bindings for the given `*.wit` interface. Can be
+    /// Generate export bindings for the given `*.wai` interface. Can be
     /// specified multiple times.
     #[structopt(long = "export", short)]
     exports: Vec<PathBuf>,
@@ -107,12 +107,12 @@ fn main() -> Result<()> {
     let imports = common
         .imports
         .iter()
-        .map(|wit| Interface::parse_file(wit))
+        .map(|wai| Interface::parse_file(wai))
         .collect::<Result<Vec<_>>>()?;
     let exports = common
         .exports
         .iter()
-        .map(|wit| Interface::parse_file(wit))
+        .map(|wai| Interface::parse_file(wai))
         .collect::<Result<Vec<_>>>()?;
 
     let mut files = Files::default();

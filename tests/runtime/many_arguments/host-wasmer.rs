@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-wai_bindgen_wasmer::export!("../../tests/runtime/many_arguments/imports.wit");
+wai_bindgen_wasmer::export!("../../tests/runtime/many_arguments/imports.wai");
 
 #[derive(Default, Clone)]
 pub struct MyImports {}
@@ -52,7 +52,7 @@ impl imports::Imports for MyImports {
     }
 }
 
-wai_bindgen_wasmer::import!("../../tests/runtime/many_arguments/exports.wit");
+wai_bindgen_wasmer::import!("../../tests/runtime/many_arguments/exports.wai");
 
 fn run(wasm: &str) -> Result<()> {
     use wasmer::AsStoreMut as _;

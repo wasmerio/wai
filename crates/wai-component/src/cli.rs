@@ -41,7 +41,7 @@ fn parse_interface(name: Option<String>, path: &Path) -> Result<Interface> {
 /// Encodes a WebAssembly component from a core WebAssembly module.
 #[derive(Debug, Parser)]
 #[clap(name = "component-encoder", version = env!("CARGO_PKG_VERSION"))]
-pub struct WitComponentApp {
+pub struct WaiComponentApp {
     /// The path to an interface definition file the component imports.
     #[clap(long = "import", value_name = "NAME=INTERFACE", parse(try_from_str = parse_named_interface))]
     pub imports: Vec<Interface>,
@@ -72,7 +72,7 @@ pub struct WitComponentApp {
     pub module: PathBuf,
 }
 
-impl WitComponentApp {
+impl WaiComponentApp {
     /// Executes the application.
     pub fn execute(self) -> Result<()> {
         if !self.module.is_file() {
@@ -125,8 +125,8 @@ impl WitComponentApp {
 ///
 /// Encodes a WebAssembly interface as a WebAssembly component.
 #[derive(Debug, Parser)]
-#[clap(name = "wit2wasm", version = env!("CARGO_PKG_VERSION"))]
-pub struct WitToWasmApp {
+#[clap(name = "wai2wasm", version = env!("CARGO_PKG_VERSION"))]
+pub struct WaiToWasmApp {
     /// The path of the output WebAssembly component.
     #[clap(long, short = 'o', value_name = "OUTPUT")]
     pub output: Option<PathBuf>,
@@ -136,7 +136,7 @@ pub struct WitToWasmApp {
     pub interface: PathBuf,
 }
 
-impl WitToWasmApp {
+impl WaiToWasmApp {
     /// Executes the application.
     pub fn execute(self) -> Result<()> {
         let output = self.output.unwrap_or_else(|| {
@@ -169,8 +169,8 @@ impl WitToWasmApp {
 ///
 /// Decodes a WebAssembly interface from a WebAssembly component.
 #[derive(Debug, Parser)]
-#[clap(name = "wit2wasm", version = env!("CARGO_PKG_VERSION"))]
-pub struct WasmToWitApp {
+#[clap(name = "wasm2wai", version = env!("CARGO_PKG_VERSION"))]
+pub struct WasmToWaiApp {
     /// The path of the output WebAssembly interface file.
     #[clap(long, short = 'o', value_name = "OUTPUT")]
     pub output: Option<PathBuf>,
@@ -180,12 +180,12 @@ pub struct WasmToWitApp {
     pub component: PathBuf,
 }
 
-impl WasmToWitApp {
+impl WasmToWaiApp {
     /// Executes the application.
     pub fn execute(self) -> Result<()> {
         let output = self.output.unwrap_or_else(|| {
             let mut stem: PathBuf = self.component.file_stem().unwrap().into();
-            stem.set_extension("wit");
+            stem.set_extension("wai");
             stem
         });
 
