@@ -411,7 +411,7 @@ fn detect_invalid_input(input: &str) -> Result<()> {
             }
 
             // Disallow control codes other than the ones explicitly recognized above,
-            // so that viewing a wit file on a terminal doesn't have surprising side
+            // so that viewing a wai file on a terminal doesn't have surprising side
             // effects or appear to have a different meaning than its actual meaning.
             ch if ch.is_control() => {
                 bail!("Control code '{}' at line {}", ch.escape_unicode(), line);

@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><code>wit-component</code></h1>
+  <h1><code>wai-component</code></h1>
 
   <p>
     <strong>WebAssembly component tooling based on the component model proposal and <em>wai</em>.</strong>
@@ -13,17 +13,17 @@
   </p>
 </div>
 
-# `wit-component`
+# `wai-component`
 
-`wit-component` is a crate and a set of CLI tools for creating and interacting with WebAssembly components based on the [component model proposal](https://github.com/WebAssembly/component-model/).
+`wai-component` is a crate and a set of CLI tools for creating and interacting with WebAssembly components based on the [component model proposal](https://github.com/WebAssembly/component-model/).
 
 ## Tools
 
-* `wit-component` - creates a WebAssembly component from a core WebAssembly module and a set of
+* `wai-component` - creates a WebAssembly component from a core WebAssembly module and a set of
   `.wai` files representing the component's imported and exported interfaces.
 
-* `wit2wasm` - encodes an interface definition (in `wit`) as an "interface-only" WebAssembly component.
+* `wai2wasm` - encodes an interface definition (in `wai`) as an "interface-only" WebAssembly component.
   A `.wasm` component file will be generated that stores a full description of the original interface.
 
-* `wasm2wit` - decodes an "interface-only" WebAssembly component to an interface definition (in `wit`).
+* `wasm2wai` - decodes an "interface-only" WebAssembly component to an interface definition (in `wai`).
   A `.wai` file will be generated that represents the interface described by the component.

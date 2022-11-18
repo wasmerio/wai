@@ -1618,7 +1618,7 @@ impl Indexes {
     }
 }
 
-/// An encoder of components based on `wit` interface definitions.
+/// An encoder of components based on `wai` interface definitions.
 #[derive(Default)]
 pub struct ComponentEncoder<'a> {
     module: &'a [u8],

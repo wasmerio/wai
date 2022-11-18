@@ -124,7 +124,7 @@ class Editor {
     const config = document.getElementById(`configure-${this.language.value}`);
     config.style.display = 'inline-block';
 
-    const wit = this.inputEditor.getValue();
+    const wai = this.inputEditor.getValue();
     const is_import = this.mode.value === 'import';
     let lang;
     switch (this.language.value) {
@@ -141,7 +141,7 @@ class Editor {
         break;
       default: return;
     }
-    const result = this.config.render(lang, wit, is_import);
+    const result = this.config.render(lang, wai, is_import);
     if (result.tag === 'err') {
       this.outputEditor.setValue(result.val);
       this.outputEditor.clearSelection();

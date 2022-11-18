@@ -57,7 +57,7 @@ impl From<StringEncoding> for wasm_encoder::CanonicalOption {
     }
 }
 
-/// Decode an "interface-only" component to a wit `Interface`.
+/// Decode an "interface-only" component to a wai `Interface`.
 pub fn decode_interface_component(bytes: &[u8]) -> Result<Interface> {
     decoding::InterfaceDecoder::new(&decoding::ComponentInfo::new(bytes)?).decode()
 }

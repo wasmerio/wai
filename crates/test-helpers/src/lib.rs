@@ -489,7 +489,7 @@ fn gen_rust<G: Generator>(
     for (name, mk, extra) in tests {
         let tests = generate_tests(input.clone(), name, |_path| (mk(), dir));
         let mut sources = proc_macro2::TokenStream::new();
-        for (iface, gen_dir, _input_wit) in tests.iter() {
+        for (iface, gen_dir, _input_wai) in tests.iter() {
             let test = gen_dir.join("bindings.rs");
             let test = test.display().to_string();
             sources.extend(quote::quote!(include!(#test);));
@@ -518,15 +518,15 @@ fn gen_verify<G: Generator>(
     use heck::*;
 
     let tests = generate_tests(input, name, |_path| (mkgen(), dir));
-    let tests = tests.iter().map(|(iface, test, wit)| {
+    let tests = tests.iter().map(|(iface, test, wai)| {
         let test = test.display().to_string();
-        let wit = wit.display().to_string();
+        let wai = wai.display().to_string();
         let name = quote::format_ident!("{}", iface.name.to_snake_case());
         let iface_name = iface.name.to_kebab_case();
         quote::quote! {
             #[test]
             fn #name() {
-                const _: &str = include_str!(#wit);
+                const _: &str = include_str!(#wai);
                 crate::verify(#test, #iface_name);
             }
         }
@@ -558,8 +558,8 @@ pub fn runtime_tests(input: TokenStream) -> TokenStream {
             let name_str = format!("{}_{}", name_str, lang);
             let name = quote::format_ident!("{}", name_str);
             let host_file = entry.join(&host_file).to_str().unwrap().to_string();
-            let import_wit = entry.join("imports.wai").to_str().unwrap().to_string();
-            let export_wit = entry.join("exports.wai").to_str().unwrap().to_string();
+            let import_wai = entry.join("imports.wai").to_str().unwrap().to_string();
+            let export_wai = entry.join("exports.wai").to_str().unwrap().to_string();
             tests.push(quote::quote! {
                 #[test]
                 fn #name() {
@@ -567,8 +567,8 @@ pub fn runtime_tests(input: TokenStream) -> TokenStream {
                         #name_str,
                         #wasm.as_ref(),
                         #host_file.as_ref(),
-                        #import_wit.as_ref(),
-                        #export_wit.as_ref(),
+                        #import_wai.as_ref(),
+                        #export_wai.as_ref(),
                     )
                 }
             });
@@ -596,8 +596,8 @@ pub fn runtime_tests_wasmer_py(_input: TokenStream) -> TokenStream {
             let name_str = format!("{}_{}", name_str, lang);
             let name = quote::format_ident!("{}", name_str);
             let host_file = entry.join("host-wasmer.py").to_str().unwrap().to_string();
-            let import_wit = entry.join("imports.wai").to_str().unwrap().to_string();
-            let export_wit = entry.join("exports.wai").to_str().unwrap().to_string();
+            let import_wai = entry.join("imports.wai").to_str().unwrap().to_string();
+            let export_wai = entry.join("exports.wai").to_str().unwrap().to_string();
             tests.push(quote::quote! {
                 #[test]
                 fn #name() {
@@ -605,8 +605,8 @@ pub fn runtime_tests_wasmer_py(_input: TokenStream) -> TokenStream {
                         #name_str,
                         #wasm.as_ref(),
                         #host_file.as_ref(),
-                        #import_wit.as_ref(),
-                        #export_wit.as_ref(),
+                        #import_wai.as_ref(),
+                        #export_wai.as_ref(),
                     )
                 }
             });
