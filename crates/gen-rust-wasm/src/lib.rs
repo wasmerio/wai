@@ -55,6 +55,10 @@ pub struct Opts {
     /// crate.
     #[cfg_attr(feature = "structopt", structopt(skip))]
     pub standalone: bool,
+
+    /// Generate type definitions, even if they are never used.
+    #[cfg_attr(feature = "structopt", structopt(long))]
+    pub force_generate_structs: bool,
 }
 
 #[derive(Default)]
@@ -90,6 +94,10 @@ impl RustWasm {
 }
 
 impl RustGenerator for RustWasm {
+    fn always_generate_structs(&self) -> bool {
+        self.opts.force_generate_structs
+    }
+
     fn default_param_mode(&self) -> TypeMode {
         if self.in_import {
             // We default to borrowing as much as possible to maximize the ability
