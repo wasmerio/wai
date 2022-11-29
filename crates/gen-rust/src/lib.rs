@@ -32,6 +32,12 @@ pub trait RustGenerator {
         false
     }
 
+    /// Make the code generator always generate types, even if they are never
+    /// used.
+    fn always_generate_structs(&self) -> bool {
+        false
+    }
+
     fn rustdoc(&mut self, docs: &Docs) {
         let docs = match &docs.contents {
             Some(docs) => docs,
@@ -382,10 +388,12 @@ pub trait RustGenerator {
     fn modes_of(&self, iface: &Interface, ty: TypeId) -> Vec<(String, TypeMode)> {
         let info = self.info(ty);
         let mut result = Vec::new();
-        if info.param {
+        if info.param || self.always_generate_structs() {
             result.push((self.param_name(iface, ty), self.default_param_mode()));
         }
-        if info.result && (!info.param || self.uses_two_names(&info)) {
+        if info.result
+            && (!info.param || self.always_generate_structs() || self.uses_two_names(&info))
+        {
             result.push((self.result_name(iface, ty), TypeMode::Owned));
         }
         result
