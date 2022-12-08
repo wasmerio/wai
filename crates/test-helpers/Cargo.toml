@@ -1,6 +1,6 @@
 [package]
 name = "test-helpers"
-version = "0.2.1"
+version = "0.2.2"
 publish = false
 authors.workspace = true
 edition.workspace = true
@@ -21,22 +21,22 @@ heck = "0.3"
 ignore = "0.4"
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.1" }
-wai-bindgen-gen-rust-wasm = { path = "../gen-rust-wasm", version = "0.2.1", optional = true }
-wai-bindgen-gen-wasmtime = { path = "../gen-wasmtime", version = "0.2.1", optional = true }
-wai-bindgen-gen-wasmtime-py = { path = "../gen-wasmtime-py", version = "0.2.1", optional = true }
-wai-bindgen-gen-js = { path = "../gen-js", version = "0.2.1", optional = true }
-wai-bindgen-gen-c = { path = "../gen-c", version = "0.2.1", optional = true }
-wai-bindgen-gen-spidermonkey = { path = "../gen-spidermonkey", version = "0.2.1", optional = true }
-wai-bindgen-gen-wasmer = { path = "../gen-wasmer", version = "0.2.1", optional = true }
-wai-bindgen-gen-wasmer-py = { path = "../gen-wasmer-py", version = "0.2.1", optional = true }
-wai-parser = { path = "../parser", version = "0.2.1" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.2" }
+wai-bindgen-gen-rust-wasm = { path = "../gen-rust-wasm", version = "0.2.2", optional = true }
+wai-bindgen-gen-wasmtime = { path = "../gen-wasmtime", version = "0.2.2", optional = true }
+wai-bindgen-gen-wasmtime-py = { path = "../gen-wasmtime-py", version = "0.2.2", optional = true }
+wai-bindgen-gen-js = { path = "../gen-js", version = "0.2.2", optional = true }
+wai-bindgen-gen-c = { path = "../gen-c", version = "0.2.2", optional = true }
+wai-bindgen-gen-spidermonkey = { path = "../gen-spidermonkey", version = "0.2.2", optional = true }
+wai-bindgen-gen-wasmer = { path = "../gen-wasmer", version = "0.2.2", optional = true }
+wai-bindgen-gen-wasmer-py = { path = "../gen-wasmer-py", version = "0.2.2", optional = true }
+wai-parser = { path = "../parser", version = "0.2.2" }
 filetime = "0.2"
 
 [build-dependencies]
-wai-bindgen-gen-c = { path = "../gen-c", version = "0.2.1" }
-wai-bindgen-gen-spidermonkey = { path = "../gen-spidermonkey", version = "0.2.1" }
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.1" }
+wai-bindgen-gen-c = { path = "../gen-c", version = "0.2.2" }
+wai-bindgen-gen-spidermonkey = { path = "../gen-spidermonkey", version = "0.2.2" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.2" }
 
 [features]
 default = ["wasm-rust", "wasm-c", "wasm-spidermonkey"]
