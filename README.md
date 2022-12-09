@@ -18,10 +18,11 @@
 
 ## About
 
-> **Note**: Unfortunately, the maintainers behind `wit-bindgen` didn’t want to
+> **Note**: Unfortunately, the maintainers behind [`wit-bindgen`] didn’t want to
 > [add support for Wasmer upstream], so we had to do a hard-fork in order to
 > make things work with [Wasmer].
 
+[`wit-bindgen`]: https://github.com/bytecodealliance/wit-bindgen
 [add support for Wasmer upstream]: https://github.com/bytecodealliance/wit-bindgen/issues/306
 [Wasmer]: https://wasmer.io
 
