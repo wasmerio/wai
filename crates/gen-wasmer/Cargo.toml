@@ -26,5 +26,5 @@ test-helpers = { path = "../test-helpers", features = [
     "wai-bindgen-gen-wasmer",
 ] }
 wai-bindgen-wasmer = { path = "../wasmer", features = ["tracing"] }
-wasmer = "3.0.0-rc.1"
-wasmer-wasi = "3.0.0-rc.1"
+wasmer = "3.0"
+wasmer-wasi = "3.0"

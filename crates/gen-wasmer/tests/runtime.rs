@@ -13,7 +13,7 @@ pub fn instantiate<T, I>(
 where
     I: FnOnce(&Instance, &dyn wasmer::AsStoreRef) -> Result<(), anyhow::Error>,
 {
-    let module = Module::from_file(&store, wasm)?;
+    let module = Module::from_file(&*store, wasm)?;
 
     let wasi_env = WasiState::new("test").finalize(store)?;
     let mut imports = wasi_env
