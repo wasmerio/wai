@@ -14,7 +14,7 @@ readme = "README.md"
 repository = "https://github.com/wasmerio/wai"
 # required by [workspace.package]
 rust-version = "1.64"
-version = "0.2.2"
+version = "0.2.3"
 
 # Compiling `spidermonkey.wasm` takes way too long without this.
 [profile.dev.package.cranelift-codegen]

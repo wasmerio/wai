@@ -15,8 +15,8 @@ test = false
 doctest = false
 
 [dependencies]
-wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.2" }
-wai-bindgen-gen-rust = { path = "../gen-rust", version = "0.2.2" }
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.3" }
+wai-bindgen-gen-rust = { path = "../gen-rust", version = "0.2.3" }
 heck = "0.3"
 structopt = { version = "0.3", default-features = false, optional = true }
 
@@ -26,5 +26,5 @@ test-helpers = { path = "../test-helpers", features = [
     "wai-bindgen-gen-wasmer",
 ] }
 wai-bindgen-wasmer = { path = "../wasmer", features = ["tracing"] }
-wasmer = "3.0.0-rc.1"
-wasmer-wasi = "3.0.0-rc.1"
+wasmer = "3.0"
+wasmer-wasi = "3.0"
