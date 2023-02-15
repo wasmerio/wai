@@ -1886,7 +1886,7 @@ dependencies = [
 
 [[package]]
 name = "test-rust-wasm"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "futures-util",
  "wai-bindgen-rust",
