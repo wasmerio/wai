@@ -1,6 +1,6 @@
 [package]
 name = "test-helpers"
-version = "0.2.2"
+version = "0.0.0"
 publish = false
 authors.workspace = true
 edition.workspace = true
@@ -43,3 +43,6 @@ default = ["wasm-rust", "wasm-c", "wasm-spidermonkey"]
 wasm-rust = []
 wasm-c = []
 wasm-spidermonkey = []
+
+[package.metadata.release]
+release = false
