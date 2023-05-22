@@ -1,0 +1,27 @@
+[package]
+name = "wai-bindgen-gen-wasmer-test"
+description = "for testing, please REMOVE BEFORE MAKING A PULL REQUEST"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[lib]
+test = false
+doctest = false
+
+[dependencies]
+wai-bindgen-gen-core = { path = "../gen-core", version = "0.2.3" }
+wai-bindgen-gen-rust = { path = "../gen-rust", version = "0.2.3" }
+heck = "0.3"
+structopt = { version = "0.3", default-features = false, optional = true }
+
+anyhow = "1.0"
+
+# Use wasmer from source for testing. REMOVE BEFORE MAKING A PULL REQUEST!!!
+wai-bindgen-wasmer = { path = "../../../wasmer/lib/wai-bindgen-wasmer", features = ["tracing"] }
+wasmer = { path = "../../../wasmer/lib/api" }

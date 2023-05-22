@@ -2314,6 +2314,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "wai-bindgen-gen-wasmer-test"
+version = "0.2.3"
+dependencies = [
+ "anyhow",
+ "heck 0.3.3",
+ "structopt",
+ "wai-bindgen-gen-core 0.2.3",
+ "wai-bindgen-gen-rust 0.2.3",
+ "wai-bindgen-wasmer 0.4.0",
+ "wasmer 3.3.0",
+]
+
+[[package]]
 name = "wai-bindgen-gen-wasmtime"
 version = "0.2.3"
 dependencies = [
