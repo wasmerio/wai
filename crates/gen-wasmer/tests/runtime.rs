@@ -1,6 +1,6 @@
 use anyhow::Result;
 use wasmer::{Imports, Instance, Module, Store};
-use wasmer_wasi::WasiState;
+use wasmer_wasix::WasiState;
 
 test_helpers::runtime_tests_wasmer!();
 
