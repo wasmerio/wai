@@ -43,11 +43,13 @@ pub mod simple_lists {
     &env,
     move |mut store: wasmer::FunctionEnvMut<EnvWrapper<T>>,arg0:i32,arg1:i32| -> Result<(), wasmer::RuntimeError> {
       let _memory: wasmer::Memory = store.data().lazy.get().unwrap().memory.clone();
-      let _memory_view = _memory.view(&store);
+
+      let (data_mut, my_store) = store.data_and_store_mut();
+
+      let _memory_view = _memory.view(&my_store);
       let mut _bc = wai_bindgen_wasmer::BorrowChecker::new(unsafe {
         _memory_view.data_unchecked_mut()
       });
-      let data_mut = store.data_mut();
       let ptr0 = arg0;
       let len0 = arg1;
       let param0 = _bc.slice(ptr0, len0)?;
@@ -98,11 +100,11 @@ pub mod simple_lists {
       .func_canonical_abi_realloc
       .clone();
       let _memory: wasmer::Memory = store.data().lazy.get().unwrap().memory.clone();
+      let (data_mut, mut store) = store.data_and_store_mut();
       let _memory_view = _memory.view(&store);
       let mut _bc = wai_bindgen_wasmer::BorrowChecker::new(unsafe {
         _memory_view.data_unchecked_mut()
       });
-      let data_mut = store.data_mut();
       let len3 = arg1;
       let base3 = arg0;
       let mut result3 = Vec::with_capacity(len3 as usize);

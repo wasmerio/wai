@@ -666,6 +666,9 @@ impl Generator for Wasmer {
             );
         }
 
+        self.src.push_str("#[allow(unused_mut)]\n");
+        self.src.push_str("let (data_mut, mut store) = store.data_and_store_mut();\n");
+
         if needs_borrow_checker {
             // TODO: This isn't actually sound and should be replaced with use
             // of WasmPtr/WasmCell.
@@ -677,7 +680,7 @@ impl Generator for Wasmer {
             );
         }
 
-        self.src.push_str("let data_mut = store.data_mut();\n");
+        // self.src.push_str("let data_mut = store.data_mut();\n");
 
         if !self.all_needed_handles.is_empty() {
             self.src
