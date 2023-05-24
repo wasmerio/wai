@@ -1,6 +1,6 @@
 use anyhow::Result;
 use wasmer::{Imports, Instance, Module, Store};
-use wasmer_wasi::WasiState;
+use wasmer_wasix::WasiEnvBuilder;
 
 test_helpers::runtime_tests_wasmer!();
 
@@ -15,7 +15,7 @@ where
 {
     let module = Module::from_file(&*store, wasm)?;
 
-    let wasi_env = WasiState::new("test").finalize(store)?;
+    let wasi_env = WasiEnvBuilder::new("test").finalize(store)?;
     let mut imports = wasi_env
         .import_object(store, &module)
         .unwrap_or(Imports::new());
@@ -23,9 +23,6 @@ where
     let initializer = add_imports(store, &mut imports);
 
     let (exports, instance) = mk_exports(store, &module, &mut imports)?;
-
-    let memory = instance.exports.get_memory("memory")?;
-    wasi_env.data_mut(store).set_memory(memory.clone());
 
     initializer(&instance, store)?;
 
