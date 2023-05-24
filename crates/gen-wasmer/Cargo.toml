@@ -34,4 +34,4 @@ test-helpers = { path = "../test-helpers", features = [
 # Use wasmer from source for testing. REMOVE BEFORE MAKING A PULL REQUEST!!!
 wai-bindgen-wasmer = { path = "../../../wasmer/lib/wai-bindgen-wasmer", features = ["tracing"] }
 wasmer = { path = "../../../wasmer/lib/api" }
-# wasmer-wasix = { path = "../../../wasmer/lib/wasi" }
+wasmer-wasix = { path = "../../../wasmer/lib/wasi" }

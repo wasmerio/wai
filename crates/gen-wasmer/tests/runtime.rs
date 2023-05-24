@@ -1,6 +1,6 @@
 use anyhow::Result;
 use wasmer::{Imports, Instance, Module, Store};
-// use wasmer_wasix::WasiState;
+use wasmer_wasix::WasiEnvBuilder;
 
 test_helpers::runtime_tests_wasmer!();
 
@@ -13,23 +13,18 @@ pub fn instantiate<T, I>(
 where
     I: FnOnce(&Instance, &dyn wasmer::AsStoreRef) -> Result<(), anyhow::Error>,
 {
-    // let module = Module::from_file(&*store, wasm)?;
+    let module = Module::from_file(&*store, wasm)?;
 
-    // let wasi_env = WasiState::new("test").finalize(store)?;
-    // let mut imports = wasi_env
-    //     .import_object(store, &module)
-    //     .unwrap_or(Imports::new());
+    let wasi_env = WasiEnvBuilder::new("test").finalize(store)?;
+    let mut imports = wasi_env
+        .import_object(store, &module)
+        .unwrap_or(Imports::new());
 
-    // let initializer = add_imports(store, &mut imports);
+    let initializer = add_imports(store, &mut imports);
 
-    // let (exports, instance) = mk_exports(store, &module, &mut imports)?;
+    let (exports, instance) = mk_exports(store, &module, &mut imports)?;
 
-    // let memory = instance.exports.get_memory("memory")?;
-    // wasi_env.data_mut(store).set_memory(memory.clone());
+    initializer(&instance, store)?;
 
-    // initializer(&instance, store)?;
-
-    // Ok(exports)
-    
-    todo!()
+    Ok(exports)
 }
