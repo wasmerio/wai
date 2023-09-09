@@ -41,6 +41,8 @@ struct Exports {
 pub struct Opts {
     #[cfg_attr(feature = "structopt", structopt(long = "no-typescript"))]
     pub no_typescript: bool,
+    #[cfg_attr(feature = "structopt", structopt(long))]
+    pub esm: bool,
 }
 
 impl Opts {
@@ -1122,7 +1124,12 @@ impl Generator for Js {
         }
 
         if !self.intrinsics.is_empty() {
-            self.src.js("const { ");
+            if self.opts.esm {
+                self.src.js("import { ");
+            } else {
+                self.src.js("const { ");
+            }
+
             for (i, (intrinsic, name)) in mem::take(&mut self.intrinsics).into_iter().enumerate() {
                 if i > 0 {
                     self.src.js(", ");
@@ -1134,7 +1141,12 @@ impl Generator for Js {
                 }
                 self.all_intrinsics.insert(intrinsic);
             }
-            self.src.js(" } = require('./intrinsics.js');\n");
+
+            if self.opts.esm {
+                self.src.js(" } from './intrinsics.js';\n");
+            } else {
+                self.src.js(" } = require('./intrinsics.js');\n");
+            }
         }
 
         self.src.js(&imports.js);
@@ -1146,10 +1158,7 @@ impl Generator for Js {
         exported_items.extend(exports.exported_items);
         exported_items.extend(imports.exported_items);
 
-        self.src.js(&format!(
-            "\nmodule.exports = {{ {} }};\n",
-            exported_items.join(", ")
-        ));
+        self.print_exports(exported_items);
 
         let src = mem::take(&mut self.src);
         let name = iface.name.to_kebab_case();
@@ -2383,10 +2392,19 @@ impl Js {
             self.print_intrinsic(i);
         }
 
-        self.src.js(&format!(
-            "\nmodule.exports = {{ {} }};\n",
-            self.src.exported_items.join(", ")
-        ));
+        self.print_exports(self.src.exported_items.clone());
+    }
+
+    fn print_exports(&mut self, exported_items: Vec<String>) {
+        if self.opts.esm {
+            self.src
+                .js(&format!("\nexport {{ {} }};\n", exported_items.join(", ")));
+        } else {
+            self.src.js(&format!(
+                "\nmodule.exports = {{ {} }};\n",
+                exported_items.join(", ")
+            ));
+        }
     }
 
     fn print_intrinsic(&mut self, i: Intrinsic) {
