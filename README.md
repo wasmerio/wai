@@ -79,7 +79,7 @@ hello: func(who: option<person>) -> string
 ```
 
 ```console
-$ wasmer run wasmer/wai-bindgen-cli --dir=. -- js --import browser.wai
+$ wasmer run wasmer/wai-bindgen-cli --mapdir=. -- js --import browser.wai
 Generating "browser.d.ts"
 Generating "browser.js"
 Generating "intrinsics.js"
@@ -139,9 +139,9 @@ All generators support the `--import` and `--export` flags in the `wai-bindgen`
 CLI tool:
 
 ```console
-$ wasmer run wasmer/wai-bindgen-cli --dir=. -- js --import browser.wai
-$ wasmer run wasmer/wai-bindgen-cli --dir=. -- rust-wasm --export my-interface.wai
-$ wasmer run wasmer/wai-bindgen-cli --dir=. -- wasmer --import host-functions.wai
+$ wasmer run wasmer/wai-bindgen-cli --mapdir=. -- js --import browser.wai
+$ wasmer run wasmer/wai-bindgen-cli --mapdir=. -- rust-wasm --export my-interface.wai
+$ wasmer run wasmer/wai-bindgen-cli --mapdir=. -- wasmer --import host-functions.wai
 ```
 
 Here "import" means "I want to import and call the functions in this interface"
